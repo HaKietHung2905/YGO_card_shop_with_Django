@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Cards - Yu-Gi-Oh Card Shop</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0 40px;
+            margin-bottom: 40px;
+        }
+        
+        .search-filters {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .yugioh-card-item {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .yugioh-card-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card-image {
+            height: 300px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-placeholder {
+            color: white;
+            font-size: 3rem;
+            opacity: 0.7;
+        }
+        
+        .card-rarity {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .rarity-common { background: #6c757d; color: white; }
+        .rarity-rare { background: #ffc107; color: black; }
+        .rarity-super-rare { background: #17a2b8; color: white; }
+        .rarity-ultra-rare { background: #e83e8c; color: white; }
+        .rarity-secret-rare { background: #6f42c1; color: white; }
+        .rarity-ghost-rare { background: #343a40; color: white; }
+        
+        .card-info {
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .card-type {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .card-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        .card-stock {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-view {
+            flex: 1;
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .btn-view:hover {
+            background: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .btn-cart {
+            flex: 1;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .btn-cart:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            color: white;
+            transform: translateY(-1px);
+            text-decoration: none;
+        }
+        
+        .btn-cart:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        
+        .navbar {
+            background: rgba(26, 26, 46, 0.95) !important;
+            backdrop-filter: blur(10px);
+        }
+        
+        .navbar-brand {
+            color: #ffd700 !important;
+        }
+        
+        .nav-link {
+            color: white !important;
+        }
+        
+        .nav-link:hover {
+            color: #ffd700 !important;
+        }
+        
+        .pagination-custom {
+            justify-content: center;
+            margin: 40px 0;
+        }
+        
+        .pagination-custom .page-link {
+            border: none;
+            margin: 0 5px;
+            border-radius: 10px;
+            color: #667eea;
+        }
+        
+        .pagination-custom .page-item.active .page-link {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-magic me-2"></i>Yu-Gi-Oh Shop
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="cards.html">All Cards</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#cart">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-cards-blank me-3"></i>All Yu-Gi-Oh Cards
+            </h1>
+            <p class="lead">Discover your next powerful addition to the deck</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Search and Filters -->
+        <div class="search-filters">
+            <form class="row g-3">
+                <!-- Search Box -->
+                <div class="col-md-6">
+                    <label for="search" class="form-label fw-bold">
+                        <i class="fas fa-search me-2"></i>Search Cards
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           placeholder="Search by name or description...">
+                </div>
+
+                <!-- Card Type Filter -->
+                <div class="col-md-2">
+                    <label for="type" class="form-label fw-bold">Card Type</label>
+                    <select class="form-select" id="type">
+                        <option value="">All Types</option>
+                        <option value="monster">Monster</option>
+                        <option value="spell">Spell</option>
+                        <option value="trap">Trap</option>
+                    </select>
+                </div>
+
+                <!-- Rarity Filter -->
+                <div class="col-md-2">
+                    <label for="rarity" class="form-label fw-bold">Rarity</label>
+                    <select class="form-select" id="rarity">
+                        <option value="">All Rarities</option>
+                        <option value="common">Common</option>
+                        <option value="rare">Rare</option>
+                        <option value="super-rare">Super Rare</option>
+                        <option value="ultra-rare">Ultra Rare</option>
+                        <option value="secret-rare">Secret Rare</option>
+                        <option value="ghost-rare">Ghost Rare</option>
+                    </select>
+                </div>
+
+                <!-- Card Set Filter -->
+                <div class="col-md-2">
+                    <label for="set" class="form-label fw-bold">Card Set</label>
+                    <select class="form-select" id="set">
+                        <option value="">All Sets</option>
+                        <option value="lob">Legend of Blue Eyes</option>
+                        <option value="mrd">Metal Raiders</option>
+                        <option value="sdy">Starter Deck Yugi</option>
+                        <option value="sdk">Starter Deck Kaiba</option>
+                    </select>
+                </div>
+
+                <!-- Submit Buttons -->
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary me-2" onclick="filterCards()">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">
+                        <i class="fas fa-times me-2"></i>Clear Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary -->
+        <div class="results-summary">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-2">Showing 1-12 of 156 cards</h5>
+                    <div id="active-filters">
+                        <!-- Active filters will appear here -->
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <select class="form-select" id="sort">
+                        <option value="">Sort by...</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="price-asc">Price (Low to High)</option>
+                        <option value="price-desc">Price (High to Low)</option>
+                        <option value="newest">Newest First</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Grid -->
+        <div class="card-grid" id="card-grid">
+            <!-- Blue-Eyes White Dragon -->
+            <div class="yugioh-card-item" data-name="Blue-Eyes White Dragon" data-type="monster" data-rarity="ultra-rare" data-set="lob" data-price="299.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <div class="card-rarity rarity-ultra-rare">Ultra Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Blue-Eyes White Dragon</h3>
+                    <div class="card-type">Monster | Level 8</div>
+                    <div class="mb-2">
+                        <small class="text-muted">ATK: 3000 / DEF: 2500</small>
+                    </div>
+                    <div class="card-price">$299.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        5 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dark Magician -->
+            <div class="yugioh-card-item" data-name="Dark Magician" data-type="monster" data-rarity="secret-rare" data-set="lob" data-price="199.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="card-rarity rarity-secret-rare">Secret Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Dark Magician</h3>
+                    <div class="card-type">Monster | Level 7</div>
+                    <div class="mb-2">
+                        <small class="text-muted">ATK: 2500 / DEF: 2100</small>
+                    </div>
+                    <div class="card-price">$199.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        3 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exodia the Forbidden One -->
+            <div class="yugioh-card-item" data-name="Exodia the Forbidden One" data-type="monster" data-rarity="ghost-rare" data-set="lob" data-price="999.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="card-rarity rarity-ghost-rare">Ghost Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Exodia the Forbidden One</h3>
+                    <div class="card-type">Monster | Level 3</div>
+                    <div class="mb-2">
+                        <small class="text-muted">ATK: 1000 / DEF: 1000</small>
+                    </div>
+                    <div class="card-price">$999.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        1 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lightning Storm -->
+            <div class="yugioh-card-item" data-name="Lightning Storm" data-type="spell" data-rarity="super-rare" data-set="mrd" data-price="89.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="card-rarity rarity-super-rare">Super Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Lightning Storm</h3>
+                    <div class="card-type">Spell</div>
+                    <div class="card-price">$89.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        12 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mirror Force -->
+            <div class="yugioh-card-item" data-name="Mirror Force" data-type="trap" data-rarity="rare" data-set="mrd" data-price="45.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="card-rarity rarity-rare">Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Mirror Force</h3>
+                    <div class="card-type">Trap</div>
+                    <div class="card-price">$45.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        8 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Red-Eyes Black Dragon -->
+            <div class="yugioh-card-item" data-name="Red-Eyes Black Dragon" data-type="monster" data-rarity="ultra-rare" data-set="lob" data-price="189.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-dragon"></i>
+                    </div>
+                    <div class="card-rarity rarity-ultra-rare">Ultra Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Red-Eyes Black Dragon</h3>
+                    <div class="card-type">Monster | Level 7</div>
+                    <div class="mb-2">
+                        <small class="text-muted">ATK: 2400 / DEF: 2000</small>
+                    </div>
+                    <div class="card-price">$189.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        4 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mystical Space Typhoon -->
+            <div class="yugioh-card-item" data-name="Mystical Space Typhoon" data-type="spell" data-rarity="common" data-set="mrd" data-price="12.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-tornado"></i>
+                    </div>
+                    <div class="card-rarity rarity-common">Common</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Mystical Space Typhoon</h3>
+                    <div class="card-type">Spell</div>
+                    <div class="card-price">$12.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-check-circle text-success"></i>
+                        25 in stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pot of Greed -->
+            <div class="yugioh-card-item" data-name="Pot of Greed" data-type="spell" data-rarity="rare" data-set="lob" data-price="65.99">
+                <div class="card-image">
+                    <div class="card-placeholder">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    <div class="card-rarity rarity-rare">Rare</div>
+                </div>
+                <div class="card-info">
+                    <h3 class="card-title">Pot of Greed</h3>
+                    <div class="card-type">Spell</div>
+                    <div class="card-price">$65.99</div>
+                    <div class="card-stock">
+                        <i class="fas fa-times-circle text-danger"></i>
+                        Out of stock
+                    </div>
+                    <div class="card-actions">
+                        <a href="#" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>View Details
+                        </a>
+                        <button class="btn-cart" disabled>
+                            <i class="fas fa-times me-1"></i>Out of Stock
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Card pagination">
+            <ul class="pagination pagination-custom">
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-angle-double-left"></i>
+                    </span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-angle-left"></i>
+                    </span>
+                </li>
+                <li class="page-item active">
+                    <span class="page-link">Page 1 of 13</span>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="#">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Filter and search functionality
+        function filterCards() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const type = document.getElementById('type').value;
+            const rarity = document.getElementById('rarity').value;
+            const set = document.getElementById('set').value;
+            
+            const cards = document.querySelectorAll('.yugioh-card-item');
+            let visibleCount = 0;
+            
+            // Update active filters display
+            updateActiveFilters(search, type, rarity, set);
+            
+            cards.forEach(card => {
+                const cardName = card.dataset.name.toLowerCase();
+                const cardType = card.dataset.type;
+                const cardRarity = card.dataset.rarity;
+                const cardSet = card.dataset.set;
+                
+                let show = true;
+                
+                if (search && !cardName.includes(search)) show = false;
+                if (type && cardType !== type) show = false;
+                if (rarity && cardRarity !== rarity) show = false;
+                if (set && cardSet !== set) show = false;
+                
+                if (show) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Update results summary
+            document.querySelector('.results-summary h5').textContent = 
+                `Showing 1-${visibleCount} of ${visibleCount} cards`;
+        }
+        
+        function clearFilters() {
+            document.getElementById('search').value = '';
+            document.getElementById('type').value = '';
+            document.getElementById('rarity').value = '';
+            document.getElementById('set').value = '';
+            
+            const cards = document.querySelectorAll('.yugioh-card-item');
+            cards.forEach(card => {
+                card.style.display = 'block';
+            });
+            
+            document.getElementById('active-filters').innerHTML = '';
+            document.querySelector('.results-summary h5').textContent = 
+                'Showing 1-8 of 8 cards';
+        }
+        
+        function updateActiveFilters(search, type, rarity, set) {
+            const filtersContainer = document.getElementById('active-filters');
+            let filtersHTML = '';
+            
+            if (search || type || rarity || set) {
+                filtersHTML = '<strong>Active filters:</strong> ';
+                
+                if (search) filtersHTML += `<span class="filter-tag">Search: "${search}"</span>`;
+                if (type) filtersHTML += `<span class="filter-tag">Type: ${type}</span>`;
+                if (rarity) filtersHTML += `<span class="filter-tag">Rarity: ${rarity}</span>`;
+                if (set) filtersHTML += `<span class="filter-tag">Set: ${set}</span>`;
+            }
+            
+            filtersContainer.innerHTML = filtersHTML;
+        }
+        
+        // Auto-filter when selections change
+        document.getElementById('type').addEventListener('change', filterCards);
+        document.getElementById('rarity').addEventListener('change', filterCards);
+        document.getElementById('set').addEventListener('change', filterCards);
+        
+        // Search on Enter key
+        document.getElementById('search').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filterCards();
+            }
+        });
+        
+        // Sort functionality
+        document.getElementById('sort').addEventListener('change', function() {
+            const sortValue = this.value;
+            const cardGrid = document.getElementById('card-grid');
+            const cards = Array.from(cardGrid.children);
+            
+            cards.sort((a, b) => {
+                switch (sortValue) {
+                    case 'name-asc':
+                        return a.dataset.name.localeCompare(b.dataset.name);
+                    case 'name-desc':
+                        return b.dataset.name.localeCompare(a.dataset.name);
+                    case 'price-asc':
+                        return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                    case 'price-desc':
+                        return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => cardGrid.appendChild(card));
+        });
+        
+        // Add to cart functionality
+        document.querySelectorAll('.btn-cart').forEach(button => {
+            if (!button.disabled) {
+                button.addEventListener('click', function() {
+                    const cardName = this.closest('.yugioh-card-item').dataset.name;
+                    alert(`Added ${cardName} to cart!`);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
