@@ -1,0 +1,1 @@
+# YGO_card_shop_with_Django
