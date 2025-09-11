@@ -8,6 +8,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('dashboard/', include('cards.admin_urls')), 
     path('', include('cards.urls')),  # Include all URLs from cards app
 ]
 
