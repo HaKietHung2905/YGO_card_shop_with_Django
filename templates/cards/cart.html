@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,304 +11,14 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <style>
-        body {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            min-height: 100vh;
-        }
-        
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 80px 0 40px;
-            margin-bottom: 40px;
-        }
-        
-        .cart-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-        
-        .cart-item {
-            border-bottom: 1px solid #eee;
-            padding: 20px 0;
-            transition: all 0.3s ease;
-        }
-        
-        .cart-item:last-child {
-            border-bottom: none;
-        }
-        
-        .cart-item:hover {
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin: 0 -10px;
-            padding: 20px 10px;
-        }
-        
-        .card-thumbnail {
-            width: 100px;
-            height: 140px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2rem;
-            margin-right: 20px;
-        }
-        
-        .item-details {
-            flex: 1;
-        }
-        
-        .item-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        
-        .item-meta {
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        
-        .rarity-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-        
-        .rarity-ultra-rare { background: #e83e8c; color: white; }
-        .rarity-secret-rare { background: #6f42c1; color: white; }
-        .rarity-rare { background: #ffc107; color: black; }
-        .rarity-super-rare { background: #17a2b8; color: white; }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .quantity-btn {
-            width: 35px;
-            height: 35px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .quantity-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-        
-        .quantity-input {
-            width: 60px;
-            text-align: center;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 8px;
-        }
-        
-        .item-price {
-            font-size: 1.1rem;
-            color: #28a745;
-            font-weight: bold;
-        }
-        
-        .item-total {
-            font-size: 1.2rem;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        .remove-btn {
-            color: #dc3545;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-        
-        .remove-btn:hover {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .cart-summary {
-            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .summary-row:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-        
-        .empty-cart {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6c757d;
-        }
-        
-        .empty-cart i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-        
-        .btn-primary-custom {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary-custom:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-outline-custom {
-            border: 2px solid #667eea;
-            color: #667eea;
-            border-radius: 10px;
-            padding: 12px 30px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-outline-custom:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-        }
-        
-        .navbar {
-            background: rgba(26, 26, 46, 0.95) !important;
-            backdrop-filter: blur(10px);
-        }
-        
-        .navbar-brand {
-            color: #ffd700 !important;
-        }
-        
-        .nav-link {
-            color: white !important;
-        }
-        
-        .nav-link:hover {
-            color: #ffd700 !important;
-        }
-        
-        .recommended-cards {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .recommended-item {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        
-        .recommended-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .recommended-item img {
-            width: 80px;
-            height: 112px;
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin: 0 auto 10px;
-        }
-    </style>
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'css/card-list-cart.css' %}">
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">
-                <i class="fas fa-magic me-2"></i>Yu-Gi-Oh Shop
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="cards.html">All Cards</a>
-                    </li>
-                </ul>
-                
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="cart.html">
-                            <i class="fas fa-shopping-cart me-1"></i>Cart (3)
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="login.html">Login</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    {% include 'includes/navbar.html' %}
 
     <!-- Page Header -->
     <div class="page-header">
@@ -320,325 +31,251 @@
     </div>
 
     <div class="container">
-        <div class="row">
-            <!-- Cart Items -->
-            <div class="col-lg-8">
-                <div class="cart-container">
-                    <h3 class="mb-4">Your Items (3)</h3>
-                    
-                    <!-- Cart Item 1 -->
-                    <div class="cart-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <div class="card-thumbnail">
-                                    <i class="fas fa-dragon"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="item-details">
-                                    <div class="item-name">Blue-Eyes White Dragon</div>
-                                    <div class="item-meta">
-                                        <span class="rarity-badge rarity-ultra-rare">Ultra Rare</span>
-                                        <span>Monster | Legend of Blue Eyes</span>
+        {% if cart_items %}
+            <div class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="cart-container">
+                        <h3 class="mb-4">Your Items ({{ cart_items.count }})</h3>
+                        
+                        <form method="post" action="{% url 'update_cart' %}">
+                            {% csrf_token %}
+                            {% for item in cart_items %}
+                                <div class="cart-item">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                            <div class="card-thumbnail">
+                                                {% if item.card.image %}
+                                                    <img src="{{ item.card.image.url }}" alt="{{ item.card.name }}" class="w-100 h-100 object-cover rounded">
+                                                {% else %}
+                                                    {% if item.card.card_type == 'monster' %}
+                                                        <i class="fas fa-dragon"></i>
+                                                    {% elif item.card.card_type == 'spell' %}
+                                                        <i class="fas fa-magic"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-shield-alt"></i>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="item-details">
+                                                <div class="item-name">{{ item.card.name }}</div>
+                                                <div class="item-meta">
+                                                    <span class="rarity-badge rarity-{{ item.card.rarity|slugify }}">{{ item.card.get_rarity_display }}</span>
+                                                    <span>{{ item.card.get_card_type_display }} | {{ item.card.card_set.name }}</span>
+                                                </div>
+                                                <div class="item-price">${{ item.card.price }} each</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="quantity-controls">
+                                                <button type="button" class="quantity-btn" onclick="decreaseQuantity('{{ item.id }}')">-</button>
+                                                <input type="number" 
+                                                       class="quantity-input" 
+                                                       id="quantity_{{ item.id }}" 
+                                                       name="quantity_{{ item.id }}"
+                                                       value="{{ item.quantity }}" 
+                                                       min="1" 
+                                                       max="{{ item.card.stock_quantity }}"
+                                                       onchange="updateItemTotal('{{ item.id }}', {{ item.card.price }})">
+                                                <button type="button" class="quantity-btn" onclick="increaseQuantity('{{ item.id }}', {{ item.card.stock_quantity }})">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 text-end">
+                                            <div class="item-total" id="total_{{ item.id }}">${{ item.total_price }}</div>
+                                            <a href="{% url 'remove_from_cart' item.pk %}" class="remove-btn" title="Remove item" onclick="return confirm('Remove this item from cart?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="item-price">$299.99 each</div>
+                                </div>
+                            {% endfor %}
+
+                            <!-- Action Buttons -->
+                            <div class="mt-4 d-flex gap-3">
+                                <button type="submit" class="btn btn-outline-custom">
+                                    <i class="fas fa-sync me-2"></i>Update Cart
+                                </button>
+                                <a href="{% url 'card_list' %}" class="btn btn-outline-custom">
+                                    <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Recommended Cards -->
+                    <div class="recommended-cards">
+                        <h4 class="mb-4">You might also like</h4>
+                        <div class="row g-3">
+                            <!-- You can add logic here to show recommended cards -->
+                            <div class="col-md-3">
+                                <div class="recommended-item">
+                                    <div class="card-thumb">
+                                        <i class="fas fa-eye"></i>
+                                    </div>
+                                    <h6>Exodia</h6>
+                                    <p class="text-success fw-bold">$999.99</p>
+                                    <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="decreaseQuantity('item1')">-</button>
-                                    <input type="number" class="quantity-input" id="item1-qty" value="1" min="1" onchange="updateTotal('item1', 299.99)">
-                                    <button class="quantity-btn" onclick="increaseQuantity('item1')">+</button>
-                                </div>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <div class="item-total" id="item1-total">$299.99</div>
-                                <button class="remove-btn" onclick="removeItem('item1')" title="Remove item">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cart Item 2 -->
-                    <div class="cart-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <div class="card-thumbnail">
-                                    <i class="fas fa-magic"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="item-details">
-                                    <div class="item-name">Dark Magician</div>
-                                    <div class="item-meta">
-                                        <span class="rarity-badge rarity-secret-rare">Secret Rare</span>
-                                        <span>Monster | Legend of Blue Eyes</span>
+                                <div class="recommended-item">
+                                    <div class="card-thumb">
+                                        <i class="fas fa-dragon"></i>
                                     </div>
-                                    <div class="item-price">$199.99 each</div>
+                                    <h6>Red-Eyes Black Dragon</h6>
+                                    <p class="text-success fw-bold">$189.99</p>
+                                    <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="decreaseQuantity('item2')">-</button>
-                                    <input type="number" class="quantity-input" id="item2-qty" value="1" min="1" onchange="updateTotal('item2', 199.99)">
-                                    <button class="quantity-btn" onclick="increaseQuantity('item2')">+</button>
-                                </div>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <div class="item-total" id="item2-total">$199.99</div>
-                                <button class="remove-btn" onclick="removeItem('item2')" title="Remove item">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cart Item 3 -->
-                    <div class="cart-item">
-                        <div class="row align-items-center">
-                            <div class="col-md-2">
-                                <div class="card-thumbnail">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="item-details">
-                                    <div class="item-name">Mirror Force</div>
-                                    <div class="item-meta">
-                                        <span class="rarity-badge rarity-rare">Rare</span>
-                                        <span>Trap | Metal Raiders</span>
+                                <div class="recommended-item">
+                                    <div class="card-thumb">
+                                        <i class="fas fa-bolt"></i>
                                     </div>
-                                    <div class="item-price">$45.99 each</div>
+                                    <h6>Lightning Storm</h6>
+                                    <p class="text-success fw-bold">$89.99</p>
+                                    <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
                                 </div>
                             </div>
                             <div class="col-md-3">
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="decreaseQuantity('item3')">-</button>
-                                    <input type="number" class="quantity-input" id="item3-qty" value="2" min="1" onchange="updateTotal('item3', 45.99)">
-                                    <button class="quantity-btn" onclick="increaseQuantity('item3')">+</button>
+                                <div class="recommended-item">
+                                    <div class="card-thumb">
+                                        <i class="fas fa-cookie-bite"></i>
+                                    </div>
+                                    <h6>Pot of Greed</h6>
+                                    <p class="text-success fw-bold">$65.99</p>
+                                    <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
                                 </div>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <div class="item-total" id="item3-total">$91.98</div>
-                                <button class="remove-btn" onclick="removeItem('item3')" title="Remove item">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="mt-4 d-flex gap-3">
-                        <button class="btn btn-outline-custom" onclick="clearCart()">
-                            <i class="fas fa-trash me-2"></i>Clear Cart
-                        </button>
-                        <a href="cards.html" class="btn btn-outline-custom">
-                            <i class="fas fa-arrow-left me-2"></i>Continue Shopping
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Recommended Cards -->
-                <div class="recommended-cards">
-                    <h4 class="mb-4">You might also like</h4>
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <div class="recommended-item">
-                                <div class="recommended-item img">
-                                    <i class="fas fa-eye"></i>
-                                </div>
-                                <h6>Exodia</h6>
-                                <p class="text-success fw-bold">$999.99</p>
-                                <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="recommended-item">
-                                <div class="recommended-item img">
-                                    <i class="fas fa-dragon"></i>
-                                </div>
-                                <h6>Red-Eyes Black Dragon</h6>
-                                <p class="text-success fw-bold">$189.99</p>
-                                <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="recommended-item">
-                                <div class="recommended-item img">
-                                    <i class="fas fa-bolt"></i>
-                                </div>
-                                <h6>Lightning Storm</h6>
-                                <p class="text-success fw-bold">$89.99</p>
-                                <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="recommended-item">
-                                <div class="recommended-item img">
-                                    <i class="fas fa-cookie-bite"></i>
-                                </div>
-                                <h6>Pot of Greed</h6>
-                                <p class="text-success fw-bold">$65.99</p>
-                                <button class="btn btn-sm btn-primary-custom">Add to Cart</button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Cart Summary -->
-            <div class="col-lg-4">
-                <div class="cart-summary">
-                    <h4 class="mb-4">Order Summary</h4>
-                    
-                    <div class="summary-row">
-                        <span>Subtotal (4 items):</span>
-                        <span id="subtotal">$591.96</span>
+                <!-- Cart Summary -->
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h4 class="mb-4">Order Summary</h4>
+                        
+                        <div class="summary-row">
+                            <span>Subtotal ({{ cart_items.count }} items):</span>
+                            <span id="subtotal">${{ total }}</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Tax (8.5%):</span>
+                            <span id="tax">${{ total|floatformat:2 }}</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <strong>Total:</strong>
+                            <strong class="text-primary" id="total">${{ total|floatformat:2 }}</strong>
+                        </div>
+                        
+                        <div class="d-grid gap-3 mt-4">
+                            <button class="btn btn-primary-custom btn-lg" onclick="proceedToCheckout()">
+                                <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                            </button>
+                            <button class="btn btn-outline-custom">
+                                <i class="fas fa-heart me-2"></i>Save for Later
+                            </button>
+                        </div>
+                        
+                        <!-- Security Info -->
+                        <div class="mt-4 text-center">
+                            <small class="text-muted">
+                                <i class="fas fa-lock me-1"></i>
+                                Secure checkout guaranteed
+                            </small>
+                        </div>
                     </div>
-                    
-                    <div class="summary-row">
-                        <span>Shipping:</span>
-                        <span class="text-success">FREE</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>Tax (8.5%):</span>
-                        <span id="tax">$50.32</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <strong>Total:</strong>
-                        <strong class="text-primary" id="total">$642.28</strong>
-                    </div>
-                    
-                    <div class="d-grid gap-3 mt-4">
-                        <button class="btn btn-primary-custom btn-lg" onclick="proceedToCheckout()">
-                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
-                        </button>
-                        <button class="btn btn-outline-custom">
-                            <i class="fas fa-heart me-2"></i>Save for Later
-                        </button>
-                    </div>
-                    
-                    <!-- Security Info -->
-                    <div class="mt-4 text-center">
-                        <small class="text-muted">
-                            <i class="fas fa-lock me-1"></i>
-                            Secure checkout guaranteed
+
+                    <!-- Promo Code -->
+                    <div class="cart-summary mt-3">
+                        <h5 class="mb-3">Promo Code</h5>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter promo code" id="promo-code">
+                            <button class="btn btn-outline-custom" onclick="applyPromoCode()">Apply</button>
+                        </div>
+                        <small class="text-muted mt-2 d-block">
+                            <i class="fas fa-tag me-1"></i>
+                            Get 10% off with code: FIRSTDUEL
                         </small>
                     </div>
                 </div>
-
-                <!-- Promo Code -->
-                <div class="cart-summary mt-3">
-                    <h5 class="mb-3">Promo Code</h5>
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Enter promo code" id="promo-code">
-                        <button class="btn btn-outline-custom" onclick="applyPromoCode()">Apply</button>
+            </div>
+        {% else %}
+            <!-- Empty Cart -->
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="cart-container">
+                        <div class="empty-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Looks like you haven't added any cards yet.</p>
+                            <a href="{% url 'card_list' %}" class="btn btn-primary-custom">
+                                <i class="fas fa-search me-2"></i>Browse Cards
+                            </a>
+                        </div>
                     </div>
-                    <small class="text-muted mt-2 d-block">
-                        <i class="fas fa-tag me-1"></i>
-                        Get 10% off with code: FIRSTDUEL
-                    </small>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
+
+    <!-- Messages -->
+    {% include 'includes/messages.html' %}
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Quantity controls
-        function increaseQuantity(itemId) {
-            const input = document.getElementById(itemId + '-qty');
-            input.value = parseInt(input.value) + 1;
-            const price = getPriceByItem(itemId);
-            updateTotal(itemId, price);
-            updateCartSummary();
-        }
-
-        function decreaseQuantity(itemId) {
-            const input = document.getElementById(itemId + '-qty');
-            if (parseInt(input.value) > 1) {
-                input.value = parseInt(input.value) - 1;
-                const price = getPriceByItem(itemId);
-                updateTotal(itemId, price);
-                updateCartSummary();
+        function increaseQuantity(itemId, maxStock) {
+            const input = document.getElementById('quantity_' + itemId);
+            const currentValue = parseInt(input.value);
+            if (currentValue < maxStock) {
+                input.value = currentValue + 1;
+                updateItemTotal(itemId, parseFloat(input.dataset.price || 0));
             }
         }
 
-        function getPriceByItem(itemId) {
-            const prices = {
-                'item1': 299.99,
-                'item2': 199.99,
-                'item3': 45.99
-            };
-            return prices[itemId];
+        function decreaseQuantity(itemId) {
+            const input = document.getElementById('quantity_' + itemId);
+            const currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+                updateItemTotal(itemId, parseFloat(input.dataset.price || 0));
+            }
         }
 
-        function updateTotal(itemId, price) {
-            const quantity = parseInt(document.getElementById(itemId + '-qty').value);
+        function updateItemTotal(itemId, price) {
+            const quantity = parseInt(document.getElementById('quantity_' + itemId).value);
             const total = (price * quantity).toFixed(2);
-            document.getElementById(itemId + '-total').textContent = '$' + total;
+            document.getElementById('total_' + itemId).textContent = ' + total;
             updateCartSummary();
         }
 
         function updateCartSummary() {
             let subtotal = 0;
-            const items = ['item1', 'item2', 'item3'];
+            const totalElements = document.querySelectorAll('[id^="total_"]');
             
-            items.forEach(item => {
-                const totalElement = document.getElementById(item + '-total');
-                if (totalElement) {
-                    const total = parseFloat(totalElement.textContent.replace('$', ''));
-                    subtotal += total;
-                }
+            totalElements.forEach(element => {
+                const total = parseFloat(element.textContent.replace(', ''));
+                subtotal += total;
             });
 
             const tax = subtotal * 0.085;
             const total = subtotal + tax;
 
-            document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
-            document.getElementById('tax').textContent = '$' + tax.toFixed(2);
-            document.getElementById('total').textContent = '$' + total.toFixed(2);
-        }
-
-        function removeItem(itemId) {
-            if (confirm('Remove this item from your cart?')) {
-                const itemElement = document.getElementById(itemId + '-qty').closest('.cart-item');
-                itemElement.remove();
-                updateCartSummary();
-                updateCartCount();
-            }
-        }
-
-        function clearCart() {
-            if (confirm('Are you sure you want to clear your entire cart?')) {
-                document.querySelectorAll('.cart-item').forEach(item => item.remove());
-                showEmptyCart();
-            }
-        }
-
-        function showEmptyCart() {
-            const cartContainer = document.querySelector('.cart-container');
-            cartContainer.innerHTML = `
-                <div class="empty-cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>Your cart is empty</h3>
-                    <p>Looks like you haven't added any cards yet.</p>
-                    <a href="cards.html" class="btn btn-primary-custom">
-                        <i class="fas fa-search me-2"></i>Browse Cards
-                    </a>
-                </div>
-            `;
-        }
-
-        function updateCartCount() {
-            const cartItems = document.querySelectorAll('.cart-item');
-            const count = cartItems.length;
-            document.querySelector('.nav-link.active').innerHTML = 
-                `<i class="fas fa-shopping-cart me-1"></i>Cart (${count})`;
+            document.getElementById('subtotal').textContent = ' + subtotal.toFixed(2);
+            document.getElementById('tax').textContent = ' + tax.toFixed(2);
+            document.getElementById('total').textContent = ' + total.toFixed(2);
         }
 
         function proceedToCheckout() {
@@ -657,10 +294,6 @@
             }
         }
 
-        // Initialize cart on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCartSummary();
-        });
     </script>
 </body>
 </html>
