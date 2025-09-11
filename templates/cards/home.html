@@ -13,9 +13,12 @@
     <!-- AOS Animation Library -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
-    
+    <!-- Custom CSS Files -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navigation.css' %}">
     <link rel="stylesheet" href="{% static 'css/cards.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sections.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities.css' %}">
 </head>
 <body>
     <!-- Navigation -->  
@@ -36,12 +39,18 @@
                             Master the ultimate trading card experience with authentic Yu-Gi-Oh cards
                         </p>
                         <div class="hero-buttons d-flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="400">
-                            <button class="btn btn-hero btn-primary-hero">
-                                <i class="fas fa-user-plus me-2"></i>Start Dueling
-                            </button>
-                            <button class="btn btn-hero btn-outline-hero">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'card_list' %}" class="btn btn-hero btn-primary-hero">
+                                    <i class="fas fa-search me-2"></i>Browse Cards
+                                </a>
+                            {% else %}
+                                <a href="{% url 'signup' %}" class="btn btn-hero btn-primary-hero">
+                                    <i class="fas fa-user-plus me-2"></i>Start Dueling
+                                </a>
+                            {% endif %}
+                            <a href="{% url 'card_list' %}" class="btn btn-hero btn-outline-hero">
                                 <i class="fas fa-search me-2"></i>Browse Cards
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -146,110 +155,81 @@
                 </div>
             </div>
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="card-showcase h-100">
-                        <div class="card-image-container">
-                            <div class="card-placeholder">
-                                <i class="fas fa-dragon fa-4x text-white"></i>
+                {% for card in featured_cards %}
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter|add:100 }}">
+                        <div class="card-showcase h-100">
+                            <div class="card-image-container">
+                                {% if card.image %}
+                                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="w-100 h-100 object-cover">
+                                {% else %}
+                                    <div class="card-placeholder">
+                                        {% if card.card_type == 'monster' %}
+                                            <i class="fas fa-dragon fa-4x text-white"></i>
+                                        {% elif card.card_type == 'spell' %}
+                                            <i class="fas fa-magic fa-4x text-white"></i>
+                                        {% else %}
+                                            <i class="fas fa-shield-alt fa-4x text-white"></i>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <div class="card-overlay">
+                                    <div class="card-actions">
+                                        <a href="{% url 'card_detail' card.pk %}" class="btn btn-light btn-sm">View Details</a>
+                                        {% if user.is_authenticated and card.is_in_stock %}
+                                            <a href="{% url 'add_to_cart' card.pk %}" class="btn btn-primary btn-sm">Add to Cart</a>
+                                        {% elif not user.is_authenticated %}
+                                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-overlay">
-                                <div class="card-actions">
-                                    <button class="btn btn-light btn-sm">View Details</button>
-                                    <button class="btn btn-primary btn-sm">Add to Cart</button>
+                            <div class="card-showcase-body">
+                                <h5 class="fw-bold mb-2">{{ card.name }}</h5>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning me-2">{{ card.get_rarity_display }}</span>
+                                    <span class="badge bg-outline-light">{{ card.get_card_type_display }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h4 text-success mb-0">${{ card.price }}</span>
+                                    <small class="text-muted">
+                                        {% if card.is_in_stock %}
+                                            {{ card.stock_quantity }} in stock
+                                        {% else %}
+                                            Out of stock
+                                        {% endif %}
+                                    </small>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-showcase-body">
-                            <h5 class="fw-bold mb-2">Blue-Eyes White Dragon</h5>
-                            <div class="mb-3">
-                                <span class="badge bg-warning me-2">Ultra Rare</span>
-                                <span class="badge bg-outline-light">Monster</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 text-success mb-0">$299.99</span>
-                                <small class="text-muted">5 in stock</small>
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="card-showcase h-100">
-                        <div class="card-image-container">
-                            <div class="card-placeholder">
-                                <i class="fas fa-magic fa-4x text-white"></i>
+                {% empty %}
+                    <!-- Default cards if no featured cards exist -->
+                    <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="card-showcase h-100">
+                            <div class="card-image-container">
+                                <div class="card-placeholder">
+                                    <i class="fas fa-dragon fa-4x text-white"></i>
+                                </div>
+                                <div class="card-overlay">
+                                    <div class="card-actions">
+                                        <a href="{% url 'card_list' %}" class="btn btn-light btn-sm">Browse Cards</a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-overlay">
-                                <div class="card-actions">
-                                    <button class="btn btn-light btn-sm">View Details</button>
-                                    <button class="btn btn-primary btn-sm">Add to Cart</button>
+                            <div class="card-showcase-body">
+                                <h5 class="fw-bold mb-2">Blue-Eyes White Dragon</h5>
+                                <div class="mb-3">
+                                    <span class="badge bg-warning me-2">Ultra Rare</span>
+                                    <span class="badge bg-outline-light">Monster</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h4 text-success mb-0">$299.99</span>
+                                    <small class="text-muted">5 in stock</small>
                                 </div>
                             </div>
                         </div>
-                        <div class="card-showcase-body">
-                            <h5 class="fw-bold mb-2">Dark Magician</h5>
-                            <div class="mb-3">
-                                <span class="badge bg-danger me-2">Secret Rare</span>
-                                <span class="badge bg-outline-light">Monster</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 text-success mb-0">$199.99</span>
-                                <small class="text-muted">3 in stock</small>
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="card-showcase h-100">
-                        <div class="card-image-container">
-                            <div class="card-placeholder">
-                                <i class="fas fa-eye fa-4x text-white"></i>
-                            </div>
-                            <div class="card-overlay">
-                                <div class="card-actions">
-                                    <button class="btn btn-light btn-sm">View Details</button>
-                                    <button class="btn btn-primary btn-sm">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-showcase-body">
-                            <h5 class="fw-bold mb-2">Exodia the Forbidden One</h5>
-                            <div class="mb-3">
-                                <span class="badge bg-dark me-2">Ghost Rare</span>
-                                <span class="badge bg-outline-light">Monster</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 text-success mb-0">$999.99</span>
-                                <small class="text-muted">1 in stock</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="card-showcase h-100">
-                        <div class="card-image-container">
-                            <div class="card-placeholder">
-                                <i class="fas fa-bolt fa-4x text-white"></i>
-                            </div>
-                            <div class="card-overlay">
-                                <div class="card-actions">
-                                    <button class="btn btn-light btn-sm">View Details</button>
-                                    <button class="btn btn-primary btn-sm">Add to Cart</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-showcase-body">
-                            <h5 class="fw-bold mb-2">Lightning Storm</h5>
-                            <div class="mb-3">
-                                <span class="badge bg-info me-2">Super Rare</span>
-                                <span class="badge bg-outline-light">Spell</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="h4 text-success mb-0">$89.99</span>
-                                <small class="text-muted">12 in stock</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
             <div class="text-center mt-5" data-aos="fade-up">
                 <a href="{% url 'card_list' %}" class="btn btn-outline-light btn-lg px-5">
@@ -269,62 +249,80 @@
                 </div>
             </div>
             <div class="row g-4">
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="set-card h-100">
-                        <div class="set-card-header text-center">
-                            <h4 class="fw-bold mb-2">Photon Hypernova</h4>
-                            <p class="mb-3">POTE</p>
-                            <small>Released: Nov 2024</small>
-                        </div>
-                        <div class="set-card-footer">
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-box-open me-2"></i>Explore Set
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="set-card h-100">
-                        <div class="set-card-header text-center">
-                            <h4 class="fw-bold mb-2">Darkwing Blast</h4>
-                            <p class="mb-3">DAMA</p>
-                            <small>Released: Oct 2024</small>
-                        </div>
-                        <div class="set-card-footer">
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-box-open me-2"></i>Explore Set
-                            </button>
+                {% for card_set in latest_sets %}
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
+                        <div class="set-card h-100">
+                            <div class="set-card-header text-center">
+                                <h4 class="fw-bold mb-2">{{ card_set.name }}</h4>
+                                <p class="mb-3">{{ card_set.code }}</p>
+                                <small>Released: {{ card_set.release_date|date:"M Y" }}</small>
+                            </div>
+                            <div class="set-card-footer">
+                                <a href="{% url 'card_list' %}?set={{ card_set.id }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="set-card h-100">
-                        <div class="set-card-header text-center">
-                            <h4 class="fw-bold mb-2">Power of the Elements</h4>
-                            <p class="mb-3">POTE</p>
-                            <small>Released: Sep 2024</small>
-                        </div>
-                        <div class="set-card-footer">
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-box-open me-2"></i>Explore Set
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="set-card h-100">
-                        <div class="set-card-header text-center">
-                            <h4 class="fw-bold mb-2">Tactical Masters</h4>
-                            <p class="mb-3">TAMA</p>
-                            <small>Released: Aug 2024</small>
-                        </div>
-                        <div class="set-card-footer">
-                            <button class="btn btn-primary w-100">
-                                <i class="fas fa-box-open me-2"></i>Explore Set
-                            </button>
+                {% empty %}
+                    <!-- Default sets if no sets exist -->
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="set-card h-100">
+                            <div class="set-card-header text-center">
+                                <h4 class="fw-bold mb-2">Photon Hypernova</h4>
+                                <p class="mb-3">POTE</p>
+                                <small>Released: Nov 2024</small>
+                            </div>
+                            <div class="set-card-footer">
+                                <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
+                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="set-card h-100">
+                            <div class="set-card-header text-center">
+                                <h4 class="fw-bold mb-2">Darkwing Blast</h4>
+                                <p class="mb-3">DAMA</p>
+                                <small>Released: Oct 2024</small>
+                            </div>
+                            <div class="set-card-footer">
+                                <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
+                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="set-card h-100">
+                            <div class="set-card-header text-center">
+                                <h4 class="fw-bold mb-2">Power of the Elements</h4>
+                                <p class="mb-3">POTE</p>
+                                <small>Released: Sep 2024</small>
+                            </div>
+                            <div class="set-card-footer">
+                                <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
+                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="set-card h-100">
+                            <div class="set-card-header text-center">
+                                <h4 class="fw-bold mb-2">Tactical Masters</h4>
+                                <p class="mb-3">TAMA</p>
+                                <small>Released: Aug 2024</small>
+                            </div>
+                            <div class="set-card-footer">
+                                <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
+                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </section>
@@ -432,9 +430,15 @@
                     <p class="lead mb-0">Join thousands of duelists who trust us with their collection. Your destiny awaits in the Shadow Realm of amazing cards!</p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-4 mt-lg-0" data-aos="fade-left">
-                    <button class="btn btn-hero btn-light btn-lg px-5 py-3">
-                        <i class="fas fa-rocket me-2"></i>Start Dueling Now
-                    </button>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'card_list' %}" class="btn btn-hero btn-light btn-lg px-5 py-3">
+                            <i class="fas fa-search me-2"></i>Browse Cards Now
+                        </a>
+                    {% else %}
+                        <a href="{% url 'signup' %}" class="btn btn-hero btn-light btn-lg px-5 py-3">
+                            <i class="fas fa-rocket me-2"></i>Start Dueling Now
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -459,21 +463,21 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="fw-bold mb-3">Shop</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">All Cards</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Monster Cards</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Spell Cards</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Trap Cards</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Rare Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">All Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=monster" class="text-muted text-decoration-none">Monster Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=spell" class="text-muted text-decoration-none">Spell Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=trap" class="text-muted text-decoration-none">Trap Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?rarity=ultra_rare" class="text-muted text-decoration-none">Rare Cards</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
                     <h6 class="fw-bold mb-3">Sets</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Latest Sets</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Classic Sets</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Booster Packs</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Structure Decks</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Tin Collections</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Latest Sets</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Classic Sets</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Booster Packs</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Structure Decks</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Tin Collections</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
@@ -489,11 +493,16 @@
                 <div class="col-md-2 mb-4">
                     <h6 class="fw-bold mb-3">Account</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Login</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Register</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">My Orders</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Wishlist</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Profile</a></li>
+                        {% if user.is_authenticated %}
+                            <li class="mb-2"><a href="{% url 'cart' %}" class="text-muted text-decoration-none">My Cart</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">My Orders</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Wishlist</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Profile</a></li>
+                            <li class="mb-2"><a href="{% url 'logout' %}" class="text-muted text-decoration-none">Logout</a></li>
+                        {% else %}
+                            <li class="mb-2"><a href="{% url 'login' %}" class="text-muted text-decoration-none">Login</a></li>
+                            <li class="mb-2"><a href="{% url 'signup' %}" class="text-muted text-decoration-none">Register</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -511,9 +520,12 @@
         </div>
     </footer>
 
+    <!-- Messages -->
+    {% include 'includes/messages.html' %}
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-   <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

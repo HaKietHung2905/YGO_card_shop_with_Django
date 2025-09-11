@@ -15,7 +15,7 @@ urlpatterns = [
     # Main pages
     path('', views.home, name='home'),
     path('cards/', views.card_list, name='card_list'),
-    path('cards/<int:pk>/', views.card_detail, name='card_detail'),
+    path('card-detail/<int:pk>/', views.card_detail, name='card_detail'),  # Updated URL pattern
     
     # Cart functionality
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),

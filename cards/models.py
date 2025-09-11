@@ -59,7 +59,7 @@ class Card(models.Model):
         return f"{self.name} ({self.rarity})"
     
     def get_absolute_url(self):
-        return reverse('card_detail', kwargs={'pk': self.pk})
+        return reverse('card_detail', kwargs={'pk': self.pk})  # Uses card_detail URL name
     
     @property
     def is_in_stock(self):
