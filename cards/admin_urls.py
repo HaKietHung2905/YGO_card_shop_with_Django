@@ -6,6 +6,10 @@ app_name = 'admin_dashboard'
 urlpatterns = [
     path('', admin_views.admin_dashboard, name='dashboard'),
     path('warehouse/', admin_views.admin_warehouse, name='warehouse'),
+    path('warehouse/card/edit/<int:card_id>/', admin_views.admin_edit_card, name='edit_card'),
+    path('warehouse/card/delete/<int:card_id>/', admin_views.admin_delete_card, name='delete_card'),
+    path('warehouse/update-stock/', admin_views.admin_update_stock, name='update_stock'),
+    
     path('posts/', admin_views.admin_posts, name='posts'),
     path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
     path('orders/', admin_views.admin_orders, name='orders'),

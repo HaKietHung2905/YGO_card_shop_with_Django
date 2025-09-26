@@ -1,0 +1,691 @@
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Management - Yu-Gi-Oh Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            min-height: calc(100vh - 40px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .content-section {
+            padding: 2rem;
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .table-custom {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .table-custom tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .stock-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .stock-high { background-color: var(--success-color); color: white; }
+        .stock-medium { background-color: var(--warning-color); color: white; }
+        .stock-low { background-color: var(--danger-color); color: white; }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .nav-tabs .nav-link {
+            border-radius: 10px 10px 0 0;
+            border: none;
+            background: transparent;
+            color: var(--dark-color);
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filter-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .rarity-badge {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .common { background-color: #6b7280; color: white; }
+        .rare { background-color: #3b82f6; color: white; }
+        .super_rare { background-color: #8b5cf6; color: white; }
+        .ultra_rare { background-color: #f59e0b; color: white; }
+        .secret_rare { background-color: #ef4444; color: white; }
+        .ghost_rare { background-color: #1f2937; color: white; }
+
+        .card-image {
+            width: 60px;
+            height: 84px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-warehouse me-3"></i>Warehouse Management
+                    </h1>
+                    <p class="mb-0 opacity-75">Manage your card inventory, stock levels, and add new cards</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCardModal">
+                        <i class="fas fa-plus me-2"></i>Add New Card
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-section">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Search</label>
+                        <input type="text" name="search" class="form-control" 
+                               placeholder="Search cards..." value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Card Type</label>
+                        <select name="card_type" class="form-select">
+                            <option value="">All Types</option>
+                            {% for value, display in card_type_choices %}
+                                <option value="{{ value }}" {% if card_type_filter == value %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Rarity</label>
+                        <select name="rarity" class="form-select">
+                            <option value="">All Rarities</option>
+                            {% for value, display in rarity_choices %}
+                                <option value="{{ value }}" {% if rarity_filter == value %}selected{% endif %}>
+                                    {{ display }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Stock Status</label>
+                        <select name="stock" class="form-select">
+                            <option value="">All Stock</option>
+                            <option value="in" {% if stock_filter == 'in' %}selected{% endif %}>In Stock</option>
+                            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Low Stock (≤5)</option>
+                            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label fw-bold">Sort</label>
+                        <select name="order_by" class="form-select">
+                            <option value="name" {% if order_by == 'name' %}selected{% endif %}>Name A-Z</option>
+                            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Name Z-A</option>
+                            <option value="price" {% if order_by == 'price' %}selected{% endif %}>Price Low-High</option>
+                            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>Price High-Low</option>
+                            <option value="stock_quantity" {% if order_by == 'stock_quantity' %}selected{% endif %}>Stock Low-High</option>
+                            <option value="-stock_quantity" {% if order_by == '-stock_quantity' %}selected{% endif %}>Stock High-Low</option>
+                            <option value="-created_at" {% if order_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary-custom me-2">
+                            <i class="fas fa-search me-2"></i>Filter
+                        </button>
+                        <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Clear
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                            <h5>Add Single Cardddd</h5>
+                            <p class="text-muted">Add a new card manually with full details</p>
+                            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardModal">
+                                Add Cardddd
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-layer-group fa-3x text-success mb-3"></i>
+                            <h5>Add Card Set</h5>
+                            <p class="text-muted">Create a new card set before adding cards</p>
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                                Add Set
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-upload fa-3x text-warning mb-3"></i>
+                            <h5>Bulk Upload</h5>
+                            <p class="text-muted">Upload multiple cards from CSV file</p>
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
+                                Bulk Upload
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards Table -->
+            <div class="card-custom">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Card Inventory
+                        <small class="text-muted">({{ cards|length }} cards displayed)</small>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Rarity</th>
+                                    <th>Set</th>
+                                    <th>Condition</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for card in cards %}
+                                <tr>
+                                    <td>
+                                        {% if card.image %}
+                                            <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
+                                        {% else %}
+                                            <div class="card-image bg-light d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-image text-muted"></i>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ card.name }}</strong>
+                                        {% if card.card_type == 'monster' %}
+                                            <br><small class="text-muted">
+                                                ATK: {{ card.attack|default:"?" }} / DEF: {{ card.defense|default:"?" }} / LV: {{ card.level|default:"?" }}
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ card.get_card_type_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="rarity-badge {{ card.rarity }}">{{ card.get_rarity_display }}</span>
+                                    </td>
+                                    <td>{{ card.card_set.name }}</td>
+                                    <td>{{ card.get_condition_display }}</td>
+                                    <td><strong>${{ card.price }}</strong></td>
+                                    <td>
+                                        <span class="stock-badge {% if card.stock_quantity > 10 %}stock-high{% elif card.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
+                                            {{ card.stock_quantity }}
+                                        </span>
+                                        <button class="btn btn-sm btn-outline-primary ms-1" 
+                                                onclick="editStock({{ card.id }}, {{ card.stock_quantity }})"
+                                                title="Edit Stock">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{% url 'admin_dashboard:edit_card' card.id %}" 
+                                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="confirmDelete({{ card.id }}, '{{ card.name }}')" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No cards found matching your criteria.</p>
+                                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardModal">
+                                            Add Your First Card
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if cards.has_other_pages %}
+            <nav aria-label="Card pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if cards.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ cards.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in cards.paginator.page_range %}
+                        {% if cards.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > cards.number|add:'-3' and num < cards.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if cards.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ cards.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add Card Modal -->
+    <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCardModalLabel">
+                        <i class="fas fa-plus me-2"></i>Add New Card
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Card Name</label>
+                                    {{ form.name }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Card Type</label>
+                                    {{ form.card_type }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Rarity</label>
+                                    {{ form.rarity }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Card Set</label>
+                                    {{ form.card_set }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Condition</label>
+                                    {{ form.condition }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Price ($)</label>
+                                    {{ form.price }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Stock Quantity</label>
+                                    {{ form.stock_quantity }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Card Image</label>
+                                    {{ form.image }}
+                                </div>
+                                
+                                <!-- Monster Stats (shown/hidden based on card type) -->
+                                <div id="monsterStats" style="display: none;">
+                                    <h6 class="fw-bold text-primary">Monster Stats</h6>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Attack</label>
+                                                {{ form.attack }}
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Defense</label>
+                                                {{ form.defense }}
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.level.id_for_label }}" class="form-label">Level</label>
+                                                {{ form.level }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="create_card" class="btn btn-primary-custom">
+                            <i class="fas fa-save me-2"></i>Create Card
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Card Set Modal -->
+    <div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCardSetModalLabel">
+                        <i class="fas fa-layer-group me-2"></i>Add New Card Set
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="{{ card_set_form.name.id_for_label }}" class="form-label fw-bold">Set Name</label>
+                            {{ card_set_form.name }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ card_set_form.code.id_for_label }}" class="form-label fw-bold">Set Code</label>
+                            {{ card_set_form.code }}
+                            <div class="form-text">Short code for the set (e.g., LOB, MRD, SRL)</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ card_set_form.release_date.id_for_label }}" class="form-label fw-bold">Release Date</label>
+                            {{ card_set_form.release_date }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="create_card_set" class="btn btn-success">
+                            <i class="fas fa-save me-2"></i>Create Set
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div class="modal fade" id="bulkUploadModal" tabindex="-1" aria-labelledby="bulkUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkUploadModalLabel">
+                        <i class="fas fa-upload me-2"></i>Bulk Upload Cards
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle me-2"></i>CSV Format Requirements</h6>
+                            <p>Your CSV file must include these columns:</p>
+                            <ul class="mb-0">
+                                <li><strong>name</strong> - Card name</li>
+                                <li><strong>description</strong> - Card description (optional)</li>
+                                <li><strong>card_type</strong> - monster, spell, or trap</li>
+                                <li><strong>rarity</strong> - common, rare, super_rare, ultra_rare, secret_rare, ghost_rare</li>
+                                <li><strong>card_set_code</strong> - Existing set code (e.g., LOB)</li>
+                                <li><strong>condition</strong> - mint, near_mint, lightly_played, moderately_played, heavily_played, damaged</li>
+                                <li><strong>price</strong> - Decimal price</li>
+                                <li><strong>stock_quantity</strong> - Integer stock count</li>
+                                <li><strong>attack</strong> - For monster cards only (optional)</li>
+                                <li><strong>defense</strong> - For monster cards only (optional)</li>
+                                <li><strong>level</strong> - For monster cards only (optional)</li>
+                            </ul>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ bulk_form.csv_file.id_for_label }}" class="form-label fw-bold">Select CSV File</label>
+                            {{ bulk_form.csv_file }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="bulk_upload" class="btn btn-warning">
+                            <i class="fas fa-upload me-2"></i>Upload Cards
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Edit Modal -->
+    <div class="modal fade" id="stockEditModal" tabindex="-1" aria-labelledby="stockEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stockEditModalLabel">Edit Stock</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="stockEditForm">
+                        {% csrf_token %}
+                        <input type="hidden" id="stockCardId" name="card_id">
+                        <div class="mb-3">
+                            <label for="stockQuantity" class="form-label fw-bold">Stock Quantity</label>
+                            <input type="number" class="form-control" id="stockQuantity" name="stock_quantity" min="0" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="updateStock()">
+                        <i class="fas fa-save me-2"></i>Update Stock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show/hide monster stats based on card type
+        document.getElementById('{{ form.card_type.id_for_label }}').addEventListener('change', function() {
+            const monsterStats = document.getElementById('monsterStats');
+            if (this.value === 'monster') {
+                monsterStats.style.display = 'block';
+            } else {
+                monsterStats.style.display = 'none';
+            }
+        });
+
+        // Stock editing functions
+        function editStock(cardId, currentStock) {
+            document.getElementById('stockCardId').value = cardId;
+            document.getElementById('stockQuantity').value = currentStock;
+            new bootstrap.Modal(document.getElementById('stockEditModal')).show();
+        }
+
+        function updateStock() {
+            const form = document.getElementById('stockEditForm');
+            const formData = new FormData(form);
+            
+            fetch('{% url "admin_dashboard:update_stock" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating stock.');
+            });
+        }
+
+        // Delete confirmation
+        function confirmDelete(cardId, cardName) {
+            if (confirm(`Are you sure you want to delete "${cardName}"? This action cannot be undone.`)) {
+                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            }
+        }
+
+        // Auto-submit form on filter change
+        document.querySelectorAll('.filter-section select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Card - Yu-Gi-Oh Admin</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --dark-color: #1a1a2e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--dark-color) 0%, #16213e 100%);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand {
+            color: #ffd700;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Header */
+        .content-header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        /* Form styling */
+        .form-control-custom {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        /* Buttons */
+        .btn-primary-custom {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-preview {
+            border: 2px dashed #dee2e6;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
+        .card-preview img {
+            max-width: 200px;
+            max-height: 280px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="{% url 'admin_dashboard:dashboard' %}" class="sidebar-brand">
+                <i class="fas fa-magic me-2"></i>Yu-Gi-Oh Admin
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:dashboard' %}">
+                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'admin_dashboard:warehouse' %}">
+                        <i class="fas fa-warehouse"></i>Warehouse Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:posts' %}">
+                        <i class="fas fa-newspaper"></i>Posts Management
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:tournaments' %}">
+                        <i class="fas fa-trophy"></i>Tournaments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:orders' %}">
+                        <i class="fas fa-shopping-cart"></i>Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:users' %}">
+                        <i class="fas fa-users"></i>Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:analytics' %}">
+                        <i class="fas fa-chart-bar"></i>Analytics
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">
+                        <i class="fas fa-cogs"></i>Settings
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Mobile Menu Button -->
+        <button class="btn btn-primary d-md-none mb-3" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Header -->
+        <div class="content-header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-edit me-3"></i>Edit Card: {{ card.name }}
+                    </h1>
+                    <p class="text-muted mb-0">Update card information and inventory details</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Warehouse
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row">
+                <!-- Form Fields -->
+                <div class="col-lg-8">
+                    <div class="dashboard-card">
+                        <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Card Information</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Card Name</label>
+                                    {{ form.name|add_class:"form-control form-control-custom" }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger small">{{ form.name.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Card Type</label>
+                                    {{ form.card_type|add_class:"form-select form-control-custom" }}
+                                    {% if form.card_type.errors %}
+                                        <div class="text-danger small">{{ form.card_type.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Rarity</label>
+                                    {{ form.rarity|add_class:"form-select form-control-custom" }}
+                                    {% if form.rarity.errors %}
+                                        <div class="text-danger small">{{ form.rarity.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Card Set</label>
+                                    {{ form.card_set|add_class:"form-select form-control-custom" }}
+                                    {% if form.card_set.errors %}
+                                        <div class="text-danger small">{{ form.card_set.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Condition</label>
+                                    {{ form.condition|add_class:"form-select form-control-custom" }}
+                                    {% if form.condition.errors %}
+                                        <div class="text-danger small">{{ form.condition.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Price ($)</label>
+                                    {{ form.price|add_class:"form-control form-control-custom" }}
+                                    {% if form.price.errors %}
+                                        <div class="text-danger small">{{ form.price.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Stock Quantity</label>
+                                    {{ form.stock_quantity|add_class:"form-control form-control-custom" }}
+                                    {% if form.stock_quantity.errors %}
+                                        <div class="text-danger small">{{ form.stock_quantity.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Card Image</label>
+                                    {{ form.image|add_class:"form-control form-control-custom" }}
+                                    {% if card.image %}
+                                        <div class="form-text">
+                                            <small class="text-muted">Current image: {{ card.image.name }}</small>
+                                        </div>
+                                    {% endif %}
+                                    {% if form.image.errors %}
+                                        <div class="text-danger small">{{ form.image.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Monster Stats -->
+                                <div id="monsterStats" {% if card.card_type != 'monster' %}style="display: none;"{% endif %}>
+                                    <h6 class="fw-bold text-primary">Monster Stats</h6>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Attack</label>
+                                                {{ form.attack|add_class:"form-control form-control-custom" }}
+                                                {% if form.attack.errors %}
+                                                    <div class="text-danger small">{{ form.attack.errors.0 }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Defense</label>
+                                                {{ form.defense|add_class:"form-control form-control-custom" }}
+                                                {% if form.defense.errors %}
+                                                    <div class="text-danger small">{{ form.defense.errors.0 }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="{{ form.level.id_for_label }}" class="form-label">Level</label>
+                                                {{ form.level|add_class:"form-control form-control-custom" }}
+                                                {% if form.level.errors %}
+                                                    <div class="text-danger small">{{ form.level.errors.0 }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                            {{ form.description|add_class:"form-control form-control-custom" }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small">{{ form.description.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Preview -->
+                <div class="col-lg-4">
+                    <div class="dashboard-card">
+                        <h5 class="mb-4"><i class="fas fa-eye me-2"></i>Card Preview</h5>
+                        
+                        <div class="card-preview">
+                            {% if card.image %}
+                                <img src="{{ card.image.url }}" alt="{{ card.name }}" class="img-fluid mb-3" id="imagePreview">
+                            {% else %}
+                                <i class="fas fa-image fa-4x text-muted mb-3" id="imagePlaceholder"></i>
+                                <p class="text-muted">No image uploaded</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mt-3">
+                            <h6 class="fw-bold">{{ card.name }}</h6>
+                            <p class="text-muted mb-2">{{ card.get_card_type_display }} | {{ card.get_rarity_display }}</p>
+                            <p class="text-muted mb-2">Set: {{ card.card_set.name }}</p>
+                            <p class="text-muted mb-2">Condition: {{ card.get_condition_display }}</p>
+                            {% if card.card_type == 'monster' %}
+                                <p class="text-muted mb-2">
+                                    ATK: {{ card.attack|default:"?" }} / DEF: {{ card.defense|default:"?" }} / LV: {{ card.level|default:"?" }}
+                                </p>
+                            {% endif %}
+                            <h5 class="text-primary">${{ card.price }}</h5>
+                            <p class="mb-0">
+                                <span class="badge {% if card.stock_quantity > 10 %}bg-success{% elif card.stock_quantity > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ card.stock_quantity }} in stock
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary me-2">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="confirmDelete({{ card.id }}, '{{ card.name }}')">
+                                <i class="fas fa-trash me-2"></i>Delete Card
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-save me-2"></i>Update Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile sidebar toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('show');
+                });
+            }
+        });
+
+        // Show/hide monster stats based on card type
+        const cardTypeSelect = document.querySelector('select[name="card_type"]');
+        const monsterStats = document.getElementById('monsterStats');
+        
+        if (cardTypeSelect && monsterStats) {
+            cardTypeSelect.addEventListener('change', function() {
+                if (this.value === 'monster') {
+                    monsterStats.style.display = 'block';
+                } else {
+                    monsterStats.style.display = 'none';
+                    // Clear monster fields when not monster type
+                    document.querySelector('input[name="attack"]').value = '';
+                    document.querySelector('input[name="defense"]').value = '';
+                    document.querySelector('input[name="level"]').value = '';
+                }
+            });
+        }
+
+        // Delete confirmation
+        function confirmDelete(cardId, cardName) {
+            if (confirm(`Are you sure you want to delete "${cardName}"? This action cannot be undone.`)) {
+                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            }
+        }
+
+        // Image preview
+        const imageInput = document.querySelector('input[name="image"]');
+        if (imageInput) {
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.getElementById('imagePreview');
+                        const placeholder = document.getElementById('imagePlaceholder');
+                        
+                        if (preview) {
+                            preview.src = e.target.result;
+                        } else if (placeholder) {
+                            placeholder.parentElement.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid mb-3" id="imagePreview">`;
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

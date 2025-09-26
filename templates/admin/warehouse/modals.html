@@ -1,0 +1,266 @@
+<!-- Add Card Modal -->
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardModalLabel">
+                    <i class="fas fa-plus me-2"></i>Add New Carddddd
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_name" class="form-label fw-bold">Card Name</label>
+                                <input type="text" name="name" class="form-control" id="id_name" placeholder="Enter card name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_card_type" class="form-label fw-bold">Card Type</label>
+                                <select name="card_type" class="form-select" id="id_card_type" required>
+                                    <option value="">Select card type</option>
+                                    <option value="monster">Monster</option>
+                                    <option value="spell">Spell</option>
+                                    <option value="trap">Trap</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_rarity" class="form-label fw-bold">Rarity</label>
+                                <select name="rarity" class="form-select" id="id_rarity" required>
+                                    <option value="">Select rarity</option>
+                                    <option value="common">Common</option>
+                                    <option value="rare">Rare</option>
+                                    <option value="super_rare">Super Rare</option>
+                                    <option value="ultra_rare">Ultra Rare</option>
+                                    <option value="secret_rare">Secret Rare</option>
+                                    <option value="ghost_rare">Ghost Rare</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_card_set" class="form-label fw-bold">Card Set</label>
+                                <select name="card_set" class="form-select" id="id_card_set" required>
+                                    <option value="">Select card set</option>
+                                    {% for card_set in card_sets %}
+                                        <option value="{{ card_set.id }}">{{ card_set.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_condition" class="form-label fw-bold">Condition</label>
+                                <select name="condition" class="form-select" id="id_condition" required>
+                                    <option value="">Select condition</option>
+                                    <option value="mint">Mint</option>
+                                    <option value="near_mint">Near Mint</option>
+                                    <option value="lightly_played">Lightly Played</option>
+                                    <option value="moderately_played">Moderately Played</option>
+                                    <option value="heavily_played">Heavily Played</option>
+                                    <option value="damaged">Damaged</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_price" class="form-label fw-bold">Price ($)</label>
+                                <input type="number" name="price" class="form-control" id="id_price" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_stock_quantity" class="form-label fw-bold">Stock Quantity</label>
+                                <input type="number" name="stock_quantity" class="form-control" id="id_stock_quantity" min="0" placeholder="0" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_image" class="form-label fw-bold">Card Image</label>
+                                <input type="file" name="image" class="form-control" id="id_image" accept="image/*">
+                            </div>
+                            
+                            <!-- Monster Stats (shown/hidden based on card type) -->
+                            <div id="monsterStats" style="display: none;">
+                                <h6 class="fw-bold text-primary">Monster Stats</h6>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="id_attack" class="form-label">Attack</label>
+                                            <input type="number" name="attack" class="form-control" id="id_attack" min="0" placeholder="ATK">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="id_defense" class="form-label">Defense</label>
+                                            <input type="number" name="defense" class="form-control" id="id_defense" min="0" placeholder="DEF">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="mb-3">
+                                            <label for="id_level" class="form-label">Level</label>
+                                            <input type="number" name="level" class="form-control" id="id_level" min="1" max="12" placeholder="LV">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_description" class="form-label fw-bold">Description</label>
+                        <textarea name="description" class="form-control" id="id_description" rows="4" placeholder="Enter card description"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="create_card" class="btn btn-primary-custom">
+                        <i class="fas fa-save me-2"></i>Create Card
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Card Set Modal -->
+<div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardSetModalLabel">
+                    <i class="fas fa-layer-group me-2"></i>Add New Card Set
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="id_set_name" class="form-label fw-bold">Set Name</label>
+                        <input type="text" name="name" class="form-control" id="id_set_name" placeholder="Enter set name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_set_code" class="form-label fw-bold">Set Code</label>
+                        <input type="text" name="code" class="form-control" id="id_set_code" placeholder="LOB, MRD, SRL..." maxlength="10" required>
+                        <div class="form-text">Short code for the set (e.g., LOB, MRD, SRL)</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_release_date" class="form-label fw-bold">Release Date</label>
+                        <input type="date" name="release_date" class="form-control" id="id_release_date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="create_card_set" class="btn btn-success">
+                        <i class="fas fa-save me-2"></i>Create Set
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Upload Modal -->
+<div class="modal fade" id="bulkUploadModal" tabindex="-1" aria-labelledby="bulkUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bulkUploadModalLabel">
+                    <i class="fas fa-upload me-2"></i>Bulk Upload Cards
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>CSV Format Requirements</h6>
+                        <p>Your CSV file must include these columns:</p>
+                        <ul class="mb-0">
+                            <li><strong>name</strong> - Card name</li>
+                            <li><strong>description</strong> - Card description (optional)</li>
+                            <li><strong>card_type</strong> - monster, spell, or trap</li>
+                            <li><strong>rarity</strong> - common, rare, super_rare, ultra_rare, secret_rare, ghost_rare</li>
+                            <li><strong>card_set_code</strong> - Existing set code (e.g., LOB)</li>
+                            <li><strong>condition</strong> - mint, near_mint, lightly_played, moderately_played, heavily_played, damaged</li>
+                            <li><strong>price</strong> - Decimal price</li>
+                            <li><strong>stock_quantity</strong> - Integer stock count</li>
+                            <li><strong>attack</strong> - For monster cards only (optional)</li>
+                            <li><strong>defense</strong> - For monster cards only (optional)</li>
+                            <li><strong>level</strong> - For monster cards only (optional)</li>
+                        </ul>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_csv_file" class="form-label fw-bold">Select CSV File</label>
+                        <input type="file" name="csv_file" class="form-control" id="id_csv_file" accept=".csv" required>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> Make sure all card sets referenced in your CSV already exist. 
+                        Create card sets first if needed using the "Add Card Set" button.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="bulk_upload" class="btn btn-warning">
+                        <i class="fas fa-upload me-2"></i>Upload Cards
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Edit Modal -->
+<div class="modal fade" id="stockEditModal" tabindex="-1" aria-labelledby="stockEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="stockEditModalLabel">Edit Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="stockEditForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="stockCardId" name="card_id">
+                    <div class="mb-3">
+                        <label for="stockQuantity" class="form-label fw-bold">Stock Quantity</label>
+                        <input type="number" class="form-control" id="stockQuantity" name="stock_quantity" min="0" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary-custom" onclick="updateStock()">
+                    <i class="fas fa-save me-2"></i>Update Stock
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show/hide monster stats based on card type selection
+document.addEventListener('DOMContentLoaded', function() {
+    const cardTypeSelect = document.querySelector('select[name="card_type"]');
+    const monsterStats = document.getElementById('monsterStats');
+    
+    if (cardTypeSelect && monsterStats) {
+        // Check initial state
+        if (cardTypeSelect.value === 'monster') {
+            monsterStats.style.display = 'block';
+        }
+        
+        // Add event listener for changes
+        cardTypeSelect.addEventListener('change', function() {
+            if (this.value === 'monster') {
+                monsterStats.style.display = 'block';
+            } else {
+                monsterStats.style.display = 'none';
+                // Clear monster fields when not monster type
+                const attackField = document.querySelector('input[name="attack"]');
+                const defenseField = document.querySelector('input[name="defense"]');
+                const levelField = document.querySelector('input[name="level"]');
+                
+                if (attackField) attackField.value = '';
+                if (defenseField) defenseField.value = '';
+                if (levelField) levelField.value = '';
+            }
+        });
+    }
+});
+</script>
