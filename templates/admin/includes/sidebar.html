@@ -1,0 +1,61 @@
+<!-- Sidebar Component -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard:dashboard' %}" class="sidebar-brand">
+            <i class="fas fa-magic me-2"></i>Yu-Gi-Oh Admin
+        </a>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:warehouse' %}">
+                    <i class="fas fa-warehouse"></i>Warehouse Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'posts' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:posts' %}">
+                    <i class="fas fa-newspaper"></i>Posts Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'tournaments' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:tournaments' %}">
+                    <i class="fas fa-trophy"></i>Tournaments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:orders' %}">
+                    <i class="fas fa-shopping-cart"></i>Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:users' %}">
+                    <i class="fas fa-users"></i>Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:analytics' %}">
+                    <i class="fas fa-chart-bar"></i>Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" 
+                   href="{% url 'admin_dashboard:settings' %}">
+                    <i class="fas fa-cogs"></i>Settings
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
