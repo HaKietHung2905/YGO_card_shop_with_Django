@@ -4,12 +4,12 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Count
 from .models import Card, CardSet, CartItem
 from django.contrib.auth.models import User
 from decimal import Decimal
 from datetime import datetime
-
+import json
 
 @staff_member_required
 def admin_dashboard(request):
@@ -28,6 +28,234 @@ def admin_dashboard(request):
     }
     return render(request, 'admin/dashboard.html', context)
 
+@staff_member_required
+def admin_card_sets(request):
+    """Card Sets management page"""
+    card_sets = CardSet.objects.all().order_by('-release_date')
+    
+    # Add statistics for each card set
+    for card_set in card_sets:
+        card_set.total_cards = Card.objects.filter(card_set=card_set).count()
+        card_set.cards_in_stock = Card.objects.filter(card_set=card_set, stock_quantity__gt=0).count()
+    
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        card_sets = card_sets.filter(
+            Q(name__icontains=search_query) | 
+            Q(code__icontains=search_query)
+        )
+    
+    # Year filter
+    year_filter = request.GET.get('year', '')
+    if year_filter:
+        card_sets = card_sets.filter(release_date__year=year_filter)
+    
+    # Pagination
+    paginator = Paginator(card_sets, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'card_sets': page_obj,
+        'search_query': search_query,
+        'year_filter': year_filter,
+        'total_sets': CardSet.objects.count(),
+        'sets_this_year': CardSet.objects.filter(release_date__year=datetime.now().year).count(),
+        'upcoming_sets': CardSet.objects.filter(release_date__gt=datetime.now().date()).count(),
+        'total_cards': Card.objects.count(),
+        'today': datetime.now().date(),
+    }
+    return render(request, 'admin/warehouse/card_sets/index.html', context)
+
+@staff_member_required
+def admin_create_card_set(request):
+    """Create a new card set"""
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name', '').strip()
+            code = request.POST.get('code', '').strip().upper()
+            release_date = request.POST.get('release_date', '')
+            description = request.POST.get('description', '').strip()
+            
+            # Validation
+            if not name or not code or not release_date:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'All required fields (name, code, release date) must be filled'
+                })
+            
+            # Check if code already exists
+            if CardSet.objects.filter(code=code).exists():
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'A card set with code "{code}" already exists'
+                })
+            
+            # Validate date format
+            try:
+                release_date_obj = datetime.strptime(release_date, '%Y-%m-%d').date()
+            except ValueError:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Invalid date format'
+                })
+            
+            # Create card set
+            card_set = CardSet.objects.create(
+                name=name,
+                code=code,
+                release_date=release_date_obj
+            )
+            
+            messages.success(request, f'Card set "{card_set.name}" created successfully!')
+            
+            return JsonResponse({
+                'success': True, 
+                'message': f'Card set "{card_set.name}" created successfully!',
+                'card_set_id': card_set.id,
+                'redirect_url': f'/dashboard/warehouse/?set={card_set.id}'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error creating card set: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@staff_member_required
+def admin_edit_card_set(request, set_id):
+    """Edit an existing card set"""
+    card_set = get_object_or_404(CardSet, id=set_id)
+    
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name', '').strip()
+            code = request.POST.get('code', '').strip().upper()
+            release_date = request.POST.get('release_date', '')
+            
+            # Validation
+            if not name or not code or not release_date:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'All required fields must be filled'
+                })
+            
+            # Check if code already exists (excluding current set)
+            if CardSet.objects.filter(code=code).exclude(id=set_id).exists():
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'A card set with code "{code}" already exists'
+                })
+            
+            # Update card set
+            card_set.name = name
+            card_set.code = code
+            card_set.release_date = datetime.strptime(release_date, '%Y-%m-%d').date()
+            card_set.save()
+            
+            messages.success(request, f'Card set "{card_set.name}" updated successfully!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Card set "{card_set.name}" updated successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error updating card set: {str(e)}'
+            })
+    
+    # For GET requests, return card set data
+    return JsonResponse({
+        'success': True,
+        'data': {
+            'id': card_set.id,
+            'name': card_set.name,
+            'code': card_set.code,
+            'release_date': card_set.release_date.isoformat(),
+        }
+    })
+
+@staff_member_required
+def admin_delete_card_set(request, set_id):
+    """Delete a card set"""
+    card_set = get_object_or_404(CardSet, id=set_id)
+    
+    if request.method == 'POST':
+        try:
+            # Check if there are cards in this set
+            cards_count = Card.objects.filter(card_set=card_set).count()
+            
+            if cards_count > 0:
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'Cannot delete card set "{card_set.name}" because it contains {cards_count} cards. Please remove all cards first.'
+                })
+            
+            card_set_name = card_set.name
+            card_set.delete()
+            
+            messages.success(request, f'Card set "{card_set_name}" deleted successfully!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Card set "{card_set_name}" deleted successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error deleting card set: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@staff_member_required
+def admin_card_set_cards(request, set_id):
+    """Get cards in a specific card set"""
+    card_set = get_object_or_404(CardSet, id=set_id)
+    cards = Card.objects.filter(card_set=card_set).order_by('name')
+    
+    # Convert to JSON-serializable format
+    cards_data = []
+    for card in cards:
+        cards_data.append({
+            'id': card.id,
+            'name': card.name,
+            'card_type': card.get_card_type_display(),
+            'rarity': card.get_rarity_display(),
+            'stock_quantity': card.stock_quantity,
+            'price': str(card.price),
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'data': {
+            'set_name': card_set.name,
+            'set_code': card_set.code,
+            'cards': cards_data,
+        }
+    })
+
+@staff_member_required
+def admin_card_sets_stats(request):
+    """Get card sets statistics for dashboard"""
+    total_sets = CardSet.objects.count()
+    sets_this_year = CardSet.objects.filter(release_date__year=datetime.now().year).count()
+    upcoming_sets = CardSet.objects.filter(release_date__gt=datetime.now().date()).count()
+    total_cards = Card.objects.count()
+    
+    return JsonResponse({
+        'success': True,
+        'data': {
+            'total_sets': total_sets,
+            'sets_this_year': sets_this_year,
+            'upcoming_sets': upcoming_sets,
+            'total_cards': total_cards,
+        }
+    })
 
 @staff_member_required
 def admin_warehouse(request):
@@ -370,10 +598,11 @@ def admin_delete_card(request, card_id):
         messages.success(request, f'Card "{card_name}" deleted successfully!')
         return redirect('admin_dashboard:warehouse')
     
+    # For GET requests, show confirmation page
     context = {
         'card': card,
     }
-    return render(request, 'admin/delete_card.html', context)
+    return render(request, 'admin/warehouse/card_delete.html', context)
 
 
 @staff_member_required

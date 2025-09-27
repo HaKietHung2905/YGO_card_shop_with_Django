@@ -1,0 +1,806 @@
+{% extends 'admin/base_admin.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Card Sets Management - Yu-Gi-Oh Admin{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .filter-section {
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-custom {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .table-custom tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+
+        .stats-card {
+            transition: transform 0.2s ease;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .set-code-badge {
+            font-family: monospace;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #6c757d;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-draft { background: #fff3cd; color: #856404; }
+        .status-upcoming { background: #cff4fc; color: #055160; }
+        .status-discontinued { background: #f8d7da; color: #721c24; }
+
+        .stock-status-badge {
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .stock-available { background-color: var(--success-color); color: white; }
+        .stock-limited { background-color: var(--warning-color); color: white; }
+        .stock-out { background-color: var(--danger-color); color: white; }
+
+        .upcoming-set {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .discontinued-set {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            opacity: 0.8;
+        }
+
+        .table-actions {
+            white-space: nowrap;
+        }
+
+        /* Override main-content style for warehouse design */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 0; /* Remove default padding for warehouse layout */
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-layer-group me-3"></i>Card Sets Management
+                    </h1>
+                    <p class="mb-0 opacity-75">Manage card sets, releases, and collections</p>
+                    <nav aria-label="breadcrumb" class="mt-2">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}" class="text-light">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}" class="text-light">Warehouse</a></li>
+                            <li class="breadcrumb-item active text-light" aria-current="page">Card Sets</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                        <i class="fas fa-plus me-2"></i>Add New Set
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-section">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card stats-card border-primary">
+                        <div class="card-body text-center">
+                            <div class="text-primary mb-2">
+                                <i class="fas fa-layer-group fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1">{{ total_sets }}</h4>
+                            <p class="text-muted mb-0">Total Sets</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card stats-card border-success">
+                        <div class="card-body text-center">
+                            <div class="text-success mb-2">
+                                <i class="fas fa-calendar-plus fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1">{{ sets_this_year }}</h4>
+                            <p class="text-muted mb-0">Released This Year</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card stats-card border-warning">
+                        <div class="card-body text-center">
+                            <div class="text-warning mb-2">
+                                <i class="fas fa-clock fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1">{{ upcoming_sets }}</h4>
+                            <p class="text-muted mb-0">Upcoming Releases</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="card stats-card border-info">
+                        <div class="card-body text-center">
+                            <div class="text-info mb-2">
+                                <i class="fas fa-cards-blank fa-2x"></i>
+                            </div>
+                            <h4 class="mb-1">{{ total_cards }}</h4>
+                            <p class="text-muted mb-0">Total Cards</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Search Sets</label>
+                        <input type="text" name="q" class="form-control" 
+                               placeholder="Search by name or code..." value="{{ search_query }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Release Year</label>
+                        <select name="year" class="form-select">
+                            <option value="">All Years</option>
+                            <option value="2024" {% if year_filter == "2024" %}selected{% endif %}>2024</option>
+                            <option value="2023" {% if year_filter == "2023" %}selected{% endif %}>2023</option>
+                            <option value="2022" {% if year_filter == "2022" %}selected{% endif %}>2022</option>
+                            <option value="2021" {% if year_filter == "2021" %}selected{% endif %}>2021</option>
+                            <option value="2020" {% if year_filter == "2020" %}selected{% endif %}>2020</option>
+                            <option value="2019" {% if year_filter == "2019" %}selected{% endif %}>2019</option>
+                            <option value="2018" {% if year_filter == "2018" %}selected{% endif %}>2018</option>
+                            <option value="2017" {% if year_filter == "2017" %}selected{% endif %}>2017</option>
+                            <option value="2016" {% if year_filter == "2016" %}selected{% endif %}>2016</option>
+                            <option value="2015" {% if year_filter == "2015" %}selected{% endif %}>2015</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-search me-2"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                            <h5>Add New Set</h5>
+                            <p class="text-muted">Create a new card set collection</p>
+                            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                                Add Set
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-boxes fa-3x text-success mb-3"></i>
+                            <h5>Manage Cards</h5>
+                            <p class="text-muted">Add and manage individual cards</p>
+                            <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-success">
+                                Card Inventory
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card-custom h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                            <h5>View Reports</h5>
+                            <p class="text-muted">Analyze set performance and statistics</p>
+                            <a href="{% url 'admin_dashboard:analytics' %}" class="btn btn-warning">
+                                Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Sets Table -->
+            <div class="card-custom">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>Card Sets
+                        <small class="text-muted">({{ card_sets.paginator.count }} total)</small>
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Set Information</th>
+                                    <th>Code</th>
+                                    <th>Release Date</th>
+                                    <th>Cards</th>
+                                    <th>Stock Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for card_set in card_sets %}
+                                <tr class="{% if card_set.release_date > today %}upcoming-set{% endif %}">
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="fas fa-box fa-2x text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ card_set.name }}</div>
+                                                <small class="text-muted">
+                                                    {% if card_set.release_date > today %}
+                                                        Upcoming Release
+                                                    {% else %}
+                                                        Released {{ card_set.release_date|date:"M Y" }}
+                                                    {% endif %}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="set-code-badge">{{ card_set.code }}</span>
+                                    </td>
+                                    <td>
+                                        {{ card_set.release_date|date:"M d, Y" }}
+                                        {% if card_set.release_date > today %}
+                                            <br><small class="text-warning">Upcoming</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold">{{ card_set.total_cards }}</div>
+                                        <small class="text-muted">total cards</small>
+                                    </td>
+                                    <td>
+                                        {% if card_set.cards_in_stock == 0 %}
+                                            <span class="stock-status-badge stock-out">Out of Stock</span>
+                                        {% elif card_set.cards_in_stock < 10 %}
+                                            <span class="stock-status-badge stock-limited">Limited Stock</span>
+                                            <small class="d-block">{{ card_set.cards_in_stock }} available</small>
+                                        {% else %}
+                                            <span class="stock-status-badge stock-available">Available</span>
+                                            <small class="d-block">{{ card_set.cards_in_stock }} available</small>
+                                        {% endif %}
+                                    </td>
+                                    <td class="table-actions">
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-sm btn-outline-primary" 
+                                                    onclick="editCardSet({{ card_set.id }})" title="Edit Set">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" 
+                                                    onclick="viewSetCards({{ card_set.id }})" title="View Cards">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <a href="{% url 'admin_dashboard:warehouse' %}?set={{ card_set.id }}" 
+                                               class="btn btn-sm btn-outline-success" title="Manage Cards">
+                                                <i class="fas fa-cogs"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="confirmDeleteSet({{ card_set.id }}, '{{ card_set.name|escapejs }}')" title="Delete Set">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No card sets found matching your criteria.</p>
+                                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                                            <i class="fas fa-plus me-2"></i>Add Your First Set
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            {% if card_sets.has_other_pages %}
+            <nav aria-label="Card sets pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if card_sets.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ card_sets.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in card_sets.paginator.page_range %}
+                        {% if card_sets.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > card_sets.number|add:'-3' and num < card_sets.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if card_sets.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ card_sets.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Add Card Set Modal -->
+    <div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCardSetModalLabel">
+                        <i class="fas fa-layer-group me-2"></i>Add New Card Set
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="addCardSetForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Set Name *</label>
+                            <input type="text" class="form-control" name="name" required 
+                                   placeholder="e.g., Legend of Blue Eyes White Dragon">
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Set Code *</label>
+                                <input type="text" class="form-control" name="code" required 
+                                       placeholder="e.g., LOB" maxlength="10" style="text-transform: uppercase;">
+                                <div class="form-text">Short code for the set</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Release Date *</label>
+                                <input type="date" class="form-control" name="release_date" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" name="description" rows="3" 
+                                      placeholder="Brief description of the card set..."></textarea>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> After creating the set, you can add cards to it via the Card Inventory section.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-plus me-2"></i>Create Card Set
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Card Set Modal -->
+    <div class="modal fade" id="editCardSetModal" tabindex="-1" aria-labelledby="editCardSetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCardSetModalLabel">
+                        <i class="fas fa-edit me-2"></i>Edit Card Set
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editCardSetForm">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <input type="hidden" name="set_id" id="editSetId">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Set Name *</label>
+                            <input type="text" class="form-control" name="name" id="editSetName" required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Set Code *</label>
+                                <input type="text" class="form-control" name="code" id="editSetCode" required 
+                                       maxlength="10" style="text-transform: uppercase;">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Release Date *</label>
+                                <input type="date" class="form-control" name="release_date" id="editSetReleaseDate" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" name="description" id="editSetDescription" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary-custom" onclick="updateCardSet()">
+                            <i class="fas fa-save me-2"></i>Update Card Set
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Set Cards Modal -->
+    <div class="modal fade" id="viewSetCardsModal" tabindex="-1" aria-labelledby="viewSetCardsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewSetCardsTitle">Cards in Set</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="Search cards..." id="setCardsSearch">
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="setCardsRarityFilter">
+                                <option value="">All Rarities</option>
+                                <option value="common">Common</option>
+                                <option value="rare">Rare</option>
+                                <option value="super_rare">Super Rare</option>
+                                <option value="ultra_rare">Ultra Rare</option>
+                                <option value="secret_rare">Secret Rare</option>
+                                <option value="ghost_rare">Ghost Rare</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="setCardsLoading" class="text-center py-4">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="table-responsive" id="setCardsTable" style="display: none;">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Card Name</th>
+                                    <th>Type</th>
+                                    <th>Rarity</th>
+                                    <th>Stock</th>
+                                    <th>Price</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="setCardsTableBody">
+                                <!-- Cards will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="btn btn-primary-custom" id="addCardToSetBtn">
+                        <i class="fas fa-plus me-2"></i>Add Card to Set
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Auto-uppercase set codes
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('input[name="code"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                });
+            });
+
+            // Form submission for adding card set
+            document.getElementById('addCardSetForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                
+                // Show loading state
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                submitBtn.disabled = true;
+                
+                fetch('{% url "admin_dashboard:create_card_set" %}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showAlert('success', data.message);
+                        bootstrap.Modal.getInstance(document.getElementById('addCardSetModal')).hide();
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        showAlert('danger', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Network error occurred. Please try again.');
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            });
+        });
+
+        function editCardSet(setId) {
+            fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const setData = data.data;
+                        document.getElementById('editSetId').value = setData.id;
+                        document.getElementById('editSetName').value = setData.name;
+                        document.getElementById('editSetCode').value = setData.code;
+                        document.getElementById('editSetReleaseDate').value = setData.release_date;
+                        document.getElementById('editSetDescription').value = setData.description || '';
+
+                        new bootstrap.Modal(document.getElementById('editCardSetModal')).show();
+                    } else {
+                        showAlert('danger', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Error loading card set data.');
+                });
+        }
+
+        function updateCardSet() {
+            const form = document.getElementById('editCardSetForm');
+            const formData = new FormData(form);
+            const setId = formData.get('set_id');
+            
+            fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', data.message);
+                    bootstrap.Modal.getInstance(document.getElementById('editCardSetModal')).hide();
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showAlert('danger', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred while updating the card set.');
+            });
+        }
+
+        function viewSetCards(setId) {
+            document.getElementById('setCardsLoading').style.display = 'block';
+            document.getElementById('setCardsTable').style.display = 'none';
+            
+            fetch(`/dashboard/warehouse/card-sets/${setId}/cards/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('viewSetCardsTitle').textContent = `Cards in ${data.data.set_name}`;
+                        document.getElementById('addCardToSetBtn').href = `/dashboard/warehouse/?set=${setId}`;
+                        
+                        const tableBody = document.getElementById('setCardsTableBody');
+                        tableBody.innerHTML = data.data.cards.map(card => `
+                            <tr>
+                                <td>
+                                    <div class="fw-bold">${card.name}</div>
+                                </td>
+                                <td><span class="badge bg-secondary">${card.card_type}</span></td>
+                                <td><span class="badge bg-primary">${card.rarity}</span></td>
+                                <td>
+                                    <span class="fw-bold ${card.stock_quantity > 10 ? 'text-success' : card.stock_quantity > 0 ? 'text-warning' : 'text-danger'}">
+                                        ${card.stock_quantity}
+                                    </span>
+                                </td>
+                                <td><strong>${card.price}</strong></td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="/dashboard/warehouse/card/edit/${card.id}/" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-info" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('');
+                        
+                        document.getElementById('setCardsLoading').style.display = 'none';
+                        document.getElementById('setCardsTable').style.display = 'block';
+                        
+                        new bootstrap.Modal(document.getElementById('viewSetCardsModal')).show();
+                    } else {
+                        showAlert('danger', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showAlert('danger', 'Error loading set cards.');
+                });
+        }
+
+        function confirmDeleteSet(setId, setName) {
+            if (confirm(`Are you sure you want to delete the card set "${setName}"? This action cannot be undone.`)) {
+                deleteCardSet(setId);
+            }
+        }
+
+        function deleteCardSet(setId) {
+            fetch(`/dashboard/warehouse/card-sets/delete/${setId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('success', data.message);
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showAlert('danger', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'An error occurred while deleting the card set.');
+            });
+        }
+
+        function showAlert(type, message) {
+            // Remove any existing alerts
+            const existingAlerts = document.querySelectorAll('.alert-dismissible');
+            existingAlerts.forEach(alert => {
+                if (alert.classList.contains('position-fixed')) {
+                    alert.remove();
+                }
+            });
+            
+            // Create new alert
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
+            alertDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    <div>${message}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Search functionality for set cards
+        document.getElementById('setCardsSearch')?.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#setCardsTableBody tr');
+            
+            rows.forEach(row => {
+                const cardName = row.querySelector('td:first-child .fw-bold').textContent.toLowerCase();
+                row.style.display = cardName.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Rarity filter for set cards
+        document.getElementById('setCardsRarityFilter')?.addEventListener('change', function() {
+            const selectedRarity = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#setCardsTableBody tr');
+            
+            rows.forEach(row => {
+                const rarity = row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase();
+                const matches = !selectedRarity || rarity.includes(selectedRarity.replace('_', ' '));
+                row.style.display = matches ? '' : 'none';
+            });
+        });
+
+        // Auto-submit form on filter change
+        document.querySelectorAll('.filter-section select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+{% endblock %}

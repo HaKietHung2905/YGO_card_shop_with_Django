@@ -15,10 +15,29 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
-                   href="{% url 'admin_dashboard:warehouse' %}">
+                <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
+                   href="#" data-bs-toggle="collapse" data-bs-target="#warehouseSubmenu" 
+                   aria-expanded="{% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' %}true{% else %}false{% endif %}">
                     <i class="fas fa-warehouse"></i>Warehouse Management
+                    <i class="fas fa-chevron-down ms-auto"></i>
                 </a>
+                <div class="collapse {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' or request.resolver_match.url_name == 'edit_card' %}show{% endif %}" 
+                     id="warehouseSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
+                               href="{% url 'admin_dashboard:warehouse' %}">
+                                <i class="fas fa-boxes"></i>Card Inventory
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'card_sets' %}active{% endif %}" 
+                               href="{% url 'admin_dashboard:card_sets' %}">
+                                <i class="fas fa-layer-group"></i>Card Sets
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'posts' %}active{% endif %}" 

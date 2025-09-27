@@ -593,10 +593,8 @@
         }
 
         // Delete confirmation
-        function confirmDelete(cardId, cardName) {
-            if (confirm(`Are you sure you want to delete "${cardName}"? This action cannot be undone.`)) {
-                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
-            }
+        function confirmDelete(cardId, cardName) {  
+            window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
         }
 
         // Auto-submit form on filter change
