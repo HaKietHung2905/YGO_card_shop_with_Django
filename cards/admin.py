@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Card, CardSet, CartItem
+from .models import Card, CardSet, CartItem, OtherProduct
 
 @admin.register(CardSet)
 class CardSetAdmin(admin.ModelAdmin):
@@ -39,3 +39,11 @@ class CartItemAdmin(admin.ModelAdmin):
     list_filter = ['added_at', 'card__card_type']
     search_fields = ['user__username', 'card__name']
     readonly_fields = ['total_price']
+
+@admin.register(OtherProduct)
+class OtherProductAdmin(admin.ModelAdmin):
+    list_display = ['name', 'product_type', 'brand', 'sku', 'price', 'stock_quantity', 'condition']
+    list_filter = ['product_type', 'condition', 'brand']
+    search_fields = ['name', 'sku', 'brand']
+    list_editable = ['price', 'stock_quantity']
+    ordering = ['name']

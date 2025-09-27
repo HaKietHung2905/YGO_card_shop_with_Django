@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
-from .models import Card, CardSet, CartItem
+from .models import Card, CardSet, CartItem, OtherProduct
 from django.contrib.auth.models import User
 from decimal import Decimal
 from datetime import datetime
@@ -682,3 +682,233 @@ def admin_settings(request):
     """Admin settings"""
     context = {}
     return render(request, 'admin/settings.html', context)
+
+
+@staff_member_required
+def admin_other_products(request):
+    """Other Products management page"""
+    products = OtherProduct.objects.all().order_by('-created_at')
+    
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        products = products.filter(
+            Q(name__icontains=search_query) | 
+            Q(sku__icontains=search_query) |
+            Q(brand__icontains=search_query)
+        )
+    
+    # Product type filter
+    product_type_filter = request.GET.get('product_type', '')
+    if product_type_filter:
+        products = products.filter(product_type=product_type_filter)
+    
+    # Stock filter
+    stock_filter = request.GET.get('stock', '')
+    if stock_filter == 'low':
+        products = products.filter(stock_quantity__lte=5)
+    elif stock_filter == 'out':
+        products = products.filter(stock_quantity=0)
+    elif stock_filter == 'in':
+        products = products.filter(stock_quantity__gt=0)
+    
+    # Ordering
+    order_by = request.GET.get('order_by', 'name')
+    if order_by in ['name', '-name', 'price', '-price', 'stock_quantity', '-stock_quantity', 'created_at', '-created_at']:
+        products = products.order_by(order_by)
+    
+    # Pagination
+    paginator = Paginator(products, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'products': page_obj,
+        'search_query': search_query,
+        'product_type_filter': product_type_filter,
+        'stock_filter': stock_filter,
+        'order_by': order_by,
+        'total_products': OtherProduct.objects.count(),
+        'products_in_stock': OtherProduct.objects.filter(stock_quantity__gt=0).count(),
+        'low_stock_products': OtherProduct.objects.filter(stock_quantity__lte=5, stock_quantity__gt=0).count(),
+        'out_of_stock': OtherProduct.objects.filter(stock_quantity=0).count(),
+        'product_type_choices': OtherProduct.PRODUCT_TYPE_CHOICES,
+    }
+    return render(request, 'admin/warehouse/other_products/index.html', context)
+
+@staff_member_required
+def admin_create_other_product(request):
+    """Create a new other product"""
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name', '').strip()
+            sku = request.POST.get('sku', '').strip().upper()
+            product_type = request.POST.get('product_type', '')
+            brand = request.POST.get('brand', '').strip()
+            condition = request.POST.get('condition', 'new')
+            price = request.POST.get('price', '')
+            stock_quantity = request.POST.get('stock_quantity', '0')
+            description = request.POST.get('description', '').strip()
+            
+            # Validation
+            if not name or not sku or not product_type or not price:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Name, SKU, product type, and price are required'
+                })
+            
+            # Check if SKU already exists
+            if OtherProduct.objects.filter(sku=sku).exists():
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'A product with SKU "{sku}" already exists'
+                })
+            
+            # Create product
+            product = OtherProduct.objects.create(
+                name=name,
+                sku=sku,
+                product_type=product_type,
+                brand=brand,
+                condition=condition,
+                price=Decimal(price),
+                stock_quantity=int(stock_quantity),
+                description=description
+            )
+            
+            # Handle image upload
+            if 'image' in request.FILES:
+                product.image = request.FILES['image']
+                product.save()
+            
+            messages.success(request, f'Product "{product.name}" created successfully!')
+            
+            return JsonResponse({
+                'success': True, 
+                'message': f'Product "{product.name}" created successfully!',
+                'product_id': product.id
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error creating product: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@staff_member_required
+def admin_edit_other_product(request, product_id):
+    """Edit an existing other product"""
+    product = get_object_or_404(OtherProduct, id=product_id)
+    
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name', '').strip()
+            sku = request.POST.get('sku', '').strip().upper()
+            product_type = request.POST.get('product_type', '')
+            brand = request.POST.get('brand', '').strip()
+            condition = request.POST.get('condition', 'new')
+            price = request.POST.get('price', '')
+            stock_quantity = request.POST.get('stock_quantity', '0')
+            description = request.POST.get('description', '').strip()
+            
+            # Validation
+            if not name or not sku or not product_type or not price:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'All required fields must be filled'
+                })
+            
+            # Check if SKU already exists (excluding current product)
+            if OtherProduct.objects.filter(sku=sku).exclude(id=product_id).exists():
+                return JsonResponse({
+                    'success': False, 
+                    'error': f'A product with SKU "{sku}" already exists'
+                })
+            
+            # Update product
+            product.name = name
+            product.sku = sku
+            product.product_type = product_type
+            product.brand = brand
+            product.condition = condition
+            product.price = Decimal(price)
+            product.stock_quantity = int(stock_quantity)
+            product.description = description
+            
+            # Handle image upload
+            if 'image' in request.FILES:
+                product.image = request.FILES['image']
+                
+            product.save()
+            
+            messages.success(request, f'Product "{product.name}" updated successfully!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Product "{product.name}" updated successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error updating product: {str(e)}'
+            })
+    
+    # For GET requests, return product data
+    return JsonResponse({
+        'success': True,
+        'data': {
+            'id': product.id,
+            'name': product.name,
+            'sku': product.sku,
+            'product_type': product.product_type,
+            'brand': product.brand,
+            'condition': product.condition,
+            'price': str(product.price),
+            'stock_quantity': product.stock_quantity,
+            'description': product.description,
+        }
+    })
+
+@staff_member_required
+def admin_delete_other_product(request, product_id):
+    """Delete an other product"""
+    product = get_object_or_404(OtherProduct, id=product_id)
+    
+    if request.method == 'POST':
+        try:
+            product_name = product.name
+            product.delete()
+            
+            messages.success(request, f'Product "{product_name}" deleted successfully!')
+            return JsonResponse({
+                'success': True, 
+                'message': f'Product "{product_name}" deleted successfully!'
+            })
+            
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': f'Error deleting product: {str(e)}'
+            })
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@staff_member_required
+def admin_other_products_stats(request):
+    """Get other products statistics"""
+    total_products = OtherProduct.objects.count()
+    products_in_stock = OtherProduct.objects.filter(stock_quantity__gt=0).count()
+    low_stock_products = OtherProduct.objects.filter(stock_quantity__lte=5, stock_quantity__gt=0).count()
+    out_of_stock = OtherProduct.objects.filter(stock_quantity=0).count()
+    
+    return JsonResponse({
+        'success': True,
+        'data': {
+            'total_products': total_products,
+            'products_in_stock': products_in_stock,
+            'low_stock_products': low_stock_products,
+            'out_of_stock': out_of_stock,
+        }
+    })

@@ -21,10 +21,19 @@ urlpatterns = [
     path('warehouse/card-sets/stats/', admin_views.admin_card_sets_stats, name='card_sets_stats'),
     
     
+    # Other Products Management URLs
+    path('warehouse/other-products/', admin_views.admin_other_products, name='other_products'),
+    path('warehouse/other-products/create/', admin_views.admin_create_other_product, name='create_other_product'),
+    path('warehouse/other-products/edit/<int:product_id>/', admin_views.admin_edit_other_product, name='edit_other_product'),
+    path('warehouse/other-products/delete/<int:product_id>/', admin_views.admin_delete_other_product, name='delete_other_product'),
+    path('warehouse/other-products/stats/', admin_views.admin_other_products_stats, name='other_products_stats'),
+
     path('posts/', admin_views.admin_posts, name='posts'),
     path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
     path('orders/', admin_views.admin_orders, name='orders'),
     path('users/', admin_views.admin_users, name='users'),
     path('analytics/', admin_views.admin_analytics, name='analytics'),
     path('settings/', admin_views.admin_settings, name='settings'),
+
+   
 ]
