@@ -1,0 +1,773 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Posts Management - Yu-Gi-Oh Admin{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            min-height: calc(100vh - 40px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .content-section {
+            padding: 2rem;
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            text-align: center;
+            height: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stats-icon.posts { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); }
+        .stats-icon.published { background: linear-gradient(135deg, #56ab2f, #a8e6cf); }
+        .stats-icon.drafts { background: linear-gradient(135deg, #ffa726, #ffcc80); }
+        .stats-icon.views { background: linear-gradient(135deg, #ef5350, #ffcdd2); }
+
+        .posts-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-color: #e9ecef;
+        }
+
+        .post-title {
+            font-weight: 600;
+            color: #2c3e50;
+            text-decoration: none;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .post-title:hover {
+            color: var(--primary-color);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-published { background: #d4edda; color: #155724; }
+        .status-draft { background: #fff3cd; color: #856404; }
+        .status-archived { background: #f8d7da; color: #721c24; }
+
+        .category-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .featured-badge {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #856404;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .post-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .post-placeholder {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+
+        .action-buttons .btn {
+            margin: 0 2px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: white;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-card {
+            text-align: center;
+            padding: 1rem;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .quick-action-card:hover {
+            border-color: var(--primary-color);
+            background: #f8f9ff;
+        }
+
+        .quick-action-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-newspaper me-3"></i>Posts Management
+                    </h1>
+                    <p class="mb-0 opacity-75">Create and manage blog posts, news articles, and announcements</p>
+                    <nav aria-label="breadcrumb" class="mt-2">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Posts Management</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                        <i class="fas fa-plus me-2"></i>Create New Post
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-section">
+            <!-- Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon posts">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="mb-1">{{ total_posts|default:0 }}</h3>
+                        <p class="text-muted mb-0">Total Posts</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon published">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="mb-1">{{ published_posts|default:0 }}</h3>
+                        <p class="text-muted mb-0">Published</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon drafts">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <h3 class="mb-1">{{ draft_posts|default:0 }}</h3>
+                        <p class="text-muted mb-0">Drafts</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-3">
+                    <div class="stats-card">
+                        <div class="stats-icon views">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="mb-1">{{ total_views|default:0 }}</h3>
+                        <p class="text-muted mb-0">Total Views</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h5 class="mb-3">
+                    <i class="fas fa-lightning-bolt me-2"></i>Quick Actions
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="quick-action-card" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">New Post</h6>
+                            <small class="text-muted">Create a new blog post</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="quick-action-card" onclick="filterPosts('draft')">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">View Drafts</h6>
+                            <small class="text-muted">See unpublished posts</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="quick-action-card" onclick="filterPosts('published')">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Published</h6>
+                            <small class="text-muted">View live posts</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="quick-action-card" onclick="bulkActions()">
+                            <div class="quick-action-icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Bulk Actions</h6>
+                            <small class="text-muted">Manage multiple posts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filter-section">
+                <form method="GET" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Search Posts</label>
+                        <input type="text" class="form-control" name="q" value="{{ search_query }}" placeholder="Search by title or content...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Status</label>
+                        <select class="form-select" name="status">
+                            <option value="">All Status</option>
+                            <option value="draft" {% if status_filter == 'draft' %}selected{% endif %}>Draft</option>
+                            <option value="published" {% if status_filter == 'published' %}selected{% endif %}>Published</option>
+                            <option value="archived" {% if status_filter == 'archived' %}selected{% endif %}>Archived</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Category</label>
+                        <select class="form-select" name="category">
+                            <option value="">All Categories</option>
+                            <option value="news" {% if category_filter == 'news' %}selected{% endif %}>News</option>
+                            <option value="tournament" {% if category_filter == 'tournament' %}selected{% endif %}>Tournament</option>
+                            <option value="card_review" {% if category_filter == 'card_review' %}selected{% endif %}>Card Review</option>
+                            <option value="strategy" {% if category_filter == 'strategy' %}selected{% endif %}>Strategy Guide</option>
+                            <option value="announcement" {% if category_filter == 'announcement' %}selected{% endif %}>Announcement</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Author</label>
+                        <select class="form-select" name="author">
+                            <option value="">All Authors</option>
+                            {% for author in authors %}
+                                <option value="{{ author.id }}" {% if author_filter == author.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ author.get_full_name|default:author.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">&nbsp;</label>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-search me-2"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label fw-bold">&nbsp;</label>
+                        <div class="d-grid">
+                            <a href="{% url 'admin_dashboard:posts' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Posts Table -->
+            <div class="posts-table">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th width="5%">
+                                    <input type="checkbox" id="selectAll" class="form-check-input">
+                                </th>
+                                <th width="8%">Image</th>
+                                <th width="25%">Title</th>
+                                <th width="12%">Author</th>
+                                <th width="10%">Category</th>
+                                <th width="8%">Status</th>
+                                <th width="8%">Views</th>
+                                <th width="12%">Created</th>
+                                <th width="12%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" class="form-check-input post-checkbox" value="{{ post.id }}">
+                                    </td>
+                                    <td>
+                                        {% if post.featured_image %}
+                                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="post-image">
+                                        {% else %}
+                                            <div class="post-placeholder">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <a href="{% url 'admin_dashboard:edit_post' post.id %}" class="post-title" title="{{ post.title }}">{{ post.title }}</a>
+                                            {% if post.is_featured %}
+                                                <span class="featured-badge ms-2">
+                                                    <i class="fas fa-star me-1"></i>Featured
+                                                </span>
+                                            {% endif %}
+                                            <div class="small text-muted mt-1">{{ post.excerpt|truncatewords:8 }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="user-avatar me-2">
+                                                <i class="fas fa-user-circle fa-lg text-muted"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ post.author.get_full_name|default:post.author.username }}</div>
+                                                <small class="text-muted">{{ post.author.username }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="category-badge">{{ post.get_category_display }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-{{ post.status }}">{{ post.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="text-center">
+                                            <strong>{{ post.view_count }}</strong>
+                                            <div class="small text-muted">views</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>{{ post.created_at|date:"M d, Y" }}</div>
+                                        <small class="text-muted">{{ post.created_at|time:"H:i" }}</small>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{% url 'admin_dashboard:edit_post' post.id %}" class="btn btn-outline-primary btn-sm" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-outline-info btn-sm" title="View" onclick="viewPost({{ post.id }})">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="deletePost({{ post.id }})" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center py-5">
+                                        <i class="fas fa-newspaper fa-3x text-muted mb-3"></i>
+                                        <h5>No Posts Found</h5>
+                                        <p class="text-muted">Create your first post to get started!</p>
+                                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                                            <i class="fas fa-plus me-2"></i>Create Post
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if posts.has_other_pages %}
+                    <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                        <div class="text-muted">
+                            Showing {{ posts.start_index }} to {{ posts.end_index }} of {{ posts.paginator.count }} posts
+                        </div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0">
+                                {% if posts.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">First</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ posts.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Previous</a>
+                                    </li>
+                                {% endif %}
+
+                                <li class="page-item active">
+                                    <span class="page-link">{{ posts.number }}</span>
+                                </li>
+
+                                {% if posts.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ posts.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Next</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ posts.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}">Last</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPostModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>Create New Post
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" enctype="multipart/form-data" action="{% url 'admin_dashboard:create_post' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Post Title *</label>
+                                <input type="text" class="form-control" name="title" required placeholder="Enter an engaging title...">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Category *</label>
+                                <select class="form-select" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="news">News</option>
+                                    <option value="tournament">Tournament</option>
+                                    <option value="card_review">Card Review</option>
+                                    <option value="strategy">Strategy Guide</option>
+                                    <option value="announcement">Announcement</option>
+                                    <option value="community">Community</option>
+                                    <option value="product_showcase">Product Showcase</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Status *</label>
+                                <select class="form-select" name="status" required>
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Excerpt *</label>
+                                <textarea class="form-control" name="excerpt" rows="3" required placeholder="Brief description for previews and social sharing..."></textarea>
+                                <small class="text-muted">Maximum 300 characters</small>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Content *</label>
+                                <textarea class="form-control" name="content" rows="10" required placeholder="Write your post content here..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Featured Image</label>
+                                <input type="file" class="form-control" name="featured_image" accept="image/*">
+                                <small class="text-muted">Recommended: 1200x630px</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Tags</label>
+                                <input type="text" class="form-control" name="tags" placeholder="yugioh, cards, strategy (comma-separated)">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="is_featured" id="isFeatured">
+                                    <label class="form-check-label fw-bold" for="isFeatured">
+                                        <i class="fas fa-star me-1"></i>Featured Post
+                                    </label>
+                                    <small class="text-muted d-block">Show this post prominently on the homepage</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-save me-2"></i>Create Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Modal -->
+    <div class="modal fade" id="bulkActionsModal" tabindex="-1" aria-labelledby="bulkActionsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="bulkActionsModalLabel">
+                        <i class="fas fa-tasks me-2"></i>Bulk Actions
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">Select an action to apply to <span id="selectedCount">0</span> selected posts:</p>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-outline-success" onclick="bulkAction('publish')">
+                            <i class="fas fa-globe me-2"></i>Publish Selected
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="bulkAction('draft')">
+                            <i class="fas fa-edit me-2"></i>Move to Draft
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="bulkAction('archive')">
+                            <i class="fas fa-archive me-2"></i>Archive Selected
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="bulkAction('delete')">
+                            <i class="fas fa-trash me-2"></i>Delete Selected
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Select All functionality
+        document.getElementById('selectAll').addEventListener('change', function() {
+            const checkboxes = document.querySelectorAll('.post-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectedCount();
+        });
+
+        // Update selected count
+        function updateSelectedCount() {
+            const selected = document.querySelectorAll('.post-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = selected;
+        }
+
+        // Listen for checkbox changes
+        document.querySelectorAll('.post-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectedCount);
+        });
+
+        // Filter posts by status
+        function filterPosts(status) {
+            const url = new URL(window.location);
+            url.searchParams.set('status', status);
+            window.location.href = url.toString();
+        }
+
+        // Show bulk actions modal
+        function bulkActions() {
+            const selected = document.querySelectorAll('.post-checkbox:checked').length;
+            if (selected === 0) {
+                alert('Please select posts first');
+                return;
+            }
+            updateSelectedCount();
+            new bootstrap.Modal(document.getElementById('bulkActionsModal')).show();
+        }
+
+        // Perform bulk action
+        function bulkAction(action) {
+            const selectedIds = Array.from(document.querySelectorAll('.post-checkbox:checked')).map(cb => cb.value);
+            
+            if (selectedIds.length === 0) {
+                alert('No posts selected');
+                return;
+            }
+
+            let confirmMessage = '';
+            switch(action) {
+                case 'publish':
+                    confirmMessage = `Publish ${selectedIds.length} posts?`;
+                    break;
+                case 'draft':
+                    confirmMessage = `Move ${selectedIds.length} posts to draft?`;
+                    break;
+                case 'archive':
+                    confirmMessage = `Archive ${selectedIds.length} posts?`;
+                    break;
+                case 'delete':
+                    confirmMessage = `Delete ${selectedIds.length} posts? This cannot be undone.`;
+                    break;
+            }
+
+            if (confirm(confirmMessage)) {
+                // Create form and submit
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{% url "admin_dashboard:bulk_post_action" %}';
+                
+                // Add CSRF token
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) {
+                    form.appendChild(csrfToken.cloneNode());
+                }
+                
+                // Add action
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = action;
+                form.appendChild(actionInput);
+                
+                // Add selected IDs
+                selectedIds.forEach(id => {
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.name = 'post_ids';
+                    idInput.value = id;
+                    form.appendChild(idInput);
+                });
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        // Delete single post
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                window.location.href = `{% url 'admin_dashboard:posts' %}${postId}/delete/`;
+            }
+        }
+
+        // View post (placeholder function)
+        function viewPost(postId) {
+            alert('Post view functionality coming soon!');
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        // Character counter for excerpt
+        document.querySelector('textarea[name="excerpt"]').addEventListener('input', function() {
+            const maxLength = 300;
+            const currentLength = this.value.length;
+            const remaining = maxLength - currentLength;
+            
+            let counterElement = this.nextElementSibling.querySelector('.char-counter');
+            if (!counterElement) {
+                counterElement = document.createElement('span');
+                counterElement.className = 'char-counter ms-2';
+                this.nextElementSibling.appendChild(counterElement);
+            }
+            
+            counterElement.textContent = `${remaining} characters remaining`;
+            counterElement.className = `char-counter ms-2 ${remaining < 0 ? 'text-danger' : 'text-muted'}`;
+        });
+    </script>
+{% endblock %}

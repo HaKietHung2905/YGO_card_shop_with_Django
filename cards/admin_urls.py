@@ -35,5 +35,11 @@ urlpatterns = [
     path('analytics/', admin_views.admin_analytics, name='analytics'),
     path('settings/', admin_views.admin_settings, name='settings'),
 
+    # Posts Management URLs
+    path('posts/', admin_views.admin_posts, name='posts'),
+    path('posts/create/', admin_views.admin_create_post, name='create_post'),
+    path('posts/edit/<int:post_id>/', admin_views.admin_edit_post, name='edit_post'),
+    path('posts/delete/<int:post_id>/', admin_views.admin_delete_post, name='delete_post'),
+    path('posts/bulk-action/', admin_views.admin_bulk_post_action, name='bulk_post_action'),
    
 ]

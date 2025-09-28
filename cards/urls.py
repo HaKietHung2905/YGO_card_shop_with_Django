@@ -21,8 +21,7 @@ urlpatterns = [
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart, name='cart'),
     path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
-    path('cart/update/', views.update_cart, name='update_cart'),
-    
+
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),

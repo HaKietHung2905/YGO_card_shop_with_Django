@@ -640,7 +640,7 @@ def admin_update_stock(request):
 def admin_posts(request):
     """Posts management"""
     context = {}
-    return render(request, 'admin/posts.html', context)
+    return render(request, 'admin/posts/index.html', context)
 
 
 @staff_member_required
@@ -912,3 +912,57 @@ def admin_other_products_stats(request):
             'out_of_stock': out_of_stock,
         }
     })
+
+@staff_member_required
+def admin_posts(request):
+    """Enhanced Posts management"""
+    # For now, create some dummy data since Post model might not exist yet
+    context = {
+        'posts': [],  # Empty list for now
+        'total_posts': 0,
+        'published_posts': 0,
+        'draft_posts': 0,
+        'total_views': 0,
+        'search_query': '',
+        'status_filter': '',
+        'category_filter': '',
+        'author_filter': '',
+        'authors': [],
+    }
+    return render(request, 'admin/posts/index.html', context)
+
+@staff_member_required
+def admin_create_post(request):
+    """Create a new post"""
+    if request.method == 'POST':
+        # For now, just redirect back with a message
+        messages.success(request, 'Post creation functionality will be available once the Post model is created.')
+        return redirect('admin_dashboard:posts')
+    
+    return redirect('admin_dashboard:posts')
+
+@staff_member_required
+def admin_edit_post(request, post_id):
+    """Edit an existing post"""
+    # For now, just redirect back with a message
+    messages.info(request, f'Edit functionality for post {post_id} will be available once the Post model is created.')
+    return redirect('admin_dashboard:posts')
+
+@staff_member_required
+def admin_delete_post(request, post_id):
+    """Delete a post"""
+    # For now, just redirect back with a message
+    messages.info(request, f'Delete functionality for post {post_id} will be available once the Post model is created.')
+    return redirect('admin_dashboard:posts')
+
+@staff_member_required
+def admin_bulk_post_action(request):
+    """Handle bulk actions on posts"""
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        post_ids = request.POST.getlist('post_ids')
+        
+        # For now, just show what would happen
+        messages.info(request, f'Bulk action "{action}" on {len(post_ids)} posts will be available once the Post model is created.')
+    
+    return redirect('admin_dashboard:posts')
