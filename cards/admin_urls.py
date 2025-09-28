@@ -28,7 +28,6 @@ urlpatterns = [
     path('warehouse/other-products/delete/<int:product_id>/', admin_views.admin_delete_other_product, name='delete_other_product'),
     path('warehouse/other-products/stats/', admin_views.admin_other_products_stats, name='other_products_stats'),
 
-    path('posts/', admin_views.admin_posts, name='posts'),
     path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
     path('orders/', admin_views.admin_orders, name='orders'),
     path('users/', admin_views.admin_users, name='users'),
