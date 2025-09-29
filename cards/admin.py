@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Card, CardSet, CartItem, OtherProduct
+from .models import Card, CardSet, CartItem, OtherProduct, OrderItem, Order
 
 @admin.register(CardSet)
 class CardSetAdmin(admin.ModelAdmin):
@@ -47,3 +47,41 @@ class OtherProductAdmin(admin.ModelAdmin):
     search_fields = ['name', 'sku', 'brand']
     list_editable = ['price', 'stock_quantity']
     ordering = ['name']
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ['order_number', 'user', 'status', 'payment_status', 'total_amount', 'created_at']
+    list_filter = ['status', 'payment_status', 'payment_method', 'created_at']
+    search_fields = ['order_number', 'user__username', 'user__email', 'shipping_full_name']
+    readonly_fields = ['order_number', 'created_at', 'updated_at']
+    date_hierarchy = 'created_at'
+    ordering = ['-created_at']
+    
+    fieldsets = (
+        ('Order Information', {
+            'fields': ('order_number', 'user', 'status', 'created_at', 'updated_at')
+        }),
+        ('Pricing', {
+            'fields': ('subtotal', 'tax', 'shipping_cost', 'total_amount')
+        }),
+        ('Shipping Details', {
+            'fields': ('shipping_full_name', 'shipping_address', 'shipping_city', 
+                      'shipping_state', 'shipping_zip_code', 'shipping_phone')
+        }),
+        ('Payment', {
+            'fields': ('payment_method', 'payment_status')
+        }),
+        ('Notes', {
+            'fields': ('order_notes', 'admin_notes'),
+            'classes': ('collapse',)
+        }),
+    )
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ['order', 'product_name', 'quantity', 'price', 'subtotal', 'created_at']
+    list_filter = ['order__status', 'created_at']
+    search_fields = ['order__order_number', 'product_name', 'product_sku']
+    readonly_fields = ['subtotal', 'created_at']
+    ordering = ['-created_at']
