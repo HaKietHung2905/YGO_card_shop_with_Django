@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 from datetime import datetime
 import json
+from .models import Order, OrderItem
+from django.db.models import Sum, Count
 
 @staff_member_required
 def admin_dashboard(request):
@@ -657,7 +659,7 @@ def admin_orders(request):
     context = {
         'orders': orders,
     }
-    return render(request, 'admin/orders.html', context)
+    return render(request, 'admin/orders/index.html', context)
 
 
 @staff_member_required
@@ -966,3 +968,178 @@ def admin_bulk_post_action(request):
         messages.info(request, f'Bulk action "{action}" on {len(post_ids)} posts will be available once the Post model is created.')
     
     return redirect('admin_dashboard:posts')
+
+@staff_member_required
+def admin_orders(request):
+    """Enhanced orders management with filtering and search"""
+    orders = Order.objects.select_related('user').prefetch_related('items').all()
+    
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        orders = orders.filter(
+            Q(order_number__icontains=search_query) |
+            Q(user__username__icontains=search_query) |
+            Q(user__email__icontains=search_query) |
+            Q(shipping_full_name__icontains=search_query)
+        )
+    
+    # Filter by status
+    status_filter = request.GET.get('status', '')
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+    
+    # Filter by payment status
+    payment_filter = request.GET.get('payment', '')
+    if payment_filter:
+        orders = orders.filter(payment_status=payment_filter)
+    
+    # Date range filter
+    date_from = request.GET.get('date_from', '')
+    date_to = request.GET.get('date_to', '')
+    if date_from:
+        orders = orders.filter(created_at__gte=date_from)
+    if date_to:
+        orders = orders.filter(created_at__lte=date_to)
+    
+    # Ordering
+    order_by = request.GET.get('order_by', '-created_at')
+    if order_by in ['created_at', '-created_at', 'total_amount', '-total_amount', 'status']:
+        orders = orders.order_by(order_by)
+    
+    # Pagination
+    paginator = Paginator(orders, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Statistics
+    total_orders = Order.objects.count()
+    pending_orders = Order.objects.filter(status='pending').count()
+    processing_orders = Order.objects.filter(status='processing').count()
+    shipped_orders = Order.objects.filter(status='shipped').count()
+    total_revenue = Order.objects.filter(payment_status='paid').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    
+    context = {
+        'orders': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'payment_filter': payment_filter,
+        'date_from': date_from,
+        'date_to': date_to,
+        'order_by': order_by,
+        'total_orders': total_orders,
+        'pending_orders': pending_orders,
+        'processing_orders': processing_orders,
+        'shipped_orders': shipped_orders,
+        'total_revenue': total_revenue,
+        'status_choices': Order.STATUS_CHOICES,
+    }
+    return render(request, 'admin/orders/index.html', context)
+
+
+"""
+STEP 3: Add these NEW functions at the END of your cards/admin_views.py file
+Keep all your existing admin views, just add these new ones at the bottom
+"""
+
+@staff_member_required
+def admin_order_detail(request, order_id):
+    """View detailed information about a specific order"""
+    order = get_object_or_404(Order, id=order_id)
+    order_items = order.items.select_related('card', 'other_product').all()
+    
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+    return render(request, 'admin/order_detail.html', context)
+
+
+@staff_member_required
+def admin_update_order_status(request, order_id):
+    """Update order status"""
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        new_status = request.POST.get('status')
+        admin_notes = request.POST.get('admin_notes', '')
+        
+        if new_status in dict(Order.STATUS_CHOICES):
+            old_status = order.status
+            order.status = new_status
+            
+            # Add admin notes if provided
+            if admin_notes:
+                if order.admin_notes:
+                    order.admin_notes += f"\n\n{admin_notes}"
+                else:
+                    order.admin_notes = admin_notes
+            
+            order.save()
+            messages.success(request, f'Order status updated from {old_status} to {new_status}')
+        else:
+            messages.error(request, 'Invalid status')
+    
+    return redirect('admin_dashboard:order_detail', order_id=order_id)
+
+
+@staff_member_required
+def admin_update_payment_status(request, order_id):
+    """Update payment status"""
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        payment_status = request.POST.get('payment_status')
+        
+        if payment_status in ['paid', 'unpaid', 'refunded']:
+            order.payment_status = payment_status
+            order.save()
+            messages.success(request, f'Payment status updated to {payment_status}')
+        else:
+            messages.error(request, 'Invalid payment status')
+    
+    return redirect('admin_dashboard:order_detail', order_id=order_id)
+
+
+@staff_member_required
+def admin_order_statistics(request):
+    """Display order statistics and analytics"""
+    from django.db.models.functions import TruncDate
+    from datetime import datetime, timedelta
+    
+    # Date range for statistics (last 30 days by default)
+    days = int(request.GET.get('days', 30))
+    start_date = datetime.now() - timedelta(days=days)
+    
+    # Orders by status
+    orders_by_status = Order.objects.values('status').annotate(count=Count('id')).order_by('status')
+    
+    # Orders by date (for chart)
+    orders_by_date = Order.objects.filter(created_at__gte=start_date).annotate(
+        date=TruncDate('created_at')
+    ).values('date').annotate(
+        count=Count('id'),
+        revenue=Sum('total_amount')
+    ).order_by('date')
+    
+    # Revenue statistics
+    total_revenue = Order.objects.filter(payment_status='paid').aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    revenue_this_month = Order.objects.filter(
+        payment_status='paid',
+        created_at__month=datetime.now().month,
+        created_at__year=datetime.now().year
+    ).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    
+    # Top customers
+    top_customers = Order.objects.values('user__username', 'user__email').annotate(
+        total_orders=Count('id'),
+        total_spent=Sum('total_amount')
+    ).order_by('-total_spent')[:10]
+    
+    context = {
+        'days': days,
+        'orders_by_status': orders_by_status,
+        'orders_by_date': orders_by_date,
+        'total_revenue': total_revenue,
+        'revenue_this_month': revenue_this_month,
+        'top_customers': top_customers,
+    }
+    return render(request, 'admin/order_statistics.html', context)

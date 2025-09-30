@@ -5,7 +5,9 @@ from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.http import QueryDict
-from .models import Card, CardSet, CartItem, OtherProduct
+from .models import Card, CardSet, CartItem, OtherProduct, Order, OrderItem
+from django.db import transaction
+from decimal import Decimal
 
 def home(request):
     """Enhanced homepage view with featured cards and other products"""
@@ -32,7 +34,7 @@ def home(request):
         'total_cards_available': total_cards_available,
         'total_accessories': total_accessories,
     }
-    return render(request, 'cards/home.html', context)
+    return render(request, 'home.html', context)
 
 def other_products_list(request):
     """Public view for browsing other products (accessories, etc.)"""
@@ -297,3 +299,165 @@ def update_cart_quantity(request, pk):
     
     return redirect('cart')
 
+@login_required
+def checkout(request):
+    """Display checkout page with cart items and shipping form"""
+    cart_items = CartItem.objects.filter(user=request.user).select_related('card', 'card__card_set')
+    
+    if not cart_items:
+        messages.warning(request, 'Your cart is empty.')
+        return redirect('cart')
+    
+    # Calculate totals
+    subtotal = sum(item.total_price for item in cart_items)
+    tax_rate = Decimal('0.085')  # 8.5% tax
+    tax = subtotal * tax_rate
+    shipping = Decimal('0.00')  # Free shipping
+    total = subtotal + tax + shipping
+    
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'tax': tax,
+        'shipping': shipping,
+        'total': total,
+    }
+    return render(request, 'cards/orders/checkout.html', context)
+
+
+@login_required
+@transaction.atomic
+def process_checkout(request):
+    """Process the checkout and create order"""
+    if request.method != 'POST':
+        return redirect('checkout')
+    
+    # Get cart items
+    cart_items = CartItem.objects.filter(user=request.user).select_related('card')
+    
+    if not cart_items:
+        messages.error(request, 'Your cart is empty.')
+        return redirect('cart')
+    
+    # Validate stock availability
+    for item in cart_items:
+        product = item.card
+        if product.stock_quantity < item.quantity:
+            messages.error(request, f'Insufficient stock for {product.name}. Available: {product.stock_quantity}')
+            return redirect('cart')
+    
+    # Calculate totals
+    subtotal = sum(item.total_price for item in cart_items)
+    tax_rate = Decimal('0.085')
+    tax = subtotal * tax_rate
+    shipping = Decimal('0.00')
+    total = subtotal + tax + shipping
+    
+    try:
+        # Create order
+        order = Order.objects.create(
+            user=request.user,
+            subtotal=subtotal,
+            tax=tax,
+            shipping_cost=shipping,
+            total_amount=total,
+            shipping_full_name=request.POST.get('full_name'),
+            shipping_address=request.POST.get('address'),
+            shipping_city=request.POST.get('city'),
+            shipping_state=request.POST.get('state'),
+            shipping_zip_code=request.POST.get('zip_code'),
+            shipping_phone=request.POST.get('phone'),
+            payment_method=request.POST.get('payment_method', 'credit_card'),
+            order_notes=request.POST.get('order_notes', ''),
+        )
+        
+        # Create order items and update stock
+        for item in cart_items:
+            product = item.card
+            
+            # Create order item
+            OrderItem.objects.create(
+                order=order,
+                card=product,
+                product_name=product.name,
+                product_sku='',  # Cards don't have SKU
+                quantity=item.quantity,
+                price=product.price,
+                subtotal=item.total_price
+            )
+            
+            # Update stock
+            product.stock_quantity -= item.quantity
+            product.save()
+        
+        # Mark order as confirmed and paid
+        order.status = 'confirmed'
+        order.payment_status = 'paid'
+        order.save()
+        
+        # Clear cart
+        cart_items.delete()
+        
+        messages.success(request, f'Order {order.order_number} placed successfully!')
+        return redirect('order_confirmation', order_id=order.id)
+        
+    except Exception as e:
+        messages.error(request, f'Error processing order: {str(e)}')
+        return redirect('checkout')
+
+
+@login_required
+def order_confirmation(request, order_id):
+    """Display order confirmation page"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    context = {
+        'order': order,
+    }
+    return render(request, 'cards/orders/order_confirmation.html', context)
+
+
+@login_required
+def my_orders(request):
+    """Display user's order history"""
+    orders = Order.objects.filter(user=request.user).prefetch_related('items')
+    
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'cards/orders/my_orders.html', context)
+
+
+@login_required
+def order_detail(request, order_id):
+    """Display detailed view of a specific order"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    context = {
+        'order': order,
+    }
+    return render(request, 'cards/orders/order_detail.html', context)
+
+
+@login_required
+def cancel_order(request, order_id):
+    """Cancel an order (only if status is pending or confirmed)"""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    
+    if order.status in ['pending', 'confirmed']:
+        # Restore stock
+        for item in order.items.all():
+            if item.card:
+                item.card.stock_quantity += item.quantity
+                item.card.save()
+            elif item.other_product:
+                item.other_product.stock_quantity += item.quantity
+                item.other_product.save()
+        
+        order.status = 'cancelled'
+        order.save()
+        messages.success(request, f'Order {order.order_number} has been cancelled.')
+    else:
+        messages.error(request, 'This order cannot be cancelled.')
+    
+    return redirect('order_detail', order_id=order_id)

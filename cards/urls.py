@@ -22,6 +22,15 @@ urlpatterns = [
     path('cart/', views.cart, name='cart'),
     path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
 
+    # Order URLs
+    path('checkout/', views.checkout, name='checkout'),
+    path('checkout/process/', views.process_checkout, name='process_checkout'),
+    path('order-confirmation/<int:order_id>/', views.order_confirmation, name='order_confirmation'),
+    path('my-orders/', views.my_orders, name='my_orders'),
+    path('order/<int:order_id>/', views.order_detail, name='order_detail'),
+    path('order/<int:order_id>/cancel/', views.cancel_order, name='cancel_order'),
+
+
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
