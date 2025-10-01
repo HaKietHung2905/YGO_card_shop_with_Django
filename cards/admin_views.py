@@ -524,7 +524,7 @@ def admin_warehouse(request):
         'card_type_choices': Card.CARD_TYPE_CHOICES,
         'rarity_choices': Card.RARITY_CHOICES,
     }
-    return render(request, 'admin/warehouse/index.html', context)
+    return render(request, 'admin/warehouse/cards/index.html', context)
 
 @staff_member_required
 def admin_edit_card(request, card_id):
@@ -586,7 +586,7 @@ def admin_edit_card(request, card_id):
         'card_sets': card_sets,
         'is_edit': True,
     }
-    return render(request, 'admin/warehouse/edit_card.html', context)
+    return render(request, 'admin/warehouse/cards/card_edit.html', context)
 
 
 @staff_member_required

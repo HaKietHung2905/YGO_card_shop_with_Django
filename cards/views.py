@@ -141,7 +141,6 @@ def add_other_product_to_cart(request, pk):
         return redirect(next_url)
     return redirect('other_product_detail', pk=pk)
 
-# Keep your existing views (card_list, card_detail, add_to_cart, cart, etc.)
 def card_list(request):
     """Display all cards with filtering and search"""
     cards = Card.objects.filter(stock_quantity__gt=0).select_related('card_set')
@@ -242,8 +241,11 @@ def add_to_cart(request, pk):
         defaults={'quantity': 1}
     )
     
+    print(f"DEBUG: Created new item: {created}")
+    print(f"DEBUG: Cart item ID: {cart_item.id}")
+    print(f"DEBUG: Quantity: {cart_item.quantity}")
+
     if not created:
-        # Check if adding one more would exceed stock
         if cart_item.quantity >= card.stock_quantity:
             messages.warning(request, f'Maximum stock ({card.stock_quantity}) reached for {card.name}.')
         else:
@@ -264,6 +266,11 @@ def cart(request):
     """Display user's cart"""
     cart_items = CartItem.objects.filter(user=request.user).select_related('card', 'card__card_set')
     total = sum(item.total_price for item in cart_items)
+    
+    # Debug
+    print(f"DEBUG CART VIEW: Found {cart_items.count()} items")
+    for item in cart_items:
+        print(f"  - {item.card.name} x{item.quantity}")
     
     context = {
         'cart_items': cart_items,
@@ -322,7 +329,7 @@ def checkout(request):
         'shipping': shipping,
         'total': total,
     }
-    return render(request, 'cards/orders/checkout.html', context)
+    return render(request, 'cards/checkout.html', context)
 
 
 @login_required
