@@ -5,15 +5,16 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
-from .models import Card, CardSet, CartItem, OtherProduct
+from .models import Card, CardSet, CartItem, OtherProduct, Tournament
+from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from decimal import Decimal
 from datetime import datetime
 import json
-from .models import Order, OrderItem
+from .models import Order, SiteSettings
 from django.db.models import Sum, Count
 from django import forms
-
+  
 @staff_member_required
 def admin_dashboard(request):
     """Admin dashboard overview"""
@@ -650,7 +651,7 @@ def admin_posts(request):
 def admin_tournaments(request):
     """Tournament management"""
     context = {}
-    return render(request, 'admin/tournaments.html', context)
+    return render(request, 'admin/tournaments/index.html', context)
 
 
 @staff_member_required
@@ -674,7 +675,7 @@ def admin_analytics(request):
 def admin_settings(request):
     """Admin settings"""
     context = {}
-    return render(request, 'admin/settings.html', context)
+    return render(request, 'admin/settings/index.html', context)
 
 
 @staff_member_required
@@ -1320,3 +1321,318 @@ def create_user(request):
         'page_title': 'Create User'
     }
     return render(request, 'admin/users/user_create.html', context)
+
+@staff_member_required
+def admin_tournaments(request):
+    # Get all tournaments
+    tournaments = Tournament.objects.all().annotate(
+        participants_count=Count('participants')
+    ).order_by('-date', '-start_time')
+    
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        tournaments = tournaments.filter(
+            Q(name__icontains=search_query) |
+            Q(format__icontains=search_query) |
+            Q(location__icontains=search_query)
+        )
+    
+    # Status filter
+    status_filter = request.GET.get('status', '')
+    if status_filter:
+        tournaments = tournaments.filter(status=status_filter)
+    
+    # Date filter
+    date_from = request.GET.get('date_from', '')
+    if date_from:
+        tournaments = tournaments.filter(date__gte=date_from)
+    
+    # Calculate statistics
+    total_tournaments = Tournament.objects.count()
+    upcoming_count = Tournament.objects.filter(status='upcoming').count()
+    ongoing_count = Tournament.objects.filter(status='ongoing').count()
+    total_participants = Tournament.objects.aggregate(
+        total=Count('participants')
+    )['total'] or 0
+    
+    # Pagination
+    paginator = Paginator(tournaments, 10)
+    page_number = request.GET.get('page')
+    tournaments_page = paginator.get_page(page_number)
+    
+    context = {
+        'tournaments': tournaments_page,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'date_from': date_from,
+        'total_tournaments': total_tournaments,
+        'upcoming_count': upcoming_count,
+        'ongoing_count': ongoing_count,
+        'total_participants': total_participants,
+    }
+    
+    return render(request, 'admin/tournaments/index.html', context)
+
+
+@staff_member_required
+def create_tournament(request):
+    if request.method == 'POST':
+        try:
+            tournament = Tournament.objects.create(
+                name=request.POST.get('name'),
+                description=request.POST.get('description', ''),
+                date=request.POST.get('date'),
+                start_time=request.POST.get('start_time'),
+                location=request.POST.get('location', ''),
+                format=request.POST.get('format', 'standard'),
+                max_participants=request.POST.get('max_participants') or None,
+                entry_fee=request.POST.get('entry_fee', 0),
+                prize_pool=request.POST.get('prize_pool') or None,
+                organizer=request.user
+            )
+            messages.success(request, f'Tournament "{tournament.name}" created successfully!')
+            return redirect('admin_dashboard:tournaments')
+        except Exception as e:
+            messages.error(request, f'Error creating tournament: {str(e)}')
+    
+    context = {
+        'formats': Tournament.FORMAT_CHOICES,
+        'statuses': Tournament.STATUS_CHOICES,
+    }
+    return render(request, 'admin/create_tournament.html', context)
+
+# Tournament Detail View
+@staff_member_required
+def tournament_detail(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    participants = tournament.participants.all()
+    
+    context = {
+        'tournament': tournament,
+        'participants': participants,
+    }
+    return render(request, 'admin/tournament_detail.html', context)
+
+# Edit Tournament View
+@staff_member_required
+def edit_tournament(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    
+    if request.method == 'POST':
+        try:
+            tournament.name = request.POST.get('name')
+            tournament.description = request.POST.get('description', '')
+            tournament.date = request.POST.get('date')
+            tournament.start_time = request.POST.get('start_time')
+            tournament.location = request.POST.get('location', '')
+            tournament.format = request.POST.get('format', 'standard')
+            tournament.max_participants = request.POST.get('max_participants') or None
+            tournament.entry_fee = request.POST.get('entry_fee', 0)
+            tournament.prize_pool = request.POST.get('prize_pool') or None
+            tournament.status = request.POST.get('status', 'upcoming')
+            tournament.save()
+            
+            messages.success(request, f'Tournament "{tournament.name}" updated successfully!')
+            return redirect('admin_dashboard:tournaments')
+        except Exception as e:
+            messages.error(request, f'Error updating tournament: {str(e)}')
+    
+    context = {
+        'tournament': tournament,
+        'formats': Tournament.FORMAT_CHOICES,
+        'statuses': Tournament.STATUS_CHOICES,
+    }
+    return render(request, 'admin/edit_tournament.html', context)
+
+# Delete Tournament View
+@staff_member_required
+@require_POST
+def delete_tournament(request, tournament_id):
+    try:
+        tournament = get_object_or_404(Tournament, id=tournament_id)
+        tournament_name = tournament.name
+        tournament.delete()
+        return JsonResponse({
+            'success': True,
+            'message': f'Tournament "{tournament_name}" deleted successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+    
+@staff_member_required
+def create_tournament(request):
+    if request.method == 'POST':
+        try:
+            tournament = Tournament.objects.create(
+                name=request.POST.get('name'),
+                description=request.POST.get('description', ''),
+                date=request.POST.get('date'),
+                start_time=request.POST.get('start_time'),
+                end_time=request.POST.get('end_time') or None,
+                location=request.POST.get('location', ''),
+                format=request.POST.get('format', 'standard'),
+                max_participants=request.POST.get('max_participants') or None,
+                entry_fee=request.POST.get('entry_fee', 0),
+                prize_pool=request.POST.get('prize_pool') or None,
+                rules=request.POST.get('rules', ''),
+                prize_structure=request.POST.get('prize_structure', ''),
+                organizer=request.user
+            )
+            messages.success(request, f'Tournament "{tournament.name}" created successfully!')
+            return redirect('admin_dashboard:tournaments')
+        except Exception as e:
+            messages.error(request, f'Error creating tournament: {str(e)}')
+    
+    from datetime import date
+    context = {
+        'formats': Tournament.FORMAT_CHOICES,
+        'statuses': Tournament.STATUS_CHOICES,
+        'today': date.today(),
+    }
+    return render(request, 'admin/tournaments/tournament_create.html', context)
+
+@staff_member_required
+def admin_settings(request):
+    """Display admin settings page"""
+    # Get settings from database or use defaults
+    # You can create a Settings model or use django-constance for this
+    
+    context = {
+        # General settings
+        'site_name': 'Yu-Gi-Oh Card Shop',
+        'maintenance_mode': False,
+        'allow_registration': True,
+        'email_notifications': True,
+        
+        # Shop settings
+        'currency': 'USD',
+        'tax_rate': 0,
+        'min_order_amount': 0,
+        'low_stock_threshold': 5,
+        
+        # Tournament settings
+        'auto_approve_registrations': True,
+        'default_max_participants': 32,
+        'registration_deadline_hours': 24,
+        
+        # System stats
+        'db_size': '245 MB',
+        'cache_size': '12 MB',
+        'uptime': '15 days',
+        'version': '1.0.0',
+    }
+    
+    return render(request, 'admin/settings/index.html', context)
+
+@staff_member_required
+@require_POST
+def update_settings(request):
+    """Update settings based on form submission"""
+    section = request.POST.get('section')
+    
+    try:
+        if section == 'general':
+            # Update general settings
+            # site_name = request.POST.get('site_name')
+            # maintenance_mode = request.POST.get('maintenance_mode') == 'on'
+            # Save to database or config
+            messages.success(request, 'General settings updated successfully!')
+            
+        elif section == 'shop':
+            # Update shop settings
+            messages.success(request, 'Shop settings updated successfully!')
+            
+        elif section == 'tournament':
+            # Update tournament settings
+            messages.success(request, 'Tournament settings updated successfully!')
+            
+    except Exception as e:
+        messages.error(request, f'Error updating settings: {str(e)}')
+    
+    return redirect('admin_dashboard:settings')
+
+@staff_member_required
+@require_POST
+def clear_cache(request):
+    """Clear application cache"""
+    try:
+        from django.core.cache import cache
+        cache.clear()
+        return JsonResponse({'success': True, 'message': 'Cache cleared successfully!'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)}, status=400)
+
+
+@staff_member_required
+def admin_settings(request):
+    """Display admin settings page"""
+    settings = SiteSettings.get_settings()
+    
+    context = {
+        # General settings
+        'site_name': settings.site_name,
+        'maintenance_mode': settings.maintenance_mode,
+        'allow_registration': settings.allow_registration,
+        'email_notifications': settings.email_notifications,
+        'theme_mode': settings.theme_mode,
+        
+        # Shop settings
+        'currency': settings.currency,
+        'tax_rate': settings.tax_rate,
+        'min_order_amount': settings.min_order_amount,
+        'low_stock_threshold': settings.low_stock_threshold,
+        
+        # Tournament settings
+        'auto_approve_registrations': settings.auto_approve_registrations,
+        'default_max_participants': settings.default_max_participants,
+        'registration_deadline_hours': settings.registration_deadline_hours,
+        
+        # System stats
+        'db_size': '245 MB',
+        'cache_size': '12 MB',
+        'uptime': '15 days',
+        'version': '1.0.0',
+    }
+    
+    return render(request, 'admin/settings/index.html', context)
+
+@staff_member_required
+@require_POST
+def update_settings(request):
+    """Update settings based on form submission"""
+    section = request.POST.get('section')
+    settings = SiteSettings.get_settings()
+    
+    try:
+        if section == 'general':
+            settings.site_name = request.POST.get('site_name', settings.site_name)
+            settings.maintenance_mode = request.POST.get('maintenance_mode') == 'on'
+            settings.allow_registration = request.POST.get('allow_registration') == 'on'
+            settings.email_notifications = request.POST.get('email_notifications') == 'on'
+            settings.theme_mode = request.POST.get('theme_mode', 'light')
+            settings.save()
+            messages.success(request, 'General settings updated successfully!')
+            
+        elif section == 'shop':
+            settings.currency = request.POST.get('currency', 'VND')
+            settings.tax_rate = request.POST.get('tax_rate', 0)
+            settings.min_order_amount = request.POST.get('min_order_amount', 0)
+            settings.low_stock_threshold = request.POST.get('low_stock_threshold', 5)
+            settings.save()
+            messages.success(request, 'Shop settings updated successfully!')
+            
+        elif section == 'tournament':
+            settings.auto_approve_registrations = request.POST.get('auto_approve_registrations') == 'on'
+            settings.default_max_participants = request.POST.get('default_max_participants', 32)
+            settings.registration_deadline_hours = request.POST.get('registration_deadline_hours', 24)
+            settings.save()
+            messages.success(request, 'Tournament settings updated successfully!')
+            
+    except Exception as e:
+        messages.error(request, f'Error updating settings: {str(e)}')
+    
+    return redirect('admin_dashboard:settings')

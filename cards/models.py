@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.db import models
 
 class CardSet(models.Model):
     name = models.CharField(max_length=200)
@@ -237,3 +238,117 @@ class OrderItem(models.Model):
     def get_product(self):
         """Return the actual product (card or other_product)"""
         return self.card if self.card else self.other_product
+    
+
+class Tournament(models.Model):
+    STATUS_CHOICES = [
+        ('upcoming', 'Upcoming'),
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    ]
+    
+    FORMAT_CHOICES = [
+        ('standard', 'Standard'),
+        ('traditional', 'Traditional'),
+        ('goat', 'GOAT Format'),
+        ('edison', 'Edison Format'),
+        ('draft', 'Draft'),
+        ('sealed', 'Sealed'),
+    ]
+    
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    date = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField(null=True, blank=True)
+    location = models.CharField(max_length=200, blank=True, null=True)
+    format = models.CharField(max_length=50, choices=FORMAT_CHOICES, default='standard')
+    max_participants = models.IntegerField(null=True, blank=True, help_text="Leave blank for unlimited")
+    entry_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    prize_pool = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
+    
+    # Relationships
+    participants = models.ManyToManyField(User, related_name='tournaments', blank=True)
+    organizer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='organized_tournaments')
+    
+    # Additional info
+    rules = models.TextField(blank=True, null=True)
+    prize_structure = models.TextField(blank=True, null=True, help_text="1st: $100, 2nd: $50, etc.")
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.date}"
+    
+    @property
+    def is_full(self):
+        if self.max_participants:
+            return self.participants.count() >= self.max_participants
+        return False
+    
+    @property
+    def spots_remaining(self):
+        if self.max_participants:
+            return self.max_participants - self.participants.count()
+        return None
+    
+    @property
+    def participants_count(self):
+        return self.participants.count()
+    
+    def can_register(self, user):
+        """Check if a user can register for this tournament"""
+        if self.status != 'upcoming':
+            return False
+        if self.is_full:
+            return False
+        if user in self.participants.all():
+            return False
+        return True
+    
+    class Meta:
+        ordering = ['-date', '-start_time']
+        verbose_name = 'Tournament'
+        verbose_name_plural = 'Tournaments'
+
+class SiteSettings(models.Model):
+    # General Settings
+    site_name = models.CharField(max_length=200, default='Yu-Gi-Oh Card Shop')
+    maintenance_mode = models.BooleanField(default=False)
+    allow_registration = models.BooleanField(default=True)
+    email_notifications = models.BooleanField(default=True)
+    theme_mode = models.CharField(max_length=20, default='light', choices=[
+        ('light', 'Light'),
+        ('dark', 'Dark'),
+        ('auto', 'Auto')
+    ])
+    
+    # Shop Settings
+    currency = models.CharField(max_length=10, default='VND')
+    tax_rate = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    min_order_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    low_stock_threshold = models.IntegerField(default=5)
+    
+    # Tournament Settings
+    auto_approve_registrations = models.BooleanField(default=True)
+    default_max_participants = models.IntegerField(default=32)
+    registration_deadline_hours = models.IntegerField(default=24)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Site Settings'
+        verbose_name_plural = 'Site Settings'
+    
+    def __str__(self):
+        return f"Settings - {self.site_name}"
+    
+    @classmethod
+    def get_settings(cls):
+        """Get or create settings instance"""
+        settings, created = cls.objects.get_or_create(pk=1)
+        return settings

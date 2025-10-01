@@ -1,0 +1,379 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Tournament Management - Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .tournament-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .tournament-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .tournament-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .tournament-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-upcoming {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-ongoing {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stats-card h3 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .tournament-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6c757d;
+        }
+
+        .info-item i {
+            color: #667eea;
+        }
+
+        .action-buttons .btn {
+            margin: 0 2px;
+            padding: 6px 12px;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .participant-count {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-trophy me-3"></i>Tournament Management
+                    </h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Tournaments</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'admin_dashboard:create_tournament' %}" class="btn btn-primary me-2">
+                        <i class="fas fa-plus me-2"></i>Create Tournament
+                    </a>
+                    <button class="btn btn-light" onclick="exportTournaments()">
+                        <i class="fas fa-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4" style="padding: 15px;">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="small mb-1">Total Tournaments</div>
+                    <h3>{{ total_tournaments|default:0 }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="small mb-1">Upcoming</div>
+                    <h3>{{ upcoming_count|default:0 }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="small mb-1">Ongoing</div>
+                    <h3>{{ ongoing_count|default:0 }}</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="small mb-1">Total Participants</div>
+                    <h3>{{ total_participants|default:0 }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-section">
+            <form method="get" action="" id="filterForm">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Search Tournaments</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" 
+                                   class="form-control" 
+                                   name="q" 
+                                   value="{{ search_query }}" 
+                                   placeholder="Search by name or format...">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Status Filter</label>
+                        <select class="form-select" name="status" onchange="this.form.submit()">
+                            <option value="">All Status</option>
+                            <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                            <option value="ongoing" {% if status_filter == 'ongoing' %}selected{% endif %}>Ongoing</option>
+                            <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Date Range</label>
+                        <input type="date" class="form-control" name="date_from" value="{{ date_from }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tournaments List -->
+        <div class="row">
+            {% if tournaments %}
+                {% for tournament in tournaments %}
+                    <div class="col-12">
+                        <div class="tournament-card">
+                            <div class="tournament-header">
+                                <div>
+                                    <h3 class="tournament-title">{{ tournament.name }}</h3>
+                                    <span class="status-badge status-{{ tournament.status }}">
+                                        {% if tournament.status == 'upcoming' %}
+                                            <i class="fas fa-clock me-1"></i>Upcoming
+                                        {% elif tournament.status == 'ongoing' %}
+                                            <i class="fas fa-play me-1"></i>Ongoing
+                                        {% elif tournament.status == 'completed' %}
+                                            <i class="fas fa-check me-1"></i>Completed
+                                        {% else %}
+                                            <i class="fas fa-times me-1"></i>Cancelled
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="action-buttons">
+                                    <a href="{% url 'admin_dashboard:tournament_detail' tournament.id %}" 
+                                       class="btn btn-outline-primary btn-sm" 
+                                       title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'admin_dashboard:edit_tournament' tournament.id %}" 
+                                       class="btn btn-outline-info btn-sm" 
+                                       title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger btn-sm" 
+                                            onclick="deleteTournament({{ tournament.id }})" 
+                                            title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="tournament-info">
+                                <div class="info-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>{{ tournament.date|date:"M d, Y" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>{{ tournament.start_time|time:"h:i A" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>{{ tournament.location|default:"TBA" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <i class="fas fa-gamepad"></i>
+                                    <span>{{ tournament.format|default:"Standard" }}</span>
+                                </div>
+                                <div class="participant-count">
+                                    <i class="fas fa-users"></i>
+                                    <strong>{{ tournament.participants_count|default:0 }}</strong> / {{ tournament.max_participants|default:"∞" }}
+                                </div>
+                            </div>
+
+                            {% if tournament.description %}
+                                <p class="text-muted mb-2">{{ tournament.description|truncatewords:30 }}</p>
+                            {% endif %}
+
+                            {% if tournament.prize_pool %}
+                                <div class="alert alert-success mb-0">
+                                    <i class="fas fa-trophy me-2"></i>
+                                    <strong>Prize Pool:</strong> ${{ tournament.prize_pool }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if tournaments.has_other_pages %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if tournaments.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ tournaments.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                                        <i class="fas fa-angle-left"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">
+                                    Page {{ tournaments.number }} of {{ tournaments.paginator.num_pages }}
+                                </span>
+                            </li>
+
+                            {% if tournaments.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ tournaments.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">
+                                        <i class="fas fa-angle-right"></i>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            {% else %}
+                <div class="col-12">
+                    <div class="text-center py-5">
+                        <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+                        <h5>No tournaments found</h5>
+                        <p class="text-muted">Create your first tournament to get started!</p>
+                        <a href="{% url 'admin_dashboard:create_tournament' %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create Tournament
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function deleteTournament(tournamentId) {
+            if (confirm('Are you sure you want to delete this tournament? This action cannot be undone.')) {
+                // Implementation for deleting tournament
+                fetch(`/dashboard/tournaments/${tournamentId}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting tournament: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the tournament');
+                });
+            }
+        }
+
+        function exportTournaments() {
+            window.location.href = '/dashboard/tournaments/export/';
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+{% endblock %}

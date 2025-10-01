@@ -49,8 +49,20 @@ urlpatterns = [
 
     # User Management URLs
     path('users/', admin_views.admin_users, name='users'),
+    path('users/create/', admin_views.create_user, name='user_create'),
     path('users/<int:user_id>/', admin_views.admin_user_detail, name='user_detail'),
     path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='edit_user'),
     path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
    
+    # Tournament URLs
+    path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
+    path('tournaments/create/', admin_views.create_tournament, name='create_tournament'),
+    path('tournaments/<int:tournament_id>/', admin_views.tournament_detail, name='tournament_detail'),
+    path('tournaments/<int:tournament_id>/edit/', admin_views.edit_tournament, name='edit_tournament'),
+    path('tournaments/<int:tournament_id>/delete/', admin_views.delete_tournament, name='delete_tournament'),
+    
+
+     path('settings/', admin_views.admin_settings, name='settings'),
+    path('settings/update/', admin_views.update_settings, name='update_settings'),
+    path('settings/clear-cache/', admin_views.clear_cache, name='clear_cache'),
 ]

@@ -1,0 +1,533 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Settings - Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .section-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .setting-item {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h5 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .setting-info p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin: 10px 0 5px 0;
+        }
+
+        .stat-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .danger-zone {
+            border: 2px solid #dc3545;
+            border-radius: 12px;
+            padding: 20px;
+            background: #fff5f5;
+        }
+
+        .danger-zone h5 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+
+        .settings-section {
+            padding: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-cog me-3"></i>Settings
+                    </h1>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Settings</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Stats -->
+        <div class="stats-grid" style="padding: 15px;">
+            <div class="stat-card">
+                <i class="fas fa-database fa-2x mb-2"></i>
+                <h3>{{ db_size|default:"N/A" }}</h3>
+                <p>Database Size</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <i class="fas fa-server fa-2x mb-2"></i>
+                <h3>{{ cache_size|default:"N/A" }}</h3>
+                <p>Cache Size</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h3>{{ uptime|default:"N/A" }}</h3>
+                <p>Uptime</p>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h3>{{ version|default:"1.0.0" }}</h3>
+                <p>Version</p>
+            </div>
+        </div>
+
+        <!-- General Settings -->
+        <div class="settings-section" >
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">General Settings</h2>
+                    <p class="section-description">Configure basic application settings</p>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'admin_dashboard:update_settings' %}" id="generalSettingsForm">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="general">
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Site Name</h5>
+                        <p>The name of your Yu-Gi-Oh card shop</p>
+                    </div>
+                    <div style="width: 300px;">
+                        <input type="text" class="form-control" name="site_name" value="{{ site_name|default:'Yu-Gi-Oh Card Shop' }}">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Maintenance Mode</h5>
+                        <p>Put the site in maintenance mode for updates</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="maintenance_mode" {% if maintenance_mode %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>User Registration</h5>
+                        <p>Allow new users to register accounts</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="allow_registration" {% if allow_registration %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Email Notifications</h5>
+                        <p>Send email notifications for orders and updates</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="email_notifications" {% if email_notifications %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save General Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Shop Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Shop Settings</h2>
+                    <p class="section-description">Configure shop-specific settings</p>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'admin_dashboard:update_settings' %}" id="shopSettingsForm">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="shop">
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Currency</h5>
+                        <p>Default currency for the shop</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <select class="form-select" name="currency">
+                            <option value="USD" {% if currency == 'USD' %}selected{% endif %}>USD ($)</option>
+                            <option value="EUR" {% if currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
+                            <option value="GBP" {% if currency == 'GBP' %}selected{% endif %}>GBP (£)</option>
+                            <option value="JPY" {% if currency == 'JPY' %}selected{% endif %}>JPY (¥)</option>
+                            <option value="VND" {% if currency == 'VND' %}selected{% endif %}>VND (đ)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Tax Rate (%)</h5>
+                        <p>Default tax rate for purchases</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <input type="number" class="form-control" name="tax_rate" value="{{ tax_rate|default:0 }}" step="0.01" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Minimum Order Amount</h5>
+                        <p>Minimum amount required for orders</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <input type="number" class="form-control" name="min_order_amount" value="{{ min_order_amount|default:0 }}" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Low Stock Alert</h5>
+                        <p>Alert when stock falls below this number</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <input type="number" class="form-control" name="low_stock_threshold" value="{{ low_stock_threshold|default:5 }}" min="0">
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Shop Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tournament Settings -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">Tournament Settings</h2>
+                    <p class="section-description">Configure tournament-related settings</p>
+                </div>
+            </div>
+
+            <form method="post" action="{% url 'admin_dashboard:update_settings' %}" id="tournamentSettingsForm">
+                {% csrf_token %}
+                <input type="hidden" name="section" value="tournament">
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Auto-Approve Registrations</h5>
+                        <p>Automatically approve tournament registrations</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="auto_approve_registrations" {% if auto_approve_registrations %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Default Max Participants</h5>
+                        <p>Default maximum participants for new tournaments</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <input type="number" class="form-control" name="default_max_participants" value="{{ default_max_participants|default:32 }}" min="1">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <h5>Registration Deadline (hours)</h5>
+                        <p>Hours before tournament start to close registration</p>
+                    </div>
+                    <div style="width: 200px;">
+                        <input type="number" class="form-control" name="registration_deadline_hours" value="{{ registration_deadline_hours|default:24 }}" min="1">
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Save Tournament Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- System Maintenance -->
+        <div class="settings-section">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div>
+                    <h2 class="section-title">System Maintenance</h2>
+                    <p class="section-description">Perform system maintenance tasks</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-outline-primary w-100" onclick="clearCache()">
+                        <i class="fas fa-broom me-2"></i>Clear Cache
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-outline-info w-100" onclick="optimizeDatabase()">
+                        <i class="fas fa-database me-2"></i>Optimize Database
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-outline-success w-100" onclick="backupDatabase()">
+                        <i class="fas fa-download me-2"></i>Backup Database
+                    </button>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <button class="btn btn-outline-warning w-100" onclick="viewLogs()">
+                        <i class="fas fa-file-alt me-2"></i>View System Logs
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-section">
+            <div class="danger-zone">
+                <h5><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h5>
+                <p class="text-muted mb-3">These actions are irreversible. Please be careful.</p>
+                
+                <div class="d-flex gap-2">
+                    <button class="btn btn-danger" onclick="confirmAction('reset_stats')">
+                        <i class="fas fa-redo me-2"></i>Reset Statistics
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmAction('clear_old_data')">
+                        <i class="fas fa-trash me-2"></i>Clear Old Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function clearCache() {
+            if (confirm('Are you sure you want to clear the cache?')) {
+                fetch('/dashboard/settings/clear-cache/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message || 'Cache cleared successfully!');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while clearing cache');
+                });
+            }
+        }
+
+        function optimizeDatabase() {
+            if (confirm('Are you sure you want to optimize the database? This may take a few minutes.')) {
+                alert('Database optimization started. This will run in the background.');
+                // Add actual implementation
+            }
+        }
+
+        function backupDatabase() {
+            if (confirm('Are you sure you want to create a database backup?')) {
+                window.location.href = '/dashboard/settings/backup-database/';
+            }
+        }
+
+        function viewLogs() {
+            window.location.href = '/dashboard/settings/logs/';
+        }
+
+        function confirmAction(action) {
+            const messages = {
+                'reset_stats': 'This will reset all statistics. Are you absolutely sure?',
+                'clear_old_data': 'This will permanently delete old data. Are you absolutely sure?'
+            };
+
+            if (confirm(messages[action])) {
+                if (confirm('This action cannot be undone. Are you really sure?')) {
+                    alert('Action confirmed. Processing...');
+                    // Add actual implementation
+                }
+            }
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Auto-save indication
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                button.disabled = true;
+
+                // Re-enable after delay (or handle in actual response)
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            });
+        });
+    </script>
+{% endblock %}
