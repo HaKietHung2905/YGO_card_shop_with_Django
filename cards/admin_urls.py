@@ -46,5 +46,11 @@ urlpatterns = [
     path('posts/edit/<int:post_id>/', admin_views.admin_edit_post, name='edit_post'),
     path('posts/delete/<int:post_id>/', admin_views.admin_delete_post, name='delete_post'),
     path('posts/bulk-action/', admin_views.admin_bulk_post_action, name='bulk_post_action'),
+
+    # User Management URLs
+    path('users/', admin_views.admin_users, name='users'),
+    path('users/<int:user_id>/', admin_views.admin_user_detail, name='user_detail'),
+    path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='edit_user'),
+    path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
    
 ]

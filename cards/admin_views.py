@@ -12,6 +12,7 @@ from datetime import datetime
 import json
 from .models import Order, OrderItem
 from django.db.models import Sum, Count
+from django import forms
 
 @staff_member_required
 def admin_dashboard(request):
@@ -663,16 +664,6 @@ def admin_orders(request):
 
 
 @staff_member_required
-def admin_users(request):
-    """Users management"""
-    users = User.objects.all()[:20]
-    context = {
-        'users': users,
-    }
-    return render(request, 'admin/users.html', context)
-
-
-@staff_member_required
 def admin_analytics(request):
     """Analytics and reports"""
     context = {}
@@ -1143,3 +1134,189 @@ def admin_order_statistics(request):
         'top_customers': top_customers,
     }
     return render(request, 'admin/order_statistics.html', context)
+
+# Add this function to your cards/admin_views.py file
+
+@staff_member_required
+def admin_users(request):
+    """User management dashboard"""
+    from datetime import datetime, timedelta
+    
+    # Get all users with related data
+    users = User.objects.all().order_by('-date_joined')
+    
+    # Search functionality
+    search_query = request.GET.get('q', '')
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query)
+        )
+    
+    # Role filter
+    role_filter = request.GET.get('role', '')
+    if role_filter == 'staff':
+        users = users.filter(is_staff=True)
+    elif role_filter == 'regular':
+        users = users.filter(is_staff=False, is_superuser=False)
+    elif role_filter == 'superuser':
+        users = users.filter(is_superuser=True)
+    
+    # Status filter
+    status_filter = request.GET.get('status', '')
+    if status_filter == 'active':
+        users = users.filter(is_active=True)
+    elif status_filter == 'inactive':
+        users = users.filter(is_active=False)
+    
+    # Calculate statistics
+    total_users = User.objects.count()
+    active_users = User.objects.filter(is_active=True).count()
+    staff_count = User.objects.filter(is_staff=True).count()
+    
+    # New users this month
+    current_month_start = datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    new_users_month = User.objects.filter(date_joined__gte=current_month_start).count()
+    
+    # Pagination
+    paginator = Paginator(users, 20)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'users': page_obj,
+        'total_users': total_users,
+        'active_users': active_users,
+        'staff_count': staff_count,
+        'new_users_month': new_users_month,
+        'search_query': search_query,
+        'role_filter': role_filter,
+        'status_filter': status_filter,
+    }
+    
+    return render(request, 'admin/users/index.html', context)
+
+
+@staff_member_required
+def admin_user_detail(request, user_id):
+    """View user details"""
+    user = get_object_or_404(User, id=user_id)
+    
+    # Get user's orders
+    user_orders = Order.objects.filter(user=user).order_by('-created_at')[:10]
+    
+    # Get user's cart items
+    cart_items = CartItem.objects.filter(user=user)
+    
+    # Calculate statistics
+    total_orders = Order.objects.filter(user=user).count()
+    total_spent = Order.objects.filter(
+        user=user, 
+        payment_status='paid'
+    ).aggregate(total=Sum('total_amount'))['total'] or 0
+    
+    context = {
+        'user_detail': user,
+        'user_orders': user_orders,
+        'cart_items': cart_items,
+        'total_orders': total_orders,
+        'total_spent': total_spent,
+    }
+    
+    return render(request, 'admin/users/user_detail.html', context)
+
+
+@staff_member_required
+def admin_edit_user(request, user_id):
+    """Edit user details"""
+    user = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        # Update user information
+        user.username = request.POST.get('username', user.username)
+        user.email = request.POST.get('email', user.email)
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.is_active = request.POST.get('is_active') == 'on'
+        user.is_staff = request.POST.get('is_staff') == 'on'
+        
+        try:
+            user.save()
+            messages.success(request, f'User {user.username} updated successfully!')
+            return redirect('admin_dashboard:user_detail', user_id=user.id)
+        except Exception as e:
+            messages.error(request, f'Error updating user: {str(e)}')
+    
+    context = {
+        'user_to_edit': user,
+    }
+    
+    return render(request, 'admin/users/user_edit.html', context)
+
+
+@staff_member_required
+def admin_toggle_user_status(request, user_id):
+    """Toggle user active status"""
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        
+        # Don't allow deactivating superusers
+        if user.is_superuser:
+            messages.error(request, 'Cannot deactivate superuser accounts')
+            return redirect('admin_dashboard:users')
+        
+        user.is_active = not user.is_active
+        user.save()
+        
+        status = 'activated' if user.is_active else 'deactivated'
+        messages.success(request, f'User {user.username} has been {status}')
+    
+    return redirect('admin_dashboard:users')
+
+
+class CustomUserCreationForm(forms.ModelForm):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'is_staff', 'is_active']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
+
+@staff_member_required
+def create_user(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, f'User {user.username} has been created successfully!')
+            return redirect('admin_dashboard:users')
+    else:
+        form = CustomUserCreationForm()
+    
+    context = {
+        'form': form,
+        'page_title': 'Create User'
+    }
+    return render(request, 'admin/users/user_create.html', context)

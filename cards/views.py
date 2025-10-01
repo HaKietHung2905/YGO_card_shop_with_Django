@@ -8,6 +8,9 @@ from django.http import QueryDict
 from .models import Card, CardSet, CartItem, OtherProduct, Order, OrderItem
 from django.db import transaction
 from decimal import Decimal
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
 
 def home(request):
     """Enhanced homepage view with featured cards and other products"""
@@ -468,3 +471,4 @@ def cancel_order(request, order_id):
         messages.error(request, 'This order cannot be cancelled.')
     
     return redirect('order_detail', order_id=order_id)
+
