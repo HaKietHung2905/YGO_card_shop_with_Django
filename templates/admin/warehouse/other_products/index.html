@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Other Products Management - Yu-Gi-Oh Admin{% endblock %}
+{% block title %}Quản Lý Sản Phẩm Khác - Yu-Gi-Oh Admin{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -114,20 +114,20 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-cube me-3"></i>Other Products Management
+                        <i class="fas fa-cube me-3"></i>Quản Lý Sản Phẩm Khác
                     </h1>
-                    <p class="mb-0 opacity-75">Manage accessories, merchandise, and non-card products</p>
+                    <p class="mb-0 opacity-75">Quản lý phụ kiện, hàng hóa và sản phẩm không phải thẻ bài</p>
                     <nav aria-label="breadcrumb" class="mt-2">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}" class="text-light">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}" class="text-light">Warehouse</a></li>
-                            <li class="breadcrumb-item active text-light" aria-current="page">Other Products</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}" class="text-light">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}" class="text-light">Kho Hàng</a></li>
+                            <li class="breadcrumb-item active text-light" aria-current="page">Sản Phẩm Khác</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-md-4 text-end">
                     <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="fas fa-plus me-2"></i>Add New Product
+                        <i class="fas fa-plus me-2"></i>Thêm Sản Phẩm Mới
                     </button>
                 </div>
             </div>
@@ -154,7 +154,7 @@
                                 <i class="fas fa-cube fa-2x"></i>
                             </div>
                             <h4 class="mb-1">{{ total_products }}</h4>
-                            <p class="text-muted mb-0">Total Products</p>
+                            <p class="text-muted mb-0">Tổng Sản Phẩm</p>
                         </div>
                     </div>
                 </div>
@@ -165,7 +165,7 @@
                                 <i class="fas fa-check-circle fa-2x"></i>
                             </div>
                             <h4 class="mb-1">{{ products_in_stock }}</h4>
-                            <p class="text-muted mb-0">In Stock</p>
+                            <p class="text-muted mb-0">Còn Hàng</p>
                         </div>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                                 <i class="fas fa-exclamation-triangle fa-2x"></i>
                             </div>
                             <h4 class="mb-1">{{ low_stock_products }}</h4>
-                            <p class="text-muted mb-0">Low Stock</p>
+                            <p class="text-muted mb-0">Còn Ít</p>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                                 <i class="fas fa-times-circle fa-2x"></i>
                             </div>
                             <h4 class="mb-1">{{ out_of_stock }}</h4>
-                            <p class="text-muted mb-0">Out of Stock</p>
+                            <p class="text-muted mb-0">Hết Hàng</p>
                         </div>
                     </div>
                 </div>
@@ -197,14 +197,14 @@
             <div class="filter-section">
                 <form method="GET" class="row g-3">
                     <div class="col-md-3">
-                        <label class="form-label fw-bold">Search</label>
+                        <label class="form-label fw-bold">Tìm Kiếm</label>
                         <input type="text" name="q" class="form-control" 
-                               placeholder="Search products..." value="{{ search_query }}">
+                               placeholder="Tìm sản phẩm..." value="{{ search_query }}">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Product Type</label>
+                        <label class="form-label fw-bold">Loại Sản Phẩm</label>
                         <select name="product_type" class="form-select">
-                            <option value="">All Types</option>
+                            <option value="">Tất Cả Loại</option>
                             {% for value, display in product_type_choices %}
                                 <option value="{{ value }}" {% if product_type_filter == value %}selected{% endif %}>
                                     {{ display }}
@@ -213,31 +213,31 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Stock Status</label>
+                        <label class="form-label fw-bold">Trạng Thái Kho</label>
                         <select name="stock" class="form-select">
-                            <option value="">All Stock</option>
-                            <option value="in" {% if stock_filter == 'in' %}selected{% endif %}>In Stock</option>
-                            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Low Stock (≤5)</option>
-                            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Out of Stock</option>
+                            <option value="">Tất Cả</option>
+                            <option value="in" {% if stock_filter == 'in' %}selected{% endif %}>Còn Hàng</option>
+                            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Còn Ít (≤5)</option>
+                            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Hết Hàng</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Sort</label>
+                        <label class="form-label fw-bold">Sắp Xếp</label>
                         <select name="order_by" class="form-select">
-                            <option value="name" {% if order_by == 'name' %}selected{% endif %}>Name A-Z</option>
-                            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Name Z-A</option>
-                            <option value="price" {% if order_by == 'price' %}selected{% endif %}>Price Low-High</option>
-                            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>Price High-Low</option>
-                            <option value="stock_quantity" {% if order_by == 'stock_quantity' %}selected{% endif %}>Stock Low-High</option>
-                            <option value="-stock_quantity" {% if order_by == '-stock_quantity' %}selected{% endif %}>Stock High-Low</option>
-                            <option value="-created_at" {% if order_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                            <option value="name" {% if order_by == 'name' %}selected{% endif %}>Tên A-Z</option>
+                            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Tên Z-A</option>
+                            <option value="price" {% if order_by == 'price' %}selected{% endif %}>Giá Thấp-Cao</option>
+                            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>Giá Cao-Thấp</option>
+                            <option value="stock_quantity" {% if order_by == 'stock_quantity' %}selected{% endif %}>Kho Thấp-Cao</option>
+                            <option value="-stock_quantity" {% if order_by == '-stock_quantity' %}selected{% endif %}>Kho Cao-Thấp</option>
+                            <option value="-created_at" {% if order_by == '-created_at' %}selected{% endif %}>Mới Nhất</option>
                         </select>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label fw-bold">&nbsp;</label>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary-custom">
-                                <i class="fas fa-search me-2"></i>Filter
+                                <i class="fas fa-search me-2"></i>Lọc
                             </button>
                         </div>
                     </div>
@@ -250,10 +250,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
-                            <h5>Add New Product</h5>
-                            <p class="text-muted">Add accessories and merchandise</p>
+                            <h5>Thêm Sản Phẩm Mới</h5>
+                            <p class="text-muted">Thêm phụ kiện và hàng hóa</p>
                             <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                Add Product
+                                Thêm Sản Phẩm
                             </button>
                         </div>
                     </div>
@@ -262,10 +262,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-boxes fa-3x text-success mb-3"></i>
-                            <h5>Manage Cards</h5>
-                            <p class="text-muted">Manage card inventory</p>
+                            <h5>Quản Lý Thẻ Bài</h5>
+                            <p class="text-muted">Quản lý kho thẻ bài</p>
                             <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-success">
-                                Card Inventory
+                                Kho Thẻ Bài
                             </a>
                         </div>
                     </div>
@@ -274,10 +274,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
-                            <h5>View Reports</h5>
-                            <p class="text-muted">Analyze product performance</p>
+                            <h5>Xem Báo Cáo</h5>
+                            <p class="text-muted">Phân tích hiệu suất sản phẩm</p>
                             <a href="{% url 'admin_dashboard:analytics' %}" class="btn btn-warning">
-                                Analytics
+                                Phân Tích
                             </a>
                         </div>
                     </div>
@@ -288,8 +288,8 @@
             <div class="card-custom">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Product Inventory
-                        <small class="text-muted">({{ products.paginator.count }} total)</small>
+                        <i class="fas fa-list me-2"></i>Kho Sản Phẩm
+                        <small class="text-muted">({{ products.paginator.count }} tổng)</small>
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -297,14 +297,14 @@
                         <table class="table table-custom table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
-                                    <th>Product</th>
-                                    <th>Type</th>
-                                    <th>Brand</th>
+                                    <th>Hình Ảnh</th>
+                                    <th>Sản Phẩm</th>
+                                    <th>Loại</th>
+                                    <th>Thương Hiệu</th>
                                     <th>SKU</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th>Actions</th>
+                                    <th>Giá</th>
+                                    <th>Kho</th>
+                                    <th>Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -332,25 +332,25 @@
                                     <td>
                                         <span class="sku-badge">{{ product.sku }}</span>
                                     </td>
-                                    <td><strong>${{ product.price }}</strong></td>
+                                    <td><strong>{{ product.price }}đ</strong></td>
                                     <td>
                                         <span class="stock-badge {% if product.stock_quantity > 10 %}stock-high{% elif product.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ product.stock_quantity }}
                                         </span>
                                         <button class="btn btn-sm btn-outline-primary ms-1" 
                                                 onclick="editStock({{ product.id }}, {{ product.stock_quantity }})"
-                                                title="Edit Stock">
+                                                title="Chỉnh Sửa Kho">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-sm btn-outline-primary" 
-                                                    onclick="editProduct({{ product.id }})" title="Edit">
+                                                    onclick="editProduct({{ product.id }})" title="Chỉnh Sửa">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button class="btn btn-sm btn-outline-danger" 
-                                                    onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')" title="Delete">
+                                                    onclick="confirmDelete({{ product.id }}, '{{ product.name|escapejs }}')" title="Xóa">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -360,9 +360,9 @@
                                 <tr>
                                     <td colspan="8" class="text-center py-5">
                                         <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">No products found matching your criteria.</p>
+                                        <p class="text-muted">Không tìm thấy sản phẩm nào phù hợp với tiêu chí.</p>
                                         <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                            Add Your First Product
+                                            Thêm Sản Phẩm Đầu Tiên
                                         </button>
                                     </td>
                                 </tr>
@@ -375,11 +375,11 @@
 
             <!-- Pagination -->
             {% if products.has_other_pages %}
-            <nav aria-label="Product pagination" class="mt-4">
+            <nav aria-label="Phân trang sản phẩm" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if products.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ products.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Previous</a>
+                            <a class="page-link" href="?page={{ products.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Trước</a>
                         </li>
                     {% endif %}
                     
@@ -397,7 +397,7 @@
                     
                     {% if products.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ products.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Next</a>
+                            <a class="page-link" href="?page={{ products.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if product_type_filter %}&product_type={{ product_type_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Sau</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -412,9 +412,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addProductModalLabel">
-                        <i class="fas fa-plus me-2"></i>Add New Product
+                        <i class="fas fa-plus me-2"></i>Thêm Sản Phẩm Mới
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <form method="POST" enctype="multipart/form-data" id="addProductForm">
                     {% csrf_token %}
@@ -422,60 +422,60 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Name *</label>
-                                    <input type="text" class="form-control" name="name" required placeholder="Product name">
+                                    <label class="form-label fw-bold">Tên Sản Phẩm *</label>
+                                    <input type="text" class="form-control" name="name" required placeholder="Tên sản phẩm">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Type *</label>
+                                    <label class="form-label fw-bold">Loại Sản Phẩm *</label>
                                     <select class="form-select" name="product_type" required>
-                                        <option value="">Select type...</option>
+                                        <option value="">Chọn loại...</option>
                                         {% for value, display in product_type_choices %}
                                             <option value="{{ value }}">{{ display }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Brand</label>
-                                    <input type="text" class="form-control" name="brand" placeholder="Brand name">
+                                    <label class="form-label fw-bold">Thương Hiệu</label>
+                                    <input type="text" class="form-control" name="brand" placeholder="Tên thương hiệu">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">SKU *</label>
-                                    <input type="text" class="form-control" name="sku" required placeholder="Product SKU" style="text-transform: uppercase;">
+                                    <input type="text" class="form-control" name="sku" required placeholder="SKU sản phẩm" style="text-transform: uppercase;">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Price ($) *</label>
+                                    <label class="form-label fw-bold">Giá (đ) *</label>
                                     <input type="number" class="form-control" name="price" required step="0.01" min="0">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Stock Quantity *</label>
+                                    <label class="form-label fw-bold">Số Lượng Kho *</label>
                                     <input type="number" class="form-control" name="stock_quantity" required min="0" value="0">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Condition</label>
+                                    <label class="form-label fw-bold">Tình Trạng</label>
                                     <select class="form-select" name="condition">
-                                        <option value="new">New</option>
-                                        <option value="opened">Opened</option>
-                                        <option value="used">Used</option>
-                                        <option value="damaged">Damaged</option>
+                                        <option value="new">Mới</option>
+                                        <option value="opened">Đã Mở</option>
+                                        <option value="used">Đã Sử Dụng</option>
+                                        <option value="damaged">Hư Hỏng</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Image</label>
+                                    <label class="form-label fw-bold">Hình Ảnh Sản Phẩm</label>
                                     <input type="file" class="form-control" name="image" accept="image/*">
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Description</label>
-                            <textarea class="form-control" name="description" rows="3" placeholder="Product description..."></textarea>
+                            <label class="form-label fw-bold">Mô Tả</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Mô tả sản phẩm..."></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary-custom">
-                            <i class="fas fa-save me-2"></i>Create Product
+                            <i class="fas fa-save me-2"></i>Tạo Sản Phẩm
                         </button>
                     </div>
                 </form>
@@ -489,9 +489,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editProductModalLabel">
-                        <i class="fas fa-edit me-2"></i>Edit Product
+                        <i class="fas fa-edit me-2"></i>Chỉnh Sửa Sản Phẩm
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <form id="editProductForm">
                     {% csrf_token %}
@@ -500,11 +500,11 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Name *</label>
+                                    <label class="form-label fw-bold">Tên Sản Phẩm *</label>
                                     <input type="text" class="form-control" name="name" id="editProductName" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Type *</label>
+                                    <label class="form-label fw-bold">Loại Sản Phẩm *</label>
                                     <select class="form-select" name="product_type" id="editProductType" required>
                                         {% for value, display in product_type_choices %}
                                             <option value="{{ value }}">{{ display }}</option>
@@ -512,7 +512,7 @@
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Brand</label>
+                                    <label class="form-label fw-bold">Thương Hiệu</label>
                                     <input type="text" class="form-control" name="brand" id="editProductBrand">
                                 </div>
                                 <div class="mb-3">
@@ -522,38 +522,38 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Price ($) *</label>
+                                    <label class="form-label fw-bold">Giá (đ) *</label>
                                     <input type="number" class="form-control" name="price" id="editProductPrice" required step="0.01" min="0">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Stock Quantity *</label>
+                                    <label class="form-label fw-bold">Số Lượng Kho *</label>
                                     <input type="number" class="form-control" name="stock_quantity" id="editProductStock" required min="0">
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Condition</label>
+                                    <label class="form-label fw-bold">Tình Trạng</label>
                                     <select class="form-select" name="condition" id="editProductCondition">
-                                        <option value="new">New</option>
-                                        <option value="opened">Opened</option>
-                                        <option value="used">Used</option>
-                                        <option value="damaged">Damaged</option>
+                                        <option value="new">Mới</option>
+                                        <option value="opened">Đã Mở</option>
+                                        <option value="used">Đã Sử Dụng</option>
+                                        <option value="damaged">Hư Hỏng</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Product Image</label>
+                                    <label class="form-label fw-bold">Hình Ảnh Sản Phẩm</label>
                                     <input type="file" class="form-control" name="image" accept="image/*">
-                                    <small class="text-muted">Leave empty to keep current image</small>
+                                    <small class="text-muted">Để trống để giữ hình ảnh hiện tại</small>
                                 </div>
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Description</label>
+                            <label class="form-label fw-bold">Mô Tả</label>
                             <textarea class="form-control" name="description" id="editProductDescription" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="button" class="btn btn-primary-custom" onclick="updateProduct()">
-                            <i class="fas fa-save me-2"></i>Update Product
+                            <i class="fas fa-save me-2"></i>Cập Nhật Sản Phẩm
                         </button>
                     </div>
                 </form>
@@ -566,23 +566,23 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="stockEditModalLabel">Edit Stock</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="stockEditModalLabel">Chỉnh Sửa Kho</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body">
                     <form id="stockEditForm">
                         {% csrf_token %}
                         <input type="hidden" id="stockProductId" name="product_id">
                         <div class="mb-3">
-                            <label for="stockQuantity" class="form-label fw-bold">Stock Quantity</label>
+                            <label for="stockQuantity" class="form-label fw-bold">Số Lượng Kho</label>
                             <input type="number" class="form-control" id="stockQuantity" name="stock_quantity" min="0" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="button" class="btn btn-primary-custom" onclick="updateStock()">
-                        <i class="fas fa-save me-2"></i>Update Stock
+                        <i class="fas fa-save me-2"></i>Cập Nhật Kho
                     </button>
                 </div>
             </div>
@@ -607,7 +607,7 @@
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalText = submitBtn.innerHTML;
                 
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Creating...';
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang tạo...';
                 submitBtn.disabled = true;
                 
                 fetch('{% url "admin_dashboard:create_other_product" %}', {
@@ -628,8 +628,8 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Network error occurred. Please try again.');
+                    console.error('Lỗi:', error);
+                    showAlert('danger', 'Xảy ra lỗi mạng. Vui lòng thử lại.');
                 })
                 .finally(() => {
                     submitBtn.innerHTML = originalText;
@@ -660,8 +660,8 @@
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Error loading product data.');
+                    console.error('Lỗi:', error);
+                    showAlert('danger', 'Lỗi khi tải dữ liệu sản phẩm.');
                 });
         }
 
@@ -688,13 +688,13 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showAlert('danger', 'An error occurred while updating the product.');
+                console.error('Lỗi:', error);
+                showAlert('danger', 'Đã xảy ra lỗi khi cập nhật sản phẩm.');
             });
         }
 
         function confirmDelete(productId, productName) {
-            if (confirm(`Are you sure you want to delete the product "${productName}"? This action cannot be undone.`)) {
+            if (confirm(`Bạn có chắc chắn muốn xóa sản phẩm "${productName}"? Hành động này không thể hoàn tác.`)) {
                 deleteProduct(productId);
             }
         }
@@ -716,8 +716,8 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showAlert('danger', 'An error occurred while deleting the product.');
+                console.error('Lỗi:', error);
+                showAlert('danger', 'Đã xảy ra lỗi khi xóa sản phẩm.');
             });
         }
 
@@ -745,12 +745,12 @@
                     bootstrap.Modal.getInstance(document.getElementById('stockEditModal')).hide();
                     location.reload();
                 } else {
-                    showAlert('danger', 'Error: ' + data.message);
+                    showAlert('danger', 'Lỗi: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showAlert('danger', 'An error occurred while updating stock.');
+                console.error('Lỗi:', error);
+                showAlert('danger', 'Đã xảy ra lỗi khi cập nhật kho.');
             });
         }
 

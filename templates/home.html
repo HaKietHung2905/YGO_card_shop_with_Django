@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yu-Gi-Oh Card Shop - Premium Trading Cards</title>
+    <title>Cửa Hàng Thẻ Bài Yu-Gi-Oh - Thẻ Bài Giao Dịch Cao Cấp</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,24 +32,24 @@
                 <div class="col-lg-6">
                     <div class="hero-content text-white">
                         <h1 class="hero-title" data-aos="fade-up">
-                            <span class="text-gradient">DUEL</span><br>
-                            <span class="text-outline">DESTINY</span>
+                            <span class="text-gradient">ĐỐI ĐẦU</span><br>
+                            <span class="text-outline">VẬN MỆNH</span>
                         </h1>
                         <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
-                            Master the ultimate trading card experience with authentic Yu-Gi-Oh cards
+                            Làm chủ trải nghiệm thẻ bài giao dịch tối thượng với thẻ Yu-Gi-Oh chính hãng
                         </p>
                         <div class="hero-buttons d-flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="400">
                             {% if user.is_authenticated %}
                                 <a href="{% url 'card_list' %}" class="btn btn-hero btn-primary-hero">
-                                    <i class="fas fa-search me-2"></i>Browse Cards
+                                    <i class="fas fa-search me-2"></i>Duyệt Thẻ Bài
                                 </a>
                             {% else %}
                                 <a href="{% url 'signup' %}" class="btn btn-hero btn-primary-hero">
-                                    <i class="fas fa-user-plus me-2"></i>Start Dueling
+                                    <i class="fas fa-user-plus me-2"></i>Bắt Đầu Đấu Thẻ
                                 </a>
                             {% endif %}
                             <a href="{% url 'card_list' %}" class="btn btn-hero btn-outline-hero">
-                                <i class="fas fa-search me-2"></i>Browse Cards
+                                <i class="fas fa-search me-2"></i>Duyệt Thẻ Bài
                             </a>
                         </div>
                     </div>
@@ -60,11 +60,11 @@
                             <div class="yugioh-card">
                                 <div class="card-shine"></div>
                                 <div class="card-content p-4 text-center">
-                                    <h5 class="text-warning fw-bold mb-3">Blue-Eyes White Dragon</h5>
-                                    <p class="small text-light mb-3">The ultimate mythical beast</p>
+                                    <h5 class="text-warning fw-bold mb-3">Rồng Trắng Mắt Xanh</h5>
+                                    <p class="small text-light mb-3">Quái thú huyền thoại tối thượng</p>
                                     <div class="card-stats">
-                                        <span class="badge bg-warning me-2">ATK: 3000</span>
-                                        <span class="badge bg-info">DEF: 2500</span>
+                                        <span class="badge bg-warning me-2">TẤN: 3000</span>
+                                        <span class="badge bg-info">THỦ: 2500</span>
                                     </div>
                                 </div>
                             </div>
@@ -73,11 +73,11 @@
                             <div class="yugioh-card">
                                 <div class="card-shine"></div>
                                 <div class="card-content p-4 text-center">
-                                    <h5 class="text-danger fw-bold mb-3">Dark Magician</h5>
-                                    <p class="small text-light mb-3">Master of dark magic</p>
+                                    <h5 class="text-danger fw-bold mb-3">Pháp Sư Bóng Tối</h5>
+                                    <p class="small text-light mb-3">Bậc thầy ma thuật bóng tối</p>
                                     <div class="card-stats">
-                                        <span class="badge bg-warning me-2">ATK: 2500</span>
-                                        <span class="badge bg-info">DEF: 2100</span>
+                                        <span class="badge bg-warning me-2">TẤN: 2500</span>
+                                        <span class="badge bg-info">THỦ: 2100</span>
                                     </div>
                                 </div>
                             </div>
@@ -87,10 +87,10 @@
                                 <div class="card-shine"></div>
                                 <div class="card-content p-4 text-center">
                                     <h5 class="text-success fw-bold mb-3">Exodia</h5>
-                                    <p class="small text-light mb-3">The forbidden one</p>
+                                    <p class="small text-light mb-3">Kẻ bị cấm đoán</p>
                                     <div class="card-stats">
-                                        <span class="badge bg-warning me-2">ATK: ∞</span>
-                                        <span class="badge bg-info">DEF: ∞</span>
+                                        <span class="badge bg-warning me-2">TẤN: ∞</span>
+                                        <span class="badge bg-info">THỦ: ∞</span>
                                     </div>
                                 </div>
                             </div>
@@ -109,8 +109,8 @@
         <div class="container">
             <div class="row text-center mb-5">
                 <div class="col-12">
-                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">Why Choose Our Shop?</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">The ultimate destination for Yu-Gi-Oh collectors and duelists</p>
+                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">Tại Sao Chọn Cửa Hàng Của Chúng Tôi?</h2>
+                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">Điểm đến tối thượng cho người sưu tầm và đấu thủ Yu-Gi-Oh</p>
                 </div>
             </div>
             <div class="row g-4">
@@ -119,8 +119,8 @@
                         <div class="feature-icon icon-1">
                             <i class="fas fa-certificate"></i>
                         </div>
-                        <h4 class="fw-bold mb-3">100% Authentic</h4>
-                        <p class="text-muted">Every card is verified authentic. No fakes, no compromises. Your collection deserves the real deal.</p>
+                        <h4 class="fw-bold mb-3">100% Chính Hãng</h4>
+                        <p class="text-muted">Mọi thẻ bài đều được xác minh chính hãng. Không hàng giả, không thỏa hiệp. Bộ sưu tập của bạn xứng đáng với hàng thật.</p>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
@@ -128,8 +128,8 @@
                         <div class="feature-icon icon-2">
                             <i class="fas fa-shipping-fast"></i>
                         </div>
-                        <h4 class="fw-bold mb-3">Lightning Fast Shipping</h4>
-                        <p class="text-muted">Get your cards faster than summoning Blue-Eyes. Express delivery available worldwide.</p>
+                        <h4 class="fw-bold mb-3">Giao Hàng Siêu Tốc</h4>
+                        <p class="text-muted">Nhận thẻ bài nhanh hơn cả việc triệu hồi Rồng Mắt Xanh. Giao hàng nhanh có sẵn toàn cầu.</p>
                     </div>
                 </div>
                 <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
@@ -137,8 +137,8 @@
                         <div class="feature-icon icon-3">
                             <i class="fas fa-star"></i>
                         </div>
-                        <h4 class="fw-bold mb-3">Rare Collections</h4>
-                        <p class="text-muted">Exclusive access to the rarest cards. From vintage classics to latest releases.</p>
+                        <h4 class="fw-bold mb-3">Bộ Sưu Tập Hiếm</h4>
+                        <p class="text-muted">Truy cập độc quyền vào những thẻ bài hiếm nhất. Từ kinh điển cổ điển đến phát hành mới nhất.</p>
                     </div>
                 </div>
             </div>
@@ -150,8 +150,8 @@
         <div class="container">
             <div class="row mb-5">
                 <div class="col-12 text-center">
-                    <h2 class="display-4 fw-bold mb-4 text-white" data-aos="fade-up">Featured Cards</h2>
-                    <p class="lead text-light" data-aos="fade-up" data-aos-delay="200">Discover the most sought-after cards in our collection</p>
+                    <h2 class="display-4 fw-bold mb-4 text-white" data-aos="fade-up">Thẻ Bài Nổi Bật</h2>
+                    <p class="lead text-light" data-aos="fade-up" data-aos-delay="200">Khám phá những thẻ bài được săn đón nhất trong bộ sưu tập của chúng tôi</p>
                 </div>
             </div>
             <div class="row g-4">
@@ -174,11 +174,11 @@
                                 {% endif %}
                                 <div class="card-overlay">
                                     <div class="card-actions">
-                                        <a href="{% url 'card_detail' card.pk %}" class="btn btn-light btn-sm">View Details</a>
+                                        <a href="{% url 'card_detail' card.pk %}" class="btn btn-light btn-sm">Xem Chi Tiết</a>
                                         {% if user.is_authenticated and card.is_in_stock %}
-                                            <a href="{% url 'add_to_cart' card.pk %}" class="btn btn-primary btn-sm">Add to Cart</a>
+                                            <a href="{% url 'add_to_cart' card.pk %}" class="btn btn-primary btn-sm">Thêm Vào Giỏ</a>
                                         {% elif not user.is_authenticated %}
-                                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login</a>
+                                            <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Đăng Nhập</a>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -190,12 +190,12 @@
                                     <span class="badge bg-outline-light">{{ card.get_card_type_display }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h4 text-success mb-0">${{ card.price }}</span>
+                                    <span class="h4 text-success mb-0">{{ card.price }}đ</span>
                                     <small class="text-muted">
                                         {% if card.is_in_stock %}
-                                            {{ card.stock_quantity }} in stock
+                                            {{ card.stock_quantity }} còn hàng
                                         {% else %}
-                                            Out of stock
+                                            Hết hàng
                                         {% endif %}
                                     </small>
                                 </div>
@@ -212,19 +212,19 @@
                                 </div>
                                 <div class="card-overlay">
                                     <div class="card-actions">
-                                        <a href="{% url 'card_list' %}" class="btn btn-light btn-sm">Browse Cards</a>
+                                        <a href="{% url 'card_list' %}" class="btn btn-light btn-sm">Duyệt Thẻ Bài</a>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-showcase-body">
-                                <h5 class="fw-bold mb-2">Blue-Eyes White Dragon</h5>
+                                <h5 class="fw-bold mb-2">Rồng Trắng Mắt Xanh</h5>
                                 <div class="mb-3">
-                                    <span class="badge bg-warning me-2">Ultra Rare</span>
-                                    <span class="badge bg-outline-light">Monster</span>
+                                    <span class="badge bg-warning me-2">Cực Hiếm</span>
+                                    <span class="badge bg-outline-light">Quái Thú</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h4 text-success mb-0">$299.99</span>
-                                    <small class="text-muted">5 in stock</small>
+                                    <span class="h4 text-success mb-0">299.999đ</span>
+                                    <small class="text-muted">5 còn hàng</small>
                                 </div>
                             </div>
                         </div>
@@ -233,7 +233,7 @@
             </div>
             <div class="text-center mt-5" data-aos="fade-up">
                 <a href="{% url 'card_list' %}" class="btn btn-outline-light btn-lg px-5">
-                    <i class="fas fa-eye me-2"></i>View All Cards
+                    <i class="fas fa-eye me-2"></i>Xem Tất Cả Thẻ Bài
                 </a>
             </div>
         </div>
@@ -244,8 +244,8 @@
         <div class="container">
             <div class="row mb-5">
                 <div class="col-12 text-center">
-                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">Latest Card Sets</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">Discover the newest additions to our collection</p>
+                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">Bộ Thẻ Mới Nhất</h2>
+                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">Khám phá những bổ sung mới nhất vào bộ sưu tập của chúng tôi</p>
                 </div>
             </div>
             <div class="row g-4">
@@ -255,11 +255,11 @@
                             <div class="set-card-header text-center">
                                 <h4 class="fw-bold mb-2">{{ card_set.name }}</h4>
                                 <p class="mb-3">{{ card_set.code }}</p>
-                                <small>Released: {{ card_set.release_date|date:"M Y" }}</small>
+                                <small>Phát hành: {{ card_set.release_date|date:"M Y" }}</small>
                             </div>
                             <div class="set-card-footer">
                                 <a href="{% url 'card_list' %}?set={{ card_set.id }}" class="btn btn-primary w-100">
-                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                    <i class="fas fa-box-open me-2"></i>Khám Phá Bộ Thẻ
                                 </a>
                             </div>
                         </div>
@@ -271,11 +271,11 @@
                             <div class="set-card-header text-center">
                                 <h4 class="fw-bold mb-2">Photon Hypernova</h4>
                                 <p class="mb-3">POTE</p>
-                                <small>Released: Nov 2024</small>
+                                <small>Phát hành: Tháng 11 2024</small>
                             </div>
                             <div class="set-card-footer">
                                 <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
-                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                    <i class="fas fa-box-open me-2"></i>Khám Phá Bộ Thẻ
                                 </a>
                             </div>
                         </div>
@@ -285,11 +285,11 @@
                             <div class="set-card-header text-center">
                                 <h4 class="fw-bold mb-2">Darkwing Blast</h4>
                                 <p class="mb-3">DAMA</p>
-                                <small>Released: Oct 2024</small>
+                                <small>Phát hành: Tháng 10 2024</small>
                             </div>
                             <div class="set-card-footer">
                                 <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
-                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                    <i class="fas fa-box-open me-2"></i>Khám Phá Bộ Thẻ
                                 </a>
                             </div>
                         </div>
@@ -299,11 +299,11 @@
                             <div class="set-card-header text-center">
                                 <h4 class="fw-bold mb-2">Power of the Elements</h4>
                                 <p class="mb-3">POTE</p>
-                                <small>Released: Sep 2024</small>
+                                <small>Phát hành: Tháng 9 2024</small>
                             </div>
                             <div class="set-card-footer">
                                 <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
-                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                    <i class="fas fa-box-open me-2"></i>Khám Phá Bộ Thẻ
                                 </a>
                             </div>
                         </div>
@@ -313,11 +313,11 @@
                             <div class="set-card-header text-center">
                                 <h4 class="fw-bold mb-2">Tactical Masters</h4>
                                 <p class="mb-3">TAMA</p>
-                                <small>Released: Aug 2024</small>
+                                <small>Phát hành: Tháng 8 2024</small>
                             </div>
                             <div class="set-card-footer">
                                 <a href="{% url 'card_list' %}" class="btn btn-primary w-100">
-                                    <i class="fas fa-box-open me-2"></i>Explore Set
+                                    <i class="fas fa-box-open me-2"></i>Khám Phá Bộ Thẻ
                                 </a>
                             </div>
                         </div>
@@ -334,25 +334,25 @@
                 <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="100">
                     <div class="stat-item">
                         <h2 class="display-4 fw-bold text-warning mb-2" data-counter="10000">0</h2>
-                        <p class="lead">Cards Available</p>
+                        <p class="lead">Thẻ Bài Có Sẵn</p>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="200">
                     <div class="stat-item">
                         <h2 class="display-4 fw-bold text-success mb-2" data-counter="5000">0</h2>
-                        <p class="lead">Happy Duelists</p>
+                        <p class="lead">Đấu Thủ Hài Lòng</p>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="300">
                     <div class="stat-item">
                         <h2 class="display-4 fw-bold text-info mb-2" data-counter="150">0</h2>
-                        <p class="lead">Card Sets</p>
+                        <p class="lead">Bộ Thẻ</p>
                     </div>
                 </div>
                 <div class="col-md-3 col-6 mb-4" data-aos="fade-up" data-aos-delay="400">
                     <div class="stat-item">
                         <h2 class="display-4 fw-bold text-danger mb-2" data-counter="24">0</h2>
-                        <p class="lead">Years Experience</p>
+                        <p class="lead">Năm Kinh Nghiệm</p>
                     </div>
                 </div>
             </div>
@@ -364,8 +364,8 @@
         <div class="container">
             <div class="row mb-5">
                 <div class="col-12 text-center">
-                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">What Duelists Say</h2>
-                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">Join thousands of satisfied customers</p>
+                    <h2 class="display-4 fw-bold mb-4" data-aos="fade-up">Đấu Thủ Nói Gì</h2>
+                    <p class="lead text-muted" data-aos="fade-up" data-aos-delay="200">Tham gia cùng hàng nghìn khách hàng hài lòng</p>
                 </div>
             </div>
             <div class="row g-4">
@@ -378,10 +378,10 @@
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
                         </div>
-                        <p class="mb-4">"Amazing quality cards! Got my Blue-Eyes White Dragon in perfect condition. Fast shipping and great customer service!"</p>
+                        <p class="mb-4">"Thẻ bài chất lượng tuyệt vời! Nhận được Rồng Trắng Mắt Xanh trong tình trạng hoàn hảo. Giao hàng nhanh và dịch vụ khách hàng tuyệt vời!"</p>
                         <div class="testimonial-author">
                             <h6 class="fw-bold mb-0">Yugi Muto</h6>
-                            <small class="text-muted">Professional Duelist</small>
+                            <small class="text-muted">Đấu Thủ Chuyên Nghiệp</small>
                         </div>
                     </div>
                 </div>
@@ -394,10 +394,10 @@
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
                         </div>
-                        <p class="mb-4">"Best card shop ever! Found rare cards I've been looking for years. Authentic and reasonably priced."</p>
+                        <p class="mb-4">"Cửa hàng thẻ bài tốt nhất! Tìm được những thẻ hiếm mà tôi đã tìm kiếm nhiều năm. Chính hãng và giá hợp lý."</p>
                         <div class="testimonial-author">
                             <h6 class="fw-bold mb-0">Kaiba Seto</h6>
-                            <small class="text-muted">CEO & Collector</small>
+                            <small class="text-muted">CEO & Nhà Sưu Tầm</small>
                         </div>
                     </div>
                 </div>
@@ -410,10 +410,10 @@
                             <i class="fas fa-star text-warning"></i>
                             <i class="fas fa-star text-warning"></i>
                         </div>
-                        <p class="mb-4">"Incredible selection and the website is so easy to use. Love the detailed card information and images!"</p>
+                        <p class="mb-4">"Lựa chọn tuyệt vời và website rất dễ sử dụng. Thích thông tin chi tiết và hình ảnh thẻ bài!"</p>
                         <div class="testimonial-author">
                             <h6 class="fw-bold mb-0">Joey Wheeler</h6>
-                            <small class="text-muted">Tournament Player</small>
+                            <small class="text-muted">Tuyển Thủ Giải Đấu</small>
                         </div>
                     </div>
                 </div>
@@ -426,17 +426,17 @@
         <div class="container position-relative">
             <div class="row align-items-center">
                 <div class="col-lg-8" data-aos="fade-right">
-                    <h2 class="display-5 fw-bold mb-3">Ready to Start Your Journey?</h2>
-                    <p class="lead mb-0">Join thousands of duelists who trust us with their collection. Your destiny awaits in the Shadow Realm of amazing cards!</p>
+                    <h2 class="display-5 fw-bold mb-3">Sẵn Sàng Bắt Đầu Hành Trình?</h2>
+                    <p class="lead mb-0">Tham gia cùng hàng nghìn đấu thủ tin tưởng chúng tôi với bộ sưu tập của họ. Vận mệnh của bạn đang chờ đợi trong Vương Quốc Bóng Tối đầy thẻ bài tuyệt vời!</p>
                 </div>
                 <div class="col-lg-4 text-lg-end mt-4 mt-lg-0" data-aos="fade-left">
                     {% if user.is_authenticated %}
                         <a href="{% url 'card_list' %}" class="btn btn-hero btn-light btn-lg px-5 py-3">
-                            <i class="fas fa-search me-2"></i>Browse Cards Now
+                            <i class="fas fa-search me-2"></i>Duyệt Thẻ Ngay
                         </a>
                     {% else %}
                         <a href="{% url 'signup' %}" class="btn btn-hero btn-light btn-lg px-5 py-3">
-                            <i class="fas fa-rocket me-2"></i>Start Dueling Now
+                            <i class="fas fa-rocket me-2"></i>Bắt Đầu Đấu Thẻ Ngay
                         </a>
                     {% endif %}
                 </div>
@@ -450,9 +450,9 @@
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h5 class="fw-bold mb-3">
-                        <i class="fas fa-magic me-2 text-warning"></i>Yu-Gi-Oh Shop
+                        <i class="fas fa-magic me-2 text-warning"></i>Cửa Hàng Yu-Gi-Oh
                     </h5>
-                    <p class="text-muted">Your premier destination for authentic Yu-Gi-Oh trading cards. Serving duelists worldwide since 2000.</p>
+                    <p class="text-muted">Điểm đến hàng đầu của bạn cho thẻ bài Yu-Gi-Oh chính hãng. Phục vụ đấu thủ trên toàn thế giới từ năm 2000.</p>
                     <div class="social-links">
                         <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
                         <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
@@ -461,47 +461,47 @@
                     </div>
                 </div>
                 <div class="col-md-2 mb-4">
-                    <h6 class="fw-bold mb-3">Shop</h6>
+                    <h6 class="fw-bold mb-3">Mua Sắm</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">All Cards</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}?type=monster" class="text-muted text-decoration-none">Monster Cards</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}?type=spell" class="text-muted text-decoration-none">Spell Cards</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}?type=trap" class="text-muted text-decoration-none">Trap Cards</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}?rarity=ultra_rare" class="text-muted text-decoration-none">Rare Cards</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Tất Cả Thẻ Bài</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=monster" class="text-muted text-decoration-none">Thẻ Quái Thú</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=spell" class="text-muted text-decoration-none">Thẻ Phép</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?type=trap" class="text-muted text-decoration-none">Thẻ Bẫy</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}?rarity=ultra_rare" class="text-muted text-decoration-none">Thẻ Hiếm</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
-                    <h6 class="fw-bold mb-3">Sets</h6>
+                    <h6 class="fw-bold mb-3">Bộ Thẻ</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Latest Sets</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Classic Sets</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Booster Packs</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Structure Decks</a></li>
-                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Tin Collections</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Mới Nhất</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Kinh Điển</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Gói Booster</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Cấu Trúc</a></li>
+                        <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Sưu Tập Hộp Thiếc</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
-                    <h6 class="fw-bold mb-3">Support</h6>
+                    <h6 class="fw-bold mb-3">Hỗ Trợ</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Help Center</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Shipping Info</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Returns</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Contact Us</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Track Order</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Trung Tâm Trợ Giúp</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Thông Tin Giao Hàng</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Đổi Trả</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Liên Hệ</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Theo Dõi Đơn Hàng</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 mb-4">
-                    <h6 class="fw-bold mb-3">Account</h6>
+                    <h6 class="fw-bold mb-3">Tài Khoản</h6>
                     <ul class="list-unstyled">
                         {% if user.is_authenticated %}
-                            <li class="mb-2"><a href="{% url 'cart' %}" class="text-muted text-decoration-none">My Cart</a></li>
-                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">My Orders</a></li>
-                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Wishlist</a></li>
-                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Profile</a></li>
-                            <li class="mb-2"><a href="{% url 'logout' %}" class="text-muted text-decoration-none">Logout</a></li>
+                            <li class="mb-2"><a href="{% url 'cart' %}" class="text-muted text-decoration-none">Giỏ Hàng</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Đơn Hàng Của Tôi</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Danh Sách Yêu Thích</a></li>
+                            <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Hồ Sơ</a></li>
+                            <li class="mb-2"><a href="{% url 'logout' %}" class="text-muted text-decoration-none">Đăng Xuất</a></li>
                         {% else %}
-                            <li class="mb-2"><a href="{% url 'login' %}" class="text-muted text-decoration-none">Login</a></li>
-                            <li class="mb-2"><a href="{% url 'signup' %}" class="text-muted text-decoration-none">Register</a></li>
+                            <li class="mb-2"><a href="{% url 'login' %}" class="text-muted text-decoration-none">Đăng Nhập</a></li>
+                            <li class="mb-2"><a href="{% url 'signup' %}" class="text-muted text-decoration-none">Đăng Ký</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -509,11 +509,11 @@
             <hr class="my-4 border-secondary">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0 text-muted">&copy; 2024 Yu-Gi-Oh Card Shop. All rights reserved.</p>
+                    <p class="mb-0 text-muted">&copy; 2024 Cửa Hàng Thẻ Bài Yu-Gi-Oh. Bảo lưu mọi quyền.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none me-3">Terms of Service</a>
+                    <a href="#" class="text-muted text-decoration-none me-3">Chính Sách Bảo Mật</a>
+                    <a href="#" class="text-muted text-decoration-none me-3">Điều Khoản Dịch Vụ</a>
                     <a href="#" class="text-muted text-decoration-none">Cookies</a>
                 </div>
             </div>

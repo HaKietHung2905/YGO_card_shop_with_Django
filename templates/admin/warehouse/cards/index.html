@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load crispy_forms_tags %}
 
-{% block title %}Warehouse Management - Yu-Gi-Oh Admin{% endblock %}
+{% block title %}Quản Lý Kho Hàng - Yu-Gi-Oh Admin{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -91,13 +91,13 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-warehouse me-3"></i>Warehouse Management
+                        <i class="fas fa-warehouse me-3"></i>Quản Lý Kho Hàng
                     </h1>
-                    <p class="mb-0 opacity-75">Manage your card inventory, stock levels, and add new cards</p>
+                    <p class="mb-0 opacity-75">Quản lý kho thẻ bài, mức tồn kho và thêm thẻ mới</p>
                 </div>
                 <div class="col-md-4 text-end">
                     <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCardModal">
-                        <i class="fas fa-plus me-2"></i>Add New Card
+                        <i class="fas fa-plus me-2"></i>Thêm Thẻ Mới
                     </button>
                 </div>
             </div>
@@ -119,14 +119,14 @@
             <div class="filter-section">
                 <form method="GET" class="row g-3">
                     <div class="col-md-3">
-                        <label class="form-label fw-bold">Search</label>
+                        <label class="form-label fw-bold">Tìm Kiếm</label>
                         <input type="text" name="search" class="form-control" 
-                               placeholder="Search cards..." value="{{ search_query }}">
+                               placeholder="Tìm kiếm thẻ..." value="{{ search_query }}">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Card Type</label>
+                        <label class="form-label fw-bold">Loại Thẻ</label>
                         <select name="card_type" class="form-select">
-                            <option value="">All Types</option>
+                            <option value="">Tất Cả Loại</option>
                             {% for value, display in card_type_choices %}
                                 <option value="{{ value }}" {% if card_type_filter == value %}selected{% endif %}>
                                     {{ display }}
@@ -135,9 +135,9 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Rarity</label>
+                        <label class="form-label fw-bold">Độ Hiếm</label>
                         <select name="rarity" class="form-select">
-                            <option value="">All Rarities</option>
+                            <option value="">Tất Cả Độ Hiếm</option>
                             {% for value, display in rarity_choices %}
                                 <option value="{{ value }}" {% if rarity_filter == value %}selected{% endif %}>
                                     {{ display }}
@@ -146,32 +146,32 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Stock Status</label>
+                        <label class="form-label fw-bold">Trạng Thái Kho</label>
                         <select name="stock" class="form-select">
-                            <option value="">All Stock</option>
-                            <option value="in" {% if stock_filter == 'in' %}selected{% endif %}>In Stock</option>
-                            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Low Stock (≤5)</option>
-                            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Out of Stock</option>
+                            <option value="">Tất Cả</option>
+                            <option value="in" {% if stock_filter == 'in' %}selected{% endif %}>Còn Hàng</option>
+                            <option value="low" {% if stock_filter == 'low' %}selected{% endif %}>Còn Ít (≤5)</option>
+                            <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Hết Hàng</option>
                         </select>
                     </div>
                     <div class="col-md-1">
-                        <label class="form-label fw-bold">Sort</label>
+                        <label class="form-label fw-bold">Sắp Xếp</label>
                         <select name="order_by" class="form-select">
-                            <option value="name" {% if order_by == 'name' %}selected{% endif %}>Name A-Z</option>
-                            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Name Z-A</option>
-                            <option value="price" {% if order_by == 'price' %}selected{% endif %}>Price Low-High</option>
-                            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>Price High-Low</option>
-                            <option value="stock_quantity" {% if order_by == 'stock_quantity' %}selected{% endif %}>Stock Low-High</option>
-                            <option value="-stock_quantity" {% if order_by == '-stock_quantity' %}selected{% endif %}>Stock High-Low</option>
-                            <option value="-created_at" {% if order_by == '-created_at' %}selected{% endif %}>Newest First</option>
+                            <option value="name" {% if order_by == 'name' %}selected{% endif %}>Tên A-Z</option>
+                            <option value="-name" {% if order_by == '-name' %}selected{% endif %}>Tên Z-A</option>
+                            <option value="price" {% if order_by == 'price' %}selected{% endif %}>Giá Thấp-Cao</option>
+                            <option value="-price" {% if order_by == '-price' %}selected{% endif %}>Giá Cao-Thấp</option>
+                            <option value="stock_quantity" {% if order_by == 'stock_quantity' %}selected{% endif %}>Kho Thấp-Cao</option>
+                            <option value="-stock_quantity" {% if order_by == '-stock_quantity' %}selected{% endif %}>Kho Cao-Thấp</option>
+                            <option value="-created_at" {% if order_by == '-created_at' %}selected{% endif %}>Mới Nhất</option>
                         </select>
                     </div>
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary-custom me-2">
-                            <i class="fas fa-search me-2"></i>Filter
+                            <i class="fas fa-search me-2"></i>Lọc
                         </button>
                         <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary">
-                            <i class="fas fa-times me-2"></i>Clear
+                            <i class="fas fa-times me-2"></i>Xóa
                         </a>
                     </div>
                 </form>
@@ -183,10 +183,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
-                            <h5>Add Single Card</h5>
-                            <p class="text-muted">Add a new card manually with full details</p>
+                            <h5>Thêm Thẻ Đơn Lẻ</h5>
+                            <p class="text-muted">Thêm thẻ mới thủ công với đầy đủ chi tiết</p>
                             <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardModal">
-                                Add Card
+                                Thêm Thẻ
                             </button>
                         </div>
                     </div>
@@ -195,10 +195,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-layer-group fa-3x text-success mb-3"></i>
-                            <h5>Add Card Set</h5>
-                            <p class="text-muted">Create a new card set before adding cards</p>
+                            <h5>Thêm Bộ Thẻ</h5>
+                            <p class="text-muted">Tạo bộ thẻ mới trước khi thêm thẻ</p>
                             <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
-                                Add Set
+                                Thêm Bộ
                             </button>
                         </div>
                     </div>
@@ -207,10 +207,10 @@
                     <div class="card-custom h-100">
                         <div class="card-body text-center">
                             <i class="fas fa-upload fa-3x text-warning mb-3"></i>
-                            <h5>Bulk Upload</h5>
-                            <p class="text-muted">Upload multiple cards from CSV file</p>
+                            <h5>Tải Hàng Loạt</h5>
+                            <p class="text-muted">Tải nhiều thẻ từ file CSV</p>
                             <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#bulkUploadModal">
-                                Bulk Upload
+                                Tải Hàng Loạt
                             </button>
                         </div>
                     </div>
@@ -221,8 +221,8 @@
             <div class="card-custom">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Card Inventory
-                        <small class="text-muted">({{ cards|length }} cards displayed)</small>
+                        <i class="fas fa-list me-2"></i>Kho Thẻ Bài
+                        <small class="text-muted">({{ cards|length }} thẻ hiển thị)</small>
                     </h5>
                 </div>
                 <div class="card-body p-0">
@@ -230,15 +230,15 @@
                         <table class="table table-custom table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Rarity</th>
-                                    <th>Set</th>
-                                    <th>Condition</th>
-                                    <th>Price</th>
-                                    <th>Stock</th>
-                                    <th>Actions</th>
+                                    <th>Hình Ảnh</th>
+                                    <th>Tên</th>
+                                    <th>Loại</th>
+                                    <th>Độ Hiếm</th>
+                                    <th>Bộ</th>
+                                    <th>Tình Trạng</th>
+                                    <th>Giá</th>
+                                    <th>Kho</th>
+                                    <th>Thao Tác</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -257,7 +257,7 @@
                                         <strong>{{ card.name }}</strong>
                                         {% if card.card_type == 'monster' %}
                                             <br><small class="text-muted">
-                                                ATK: {{ card.attack|default:"?" }} / DEF: {{ card.defense|default:"?" }} / LV: {{ card.level|default:"?" }}
+                                                TẤN: {{ card.attack|default:"?" }} / THỦ: {{ card.defense|default:"?" }} / CẤP: {{ card.level|default:"?" }}
                                             </small>
                                         {% endif %}
                                     </td>
@@ -269,25 +269,25 @@
                                     </td>
                                     <td>{{ card.card_set.name }}</td>
                                     <td>{{ card.get_condition_display }}</td>
-                                    <td><strong>${{ card.price }}</strong></td>
+                                    <td><strong>{{ card.price }}đ</strong></td>
                                     <td>
                                         <span class="stock-badge {% if card.stock_quantity > 10 %}stock-high{% elif card.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ card.stock_quantity }}
                                         </span>
                                         <button class="btn btn-sm btn-outline-primary ms-1" 
                                                 onclick="editStock({{ card.id }}, {{ card.stock_quantity }})"
-                                                title="Edit Stock">
+                                                title="Chỉnh Sửa Kho">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a href="{% url 'admin_dashboard:edit_card' card.id %}" 
-                                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                               class="btn btn-sm btn-outline-primary" title="Chỉnh Sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <button class="btn btn-sm btn-outline-danger" 
-                                                    onclick="confirmDelete({{ card.id }}, '{{ card.name }}')" title="Delete">
+                                                    onclick="confirmDelete({{ card.id }}, '{{ card.name }}')" title="Xóa">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -297,9 +297,9 @@
                                 <tr>
                                     <td colspan="9" class="text-center py-5">
                                         <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">No cards found matching your criteria.</p>
+                                        <p class="text-muted">Không tìm thấy thẻ nào phù hợp với tiêu chí.</p>
                                         <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardModal">
-                                            Add Your First Card
+                                            Thêm Thẻ Đầu Tiên
                                         </button>
                                     </td>
                                 </tr>
@@ -312,11 +312,11 @@
 
             <!-- Pagination -->
             {% if cards.has_other_pages %}
-            <nav aria-label="Card pagination" class="mt-4">
+            <nav aria-label="Phân trang thẻ bài" class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if cards.has_previous %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ cards.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Previous</a>
+                            <a class="page-link" href="?page={{ cards.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Trước</a>
                         </li>
                     {% endif %}
                     
@@ -334,7 +334,7 @@
                     
                     {% if cards.has_next %}
                         <li class="page-item">
-                            <a class="page-link" href="?page={{ cards.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Next</a>
+                            <a class="page-link" href="?page={{ cards.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if card_type_filter %}&card_type={{ card_type_filter }}{% endif %}{% if rarity_filter %}&rarity={{ rarity_filter }}{% endif %}{% if card_set_filter %}&card_set={{ card_set_filter }}{% endif %}{% if stock_filter %}&stock={{ stock_filter }}{% endif %}{% if order_by %}&order_by={{ order_by }}{% endif %}">Sau</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -349,9 +349,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addCardModalLabel">
-                        <i class="fas fa-plus me-2"></i>Add New Card
+                        <i class="fas fa-plus me-2"></i>Thêm Thẻ Mới
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
@@ -359,59 +359,59 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Card Name</label>
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Tên Thẻ</label>
                                     {{ form.name }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Card Type</label>
+                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Loại Thẻ</label>
                                     {{ form.card_type }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Rarity</label>
+                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Độ Hiếm</label>
                                     {{ form.rarity }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Card Set</label>
+                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Bộ Thẻ</label>
                                     {{ form.card_set }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Condition</label>
+                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Tình Trạng</label>
                                     {{ form.condition }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Price ($)</label>
+                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Giá (đ)</label>
                                     {{ form.price }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Stock Quantity</label>
+                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Số Lượng Kho</label>
                                     {{ form.stock_quantity }}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Card Image</label>
+                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Hình Ảnh Thẻ</label>
                                     {{ form.image }}
                                 </div>
                                 
                                 <!-- Monster Stats (shown/hidden based on card type) -->
                                 <div id="monsterStats" style="display: none;">
-                                    <h6 class="fw-bold text-primary">Monster Stats</h6>
+                                    <h6 class="fw-bold text-primary">Chỉ Số Quái Thú</h6>
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Attack</label>
+                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Tấn Công</label>
                                                 {{ form.attack }}
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Defense</label>
+                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Phòng Thủ</label>
                                                 {{ form.defense }}
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.level.id_for_label }}" class="form-label">Level</label>
+                                                <label for="{{ form.level.id_for_label }}" class="form-label">Cấp Độ</label>
                                                 {{ form.level }}
                                             </div>
                                         </div>
@@ -420,14 +420,14 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Mô Tả</label>
                             {{ form.description }}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" name="create_card" class="btn btn-primary-custom">
-                            <i class="fas fa-save me-2"></i>Create Card
+                            <i class="fas fa-save me-2"></i>Tạo Thẻ
                         </button>
                     </div>
                 </form>
@@ -441,31 +441,31 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addCardSetModalLabel">
-                        <i class="fas fa-layer-group me-2"></i>Add New Card Set
+                        <i class="fas fa-layer-group me-2"></i>Thêm Bộ Thẻ Mới
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <form method="POST">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="{{ card_set_form.name.id_for_label }}" class="form-label fw-bold">Set Name</label>
+                            <label for="{{ card_set_form.name.id_for_label }}" class="form-label fw-bold">Tên Bộ</label>
                             {{ card_set_form.name }}
                         </div>
                         <div class="mb-3">
-                            <label for="{{ card_set_form.code.id_for_label }}" class="form-label fw-bold">Set Code</label>
+                            <label for="{{ card_set_form.code.id_for_label }}" class="form-label fw-bold">Mã Bộ</label>
                             {{ card_set_form.code }}
-                            <div class="form-text">Short code for the set (e.g., LOB, MRD, SRL)</div>
+                            <div class="form-text">Mã ngắn cho bộ thẻ (vd: LOB, MRD, SRL)</div>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ card_set_form.release_date.id_for_label }}" class="form-label fw-bold">Release Date</label>
+                            <label for="{{ card_set_form.release_date.id_for_label }}" class="form-label fw-bold">Ngày Phát Hành</label>
                             {{ card_set_form.release_date }}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" name="create_card_set" class="btn btn-success">
-                            <i class="fas fa-save me-2"></i>Create Set
+                            <i class="fas fa-save me-2"></i>Tạo Bộ
                         </button>
                     </div>
                 </form>
@@ -479,39 +479,39 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="bulkUploadModalLabel">
-                        <i class="fas fa-upload me-2"></i>Bulk Upload Cards
+                        <i class="fas fa-upload me-2"></i>Tải Thẻ Hàng Loạt
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="modal-body">
                         <div class="alert alert-info">
-                            <h6><i class="fas fa-info-circle me-2"></i>CSV Format Requirements</h6>
-                            <p>Your CSV file must include these columns:</p>
+                            <h6><i class="fas fa-info-circle me-2"></i>Yêu Cầu Định Dạng CSV</h6>
+                            <p>File CSV của bạn phải bao gồm các cột sau:</p>
                             <ul class="mb-0">
-                                <li><strong>name</strong> - Card name</li>
-                                <li><strong>description</strong> - Card description (optional)</li>
-                                <li><strong>card_type</strong> - monster, spell, or trap</li>
+                                <li><strong>name</strong> - Tên thẻ</li>
+                                <li><strong>description</strong> - Mô tả thẻ (tùy chọn)</li>
+                                <li><strong>card_type</strong> - monster, spell, hoặc trap</li>
                                 <li><strong>rarity</strong> - common, rare, super_rare, ultra_rare, secret_rare, ghost_rare</li>
-                                <li><strong>card_set_code</strong> - Existing set code (e.g., LOB)</li>
+                                <li><strong>card_set_code</strong> - Mã bộ hiện có (vd: LOB)</li>
                                 <li><strong>condition</strong> - mint, near_mint, lightly_played, moderately_played, heavily_played, damaged</li>
-                                <li><strong>price</strong> - Decimal price</li>
-                                <li><strong>stock_quantity</strong> - Integer stock count</li>
-                                <li><strong>attack</strong> - For monster cards only (optional)</li>
-                                <li><strong>defense</strong> - For monster cards only (optional)</li>
-                                <li><strong>level</strong> - For monster cards only (optional)</li>
+                                <li><strong>price</strong> - Giá thập phân</li>
+                                <li><strong>stock_quantity</strong> - Số lượng kho (số nguyên)</li>
+                                <li><strong>attack</strong> - Chỉ dành cho thẻ quái (tùy chọn)</li>
+                                <li><strong>defense</strong> - Chỉ dành cho thẻ quái (tùy chọn)</li>
+                                <li><strong>level</strong> - Chỉ dành cho thẻ quái (tùy chọn)</li>
                             </ul>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ bulk_form.csv_file.id_for_label }}" class="form-label fw-bold">Select CSV File</label>
+                            <label for="{{ bulk_form.csv_file.id_for_label }}" class="form-label fw-bold">Chọn File CSV</label>
                             {{ bulk_form.csv_file }}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" name="bulk_upload" class="btn btn-warning">
-                            <i class="fas fa-upload me-2"></i>Upload Cards
+                            <i class="fas fa-upload me-2"></i>Tải Lên Thẻ
                         </button>
                     </div>
                 </form>
@@ -524,23 +524,23 @@
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="stockEditModalLabel">Edit Stock</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="stockEditModalLabel">Chỉnh Sửa Kho</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                 </div>
                 <div class="modal-body">
                     <form id="stockEditForm">
                         {% csrf_token %}
                         <input type="hidden" id="stockCardId" name="card_id">
                         <div class="mb-3">
-                            <label for="stockQuantity" class="form-label fw-bold">Stock Quantity</label>
+                            <label for="stockQuantity" class="form-label fw-bold">Số Lượng Kho</label>
                             <input type="number" class="form-control" id="stockQuantity" name="stock_quantity" min="0" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                     <button type="button" class="btn btn-primary-custom" onclick="updateStock()">
-                        <i class="fas fa-save me-2"></i>Update Stock
+                        <i class="fas fa-save me-2"></i>Cập Nhật Kho
                     </button>
                 </div>
             </div>
@@ -583,18 +583,20 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Error: ' + data.message);
+                    alert('Lỗi: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while updating stock.');
+                console.error('Lỗi:', error);
+                alert('Đã xảy ra lỗi khi cập nhật kho.');
             });
         }
 
         // Delete confirmation
         function confirmDelete(cardId, cardName) {  
-            window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            if (confirm(`Bạn có chắc chắn muốn xóa thẻ "${cardName}"?`)) {
+                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            }
         }
 
         // Auto-submit form on filter change

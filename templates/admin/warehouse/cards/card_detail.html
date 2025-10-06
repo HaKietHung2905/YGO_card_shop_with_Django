@@ -1,11 +1,11 @@
 {% load static %}
 {% load currency_filters %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ card.name }} - Yu-Gi-Oh Card Shop</title>
+    <title>{{ card.name }} - Cửa Hàng Thẻ Bài Yu-Gi-Oh</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -387,9 +387,9 @@
     <div class="page-header">
         <div class="container">
             <nav class="breadcrumb-custom">
-                <a href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Home</a>
+                <a href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Trang Chủ</a>
                 <span class="mx-2">/</span>
-                <a href="{% url 'card_list' %}">Cards</a>
+                <a href="{% url 'card_list' %}">Thẻ Bài</a>
                 <span class="mx-2">/</span>
                 <span>{{ card.name }}</span>
             </nav>
@@ -407,11 +407,11 @@
                     <div class="card-image-section">
                         {% if card.is_in_stock %}
                             <span class="stock-badge in-stock">
-                                <i class="fas fa-check-circle me-2"></i>In Stock
+                                <i class="fas fa-check-circle me-2"></i>Còn Hàng
                             </span>
                         {% else %}
                             <span class="stock-badge out-of-stock">
-                                <i class="fas fa-times-circle me-2"></i>Out of Stock
+                                <i class="fas fa-times-circle me-2"></i>Hết Hàng
                             </span>
                         {% endif %}
                         
@@ -433,42 +433,42 @@
                         
                         <div class="info-grid">
                             <div class="info-item">
-                                <strong><i class="fas fa-tag me-2"></i>Card Type</strong>
+                                <strong><i class="fas fa-tag me-2"></i>Loại Thẻ</strong>
                                 <span class="badge-custom badge-type">{{ card.get_card_type_display }}</span>
                             </div>
                             <div class="info-item">
-                                <strong><i class="fas fa-star me-2"></i>Rarity</strong>
+                                <strong><i class="fas fa-star me-2"></i>Độ Hiếm</strong>
                                 <span class="badge-custom badge-rarity">{{ card.get_rarity_display }}</span>
                             </div>
                             <div class="info-item">
-                                <strong><i class="fas fa-shield-alt me-2"></i>Condition</strong>
+                                <strong><i class="fas fa-shield-alt me-2"></i>Tình Trạng</strong>
                                 <span>{{ card.get_condition_display }}</span>
                             </div>
                             <div class="info-item">
-                                <strong><i class="fas fa-boxes me-2"></i>Stock Available</strong>
-                                <span>{{ card.stock_quantity }} units</span>
+                                <strong><i class="fas fa-boxes me-2"></i>Số Lượng Có Sẵn</strong>
+                                <span>{{ card.stock_quantity }} cái</span>
                             </div>
                         </div>
 
                         {% if card.card_type == 'monster' %}
                         <div class="monster-stats">
-                            <h5><i class="fas fa-dragon me-2"></i>Monster Statistics</h5>
+                            <h5><i class="fas fa-dragon me-2"></i>Thông Số Quái Thú</h5>
                             <div class="stat-row">
                                 {% if card.attack is not None %}
                                 <div class="stat-box">
-                                    <strong>ATTACK</strong>
+                                    <strong>TẤN CÔNG</strong>
                                     <span>{{ card.attack }}</span>
                                 </div>
                                 {% endif %}
                                 {% if card.defense is not None %}
                                 <div class="stat-box">
-                                    <strong>DEFENSE</strong>
+                                    <strong>PHÒNG THỦ</strong>
                                     <span>{{ card.defense }}</span>
                                 </div>
                                 {% endif %}
                                 {% if card.level is not None %}
                                 <div class="stat-box">
-                                    <strong>LEVEL</strong>
+                                    <strong>CẤP ĐỘ</strong>
                                     <span>{{ card.level }}</span>
                                 </div>
                                 {% endif %}
@@ -477,12 +477,12 @@
                         {% endif %}
 
                         <div class="description-box">
-                            <h5><i class="fas fa-align-left me-2"></i>Card Description</h5>
+                            <h5><i class="fas fa-align-left me-2"></i>Mô Tả Thẻ Bài</h5>
                             <p class="mb-0">{{ card.description }}</p>
                         </div>
 
                         <div class="price-section">
-                            <div class="price-label">Price</div>
+                            <div class="price-label">Giá</div>
                             <h3 class="price-amount">{% currency_display card.price %}</h3>
                         </div>
 
@@ -491,17 +491,17 @@
                                 <form method="POST" action="{% url 'add_to_cart' card.id %}" class="d-grid gap-2">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-primary-custom">
-                                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                                        <i class="fas fa-shopping-cart me-2"></i>Thêm Vào Giỏ Hàng
                                     </button>
                                 </form>
                             {% else %}
                                 <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary-custom d-block text-center">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Login to Purchase
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập Để Mua Hàng
                                 </a>
                             {% endif %}
                         {% else %}
                             <button class="btn btn-outline-custom d-block w-100" disabled>
-                                <i class="fas fa-times-circle me-2"></i>Currently Out of Stock
+                                <i class="fas fa-times-circle me-2"></i>Hiện Tại Hết Hàng
                             </button>
                         {% endif %}
                     </div>
@@ -511,7 +511,7 @@
 
         {% if related_cards %}
         <div class="related-section">
-            <h3><i class="fas fa-layer-group me-3"></i>More from {{ card.card_set.name }}</h3>
+            <h3><i class="fas fa-layer-group me-3"></i>Thêm Từ {{ card.card_set.name }}</h3>
             <div class="row g-4">
                 {% for related_card in related_cards %}
                 <div class="col-lg-3 col-md-4 col-sm-6">
@@ -528,7 +528,7 @@
                             <div class="related-card-price">{% currency_display related_card.price %}</div>
                             <small class="text-muted d-block mb-3">{{ related_card.get_rarity_display }}</small>
                             <a href="{% url 'card_detail' related_card.id %}" class="btn btn-outline-custom btn-sm w-100">
-                                <i class="fas fa-eye me-2"></i>View Details
+                                <i class="fas fa-eye me-2"></i>Xem Chi Tiết
                             </a>
                         </div>
                     </div>

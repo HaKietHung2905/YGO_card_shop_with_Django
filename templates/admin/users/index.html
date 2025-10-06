@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}User Management - Admin Dashboard{% endblock %}
+{% block title %}Quản Lý Người Dùng - Bảng Điều Khiển Admin{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -135,18 +135,18 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="h2 mb-2">
-                    <i class="fas fa-users me-3"></i>User Management
+                    <i class="fas fa-users me-3"></i>Quản Lý Người Dùng
                 </h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Users</li>
+                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                        <li class="breadcrumb-item active">Người Dùng</li>
                     </ol>
                 </nav>
             </div>
             <div class="col-md-4 text-end">
                 <button class="btn btn-light" onclick="exportUsers()">
-                    <i class="fas fa-download me-2"></i>Export
+                    <i class="fas fa-download me-2"></i>Xuất
                 </button>
             </div>
         </div>
@@ -156,25 +156,25 @@
     <div class="row mb-4" style="padding: 15px;">
         <div class="col-md-3">
             <div class="stats-card">
-                <div class="small mb-1">Total Users</div>
+                <div class="small mb-1">Tổng Người Dùng</div>
                 <h3>{{ total_users }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <div class="small mb-1">Active Users</div>
+                <div class="small mb-1">Đang Hoạt Động</div>
                 <h3>{{ active_users }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <div class="small mb-1">Staff Members</div>
+                <div class="small mb-1">Nhân Viên</div>
                 <h3>{{ staff_count }}</h3>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                <div class="small mb-1">New This Month</div>
+                <div class="small mb-1">Mới Tháng Này</div>
                 <h3>{{ new_users_month }}</h3>
             </div>
         </div>
@@ -185,40 +185,38 @@
         <form method="get" action="" id="searchForm">
             <div class="row align-items-end">
                 <div class="col-md-6">
-                    <label class="form-label fw-bold">Search Users</label>
+                    <label class="form-label fw-bold">Tìm Kiếm Người Dùng</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-search"></i></span>
                         <input type="text" class="form-control" name="q" value="{{ search_query }}"
-                            placeholder="Search by username, email, or name...">
+                            placeholder="Tìm theo tên đăng nhập, email hoặc tên...">
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Role Filter</label>
+                    <label class="form-label fw-bold">Lọc Vai Trò</label>
                     <select class="form-select" name="role" onchange="this.form.submit()">
-                        <option value="">All Users</option>
-                        <option value="staff" {% if role_filter == "staff" %}selected{% endif %}>Staff Only</option>
-                        <option value="regular" {% if role_filter == "regular" %}selected{% endif %}>Regular Users
-                        </option>
-                        <option value="superuser" {% if role_filter == "superuser" %}selected{% endif %}>Superusers
-                        </option>
+                        <option value="">Tất Cả Người Dùng</option>
+                        <option value="staff" {% if role_filter == "staff" %}selected{% endif %}>Chỉ Nhân Viên</option>
+                        <option value="regular" {% if role_filter == "regular" %}selected{% endif %}>Người Dùng Thường</option>
+                        <option value="superuser" {% if role_filter == "superuser" %}selected{% endif %}>Quản Trị Viên</option>
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label fw-bold">Status Filter</label>
+                    <label class="form-label fw-bold">Lọc Trạng Thái</label>
                     <select class="form-select" name="status" onchange="this.form.submit()">
-                        <option value="">All Status</option>
-                        <option value="active" {% if status_filter == "active" %}selected{% endif %}>Active</option>
-                        <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>Inactive</option>
+                        <option value="">Tất Cả Trạng Thái</option>
+                        <option value="active" {% if status_filter == "active" %}selected{% endif %}>Hoạt Động</option>
+                        <option value="inactive" {% if status_filter == "inactive" %}selected{% endif %}>Không Hoạt Động</option>
                     </select>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-filter me-2"></i>Apply Filters
+                        <i class="fas fa-filter me-2"></i>Áp Dụng Bộ Lọc
                     </button>
                     <a href="{% url 'admin_dashboard:users' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-2"></i>Clear Filters
+                        <i class="fas fa-times me-2"></i>Xóa Bộ Lọc
                     </a>
                 </div>
             </div>
@@ -226,17 +224,17 @@
     </div>
     <div class="col-md-4 text-end">
         <a href="{% url 'admin_dashboard:user_create' %}" class="btn btn-primary me-2">
-            <i class="fas fa-user-plus me-2"></i>Create User
+            <i class="fas fa-user-plus me-2"></i>Tạo Người Dùng
         </a>
         <button class="btn btn-light" onclick="exportUsers()">
-            <i class="fas fa-download me-2"></i>Export
+            <i class="fas fa-download me-2"></i>Xuất
         </button>
     </div>
     <!-- Users Table -->
     <div class="table-responsive">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
-                <i class="fas fa-list me-2"></i>All Users
+                <i class="fas fa-list me-2"></i>Tất Cả Người Dùng
                 <span class="badge bg-secondary">{{ users.paginator.count }}</span>
             </h5>
         </div>
@@ -245,13 +243,13 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th>User</th>
+                    <th>Người Dùng</th>
                     <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Last Login</th>
-                    <th>Actions</th>
+                    <th>Vai Trò</th>
+                    <th>Trạng Thái</th>
+                    <th>Tham Gia</th>
+                    <th>Đăng Nhập Lần Cuối</th>
+                    <th>Thao Tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -275,54 +273,54 @@
                     <td>
                         {% if user.is_superuser %}
                         <span class="badge bg-danger">
-                            <i class="fas fa-crown me-1"></i>Superuser
+                            <i class="fas fa-crown me-1"></i>Quản Trị Viên
                         </span>
                         {% elif user.is_staff %}
                         <span class="badge bg-info">
-                            <i class="fas fa-user-shield me-1"></i>Staff
+                            <i class="fas fa-user-shield me-1"></i>Nhân Viên
                         </span>
                         {% else %}
                         <span class="badge bg-secondary">
-                            <i class="fas fa-user me-1"></i>User
+                            <i class="fas fa-user me-1"></i>Người Dùng
                         </span>
                         {% endif %}
                     </td>
                     <td>
                         {% if user.is_active %}
                         <span class="status-badge status-active">
-                            <i class="fas fa-check-circle me-1"></i>Active
+                            <i class="fas fa-check-circle me-1"></i>Hoạt Động
                         </span>
                         {% else %}
                         <span class="status-badge status-inactive">
-                            <i class="fas fa-times-circle me-1"></i>Inactive
+                            <i class="fas fa-times-circle me-1"></i>Không Hoạt Động
                         </span>
                         {% endif %}
                     </td>
                     <td>
-                        <div>{{ user.date_joined|date:"M d, Y" }}</div>
-                        <small class="text-muted">{{ user.date_joined|timesince }} ago</small>
+                        <div>{{ user.date_joined|date:"d/m/Y" }}</div>
+                        <small class="text-muted">{{ user.date_joined|timesince }} trước</small>
                     </td>
                     <td>
                         {% if user.last_login %}
-                        <div>{{ user.last_login|date:"M d, Y" }}</div>
-                        <small class="text-muted">{{ user.last_login|timesince }} ago</small>
+                        <div>{{ user.last_login|date:"d/m/Y" }}</div>
+                        <small class="text-muted">{{ user.last_login|timesince }} trước</small>
                         {% else %}
-                        <span class="text-muted">Never</span>
+                        <span class="text-muted">Chưa Bao Giờ</span>
                         {% endif %}
                     </td>
                     <td>
                         <div class="action-buttons">
                             <a href="{% url 'admin_dashboard:user_detail' user.id %}"
-                                class="btn btn-outline-primary btn-sm" title="View Details">
+                                class="btn btn-outline-primary btn-sm" title="Xem Chi Tiết">
                                 <i class="fas fa-eye"></i>
                             </a>
                             <a href="{% url 'admin_dashboard:edit_user' user.id %}" class="btn btn-outline-info btn-sm"
-                                title="Edit">
+                                title="Chỉnh Sửa">
                                 <i class="fas fa-edit"></i>
                             </a>
                             {% if not user.is_superuser %}
                             <button class="btn btn-outline-danger btn-sm" onclick="toggleUserStatus({{ user.id }})"
-                                title="Toggle Status">
+                                title="Đổi Trạng Thái">
                                 <i class="fas fa-ban"></i>
                             </button>
                             {% endif %}
@@ -335,7 +333,7 @@
 
         <!-- Pagination -->
         {% if users.has_other_pages %}
-        <nav aria-label="Page navigation">
+        <nav aria-label="Phân trang">
             <ul class="pagination justify-content-center">
                 {% if users.has_previous %}
                 <li class="page-item">
@@ -354,7 +352,7 @@
 
                 <li class="page-item active">
                     <span class="page-link">
-                        Page {{ users.number }} of {{ users.paginator.num_pages }}
+                        Trang {{ users.number }} / {{ users.paginator.num_pages }}
                     </span>
                 </li>
 
@@ -378,8 +376,8 @@
         {% else %}
         <div class="text-center py-5">
             <i class="fas fa-users fa-3x text-muted mb-3"></i>
-            <h5>No users found</h5>
-            <p class="text-muted">Try adjusting your search or filters</p>
+            <h5>Không tìm thấy người dùng</h5>
+            <p class="text-muted">Thử điều chỉnh tìm kiếm hoặc bộ lọc của bạn</p>
         </div>
         {% endif %}
     </div>
@@ -387,15 +385,15 @@
 
 <script>
     function toggleUserStatus(userId) {
-        if (confirm('Are you sure you want to toggle this user\'s status?')) {
+        if (confirm('Bạn có chắc chắn muốn đổi trạng thái người dùng này?')) {
             // Implementation for toggling user status
-            console.log('Toggle user status:', userId);
+            console.log('Đổi trạng thái người dùng:', userId);
             // You can add AJAX call here
         }
     }
 
     function exportUsers() {
-        alert('Export functionality will be implemented');
+        alert('Tính năng xuất dữ liệu sẽ được triển khai');
         // You can implement CSV/Excel export here
     }
 </script>

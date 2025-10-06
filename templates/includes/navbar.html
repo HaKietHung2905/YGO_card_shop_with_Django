@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">
-            <i class="fas fa-magic me-2"></i>Yu-Gi-Oh Shop
+            <i class="fas fa-magic me-2"></i>Cửa Hàng Yu-Gi-Oh
         </a>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -12,10 +12,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Trang Chủ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'card_list' %}active{% endif %}" href="{% url 'card_list' %}">All Cards</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'card_list' %}active{% endif %}" href="{% url 'card_list' %}">Tất Cả Thẻ Bài</a>
                 </li>
             </ul>
             
@@ -23,7 +23,7 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'cart' %}">
-                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                            <i class="fas fa-shopping-cart me-1"></i>Giỏ Hàng
                             {% comment %}
                             {% endcomment %}
                         </a>
@@ -33,18 +33,18 @@
                             <i class="fas fa-user me-1"></i>{{ user.username }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Order History</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Hồ Sơ</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-history me-2"></i>Lịch Sử Đơn Hàng</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i>Đăng Xuất</a></li>
                         </ul>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'login' %}">Đăng Nhập</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'signup' %}">Sign Up</a>
+                        <a class="nav-link" href="{% url 'signup' %}">Đăng Ký</a>
                     </li>
                 {% endif %}
             </ul>

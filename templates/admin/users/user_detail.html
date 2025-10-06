@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}User Details - {{ user_detail.username }}{% endblock %}
+{% block title %}Chi Tiết Người Dùng - {{ user_detail.username }}{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -80,8 +80,8 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Users</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Người Dùng</a></li>
                 <li class="breadcrumb-item active">{{ user_detail.username }}</li>
             </ol>
         </nav>
@@ -100,32 +100,32 @@
                     <div class="d-flex gap-2 flex-wrap">
                         {% if user_detail.is_superuser %}
                             <span class="badge bg-danger badge-role">
-                                <i class="fas fa-crown me-1"></i>Superuser
+                                <i class="fas fa-crown me-1"></i>Quản Trị Viên
                             </span>
                         {% elif user_detail.is_staff %}
                             <span class="badge bg-info badge-role">
-                                <i class="fas fa-user-shield me-1"></i>Staff Member
+                                <i class="fas fa-user-shield me-1"></i>Nhân Viên
                             </span>
                         {% else %}
                             <span class="badge bg-light text-dark badge-role">
-                                <i class="fas fa-user me-1"></i>Regular User
+                                <i class="fas fa-user me-1"></i>Người Dùng Thường
                             </span>
                         {% endif %}
                         
                         {% if user_detail.is_active %}
                             <span class="badge bg-success badge-role">
-                                <i class="fas fa-check-circle me-1"></i>Active
+                                <i class="fas fa-check-circle me-1"></i>Hoạt Động
                             </span>
                         {% else %}
                             <span class="badge bg-secondary badge-role">
-                                <i class="fas fa-times-circle me-1"></i>Inactive
+                                <i class="fas fa-times-circle me-1"></i>Không Hoạt Động
                             </span>
                         {% endif %}
                     </div>
                 </div>
                 <div class="col-auto">
                     <a href="{% url 'admin_dashboard:user_edit' user_detail.id %}" class="btn btn-light">
-                        <i class="fas fa-edit me-2"></i>Edit User
+                        <i class="fas fa-edit me-2"></i>Chỉnh Sửa Người Dùng
                     </a>
                 </div>
             </div>
@@ -136,27 +136,27 @@
             <div class="col-md-4">
                 <!-- Statistics -->
                 <div class="info-card">
-                    <h5 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+                    <h5 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Thống Kê</h5>
                     
                     <div class="stat-box">
-                        <p>Total Orders</p>
+                        <p>Tổng Đơn Hàng</p>
                         <h4>{{ total_orders }}</h4>
                     </div>
                     
                     <div class="stat-box">
-                        <p>Total Spent</p>
-                        <h4>${{ total_spent|floatformat:2 }}</h4>
+                        <p>Tổng Chi Tiêu</p>
+                        <h4>{{ total_spent|floatformat:0 }}đ</h4>
                     </div>
                     
                     <div class="stat-box">
-                        <p>Cart Items</p>
+                        <p>Sản Phẩm Trong Giỏ</p>
                         <h4>{{ cart_items.count }}</h4>
                     </div>
                 </div>
 
                 <!-- User Information -->
                 <div class="info-card">
-                    <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>User Information</h5>
+                    <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Thông Tin Người Dùng</h5>
                     
                     <div class="mb-3">
                         <strong class="text-muted d-block mb-1">Email</strong>
@@ -164,23 +164,23 @@
                     </div>
                     
                     <div class="mb-3">
-                        <strong class="text-muted d-block mb-1">Full Name</strong>
-                        <p class="mb-0">{{ user_detail.get_full_name|default:"Not provided" }}</p>
+                        <strong class="text-muted d-block mb-1">Họ Tên</strong>
+                        <p class="mb-0">{{ user_detail.get_full_name|default:"Chưa cung cấp" }}</p>
                     </div>
                     
                     <div class="mb-3">
-                        <strong class="text-muted d-block mb-1">Date Joined</strong>
-                        <p class="mb-0">{{ user_detail.date_joined|date:"F d, Y" }}</p>
-                        <small class="text-muted">{{ user_detail.date_joined|timesince }} ago</small>
+                        <strong class="text-muted d-block mb-1">Ngày Tham Gia</strong>
+                        <p class="mb-0">{{ user_detail.date_joined|date:"d/m/Y" }}</p>
+                        <small class="text-muted">{{ user_detail.date_joined|timesince }} trước</small>
                     </div>
                     
                     <div class="mb-3">
-                        <strong class="text-muted d-block mb-1">Last Login</strong>
+                        <strong class="text-muted d-block mb-1">Đăng Nhập Lần Cuối</strong>
                         {% if user_detail.last_login %}
-                            <p class="mb-0">{{ user_detail.last_login|date:"F d, Y H:i" }}</p>
-                            <small class="text-muted">{{ user_detail.last_login|timesince }} ago</small>
+                            <p class="mb-0">{{ user_detail.last_login|date:"d/m/Y H:i" }}</p>
+                            <small class="text-muted">{{ user_detail.last_login|timesince }} trước</small>
                         {% else %}
-                            <p class="mb-0 text-muted">Never logged in</p>
+                            <p class="mb-0 text-muted">Chưa đăng nhập lần nào</p>
                         {% endif %}
                     </div>
                 </div>
@@ -191,9 +191,9 @@
                 <!-- Recent Orders -->
                 <div class="info-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Recent Orders</h5>
+                        <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Đơn Hàng Gần Đây</h5>
                         <a href="{% url 'admin_dashboard:orders' %}?user={{ user_detail.id }}" class="btn btn-sm btn-outline-primary">
-                            View All Orders
+                            Xem Tất Cả Đơn Hàng
                         </a>
                     </div>
 
@@ -203,27 +203,27 @@
                                 <div class="row align-items-center">
                                     <div class="col-md-3">
                                         <strong>{{ order.order_number }}</strong>
-                                        <div class="small text-muted">{{ order.created_at|date:"M d, Y" }}</div>
+                                        <div class="small text-muted">{{ order.created_at|date:"d/m/Y" }}</div>
                                     </div>
                                     <div class="col-md-3">
                                         {% if order.status == 'pending' %}
-                                            <span class="badge bg-warning">Pending</span>
+                                            <span class="badge bg-warning">Chờ Xử Lý</span>
                                         {% elif order.status == 'processing' %}
-                                            <span class="badge bg-info">Processing</span>
+                                            <span class="badge bg-info">Đang Xử Lý</span>
                                         {% elif order.status == 'shipped' %}
-                                            <span class="badge bg-primary">Shipped</span>
+                                            <span class="badge bg-primary">Đã Gửi</span>
                                         {% elif order.status == 'delivered' %}
-                                            <span class="badge bg-success">Delivered</span>
+                                            <span class="badge bg-success">Đã Giao</span>
                                         {% else %}
                                             <span class="badge bg-danger">{{ order.status|title }}</span>
                                         {% endif %}
                                     </div>
                                     <div class="col-md-3">
-                                        <strong>${{ order.total_amount }}</strong>
+                                        <strong>{{ order.total_amount }}đ</strong>
                                     </div>
                                     <div class="col-md-3 text-end">
                                         <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> View
+                                            <i class="fas fa-eye"></i> Xem
                                         </a>
                                     </div>
                                 </div>
@@ -232,7 +232,7 @@
                     {% else %}
                         <div class="text-center py-4">
                             <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No orders yet</p>
+                            <p class="text-muted">Chưa có đơn hàng nào</p>
                         </div>
                     {% endif %}
                 </div>
@@ -240,16 +240,16 @@
                 <!-- Current Cart -->
                 {% if cart_items %}
                     <div class="info-card mt-4">
-                        <h5 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>Current Cart Items</h5>
+                        <h5 class="mb-4"><i class="fas fa-shopping-bag me-2"></i>Sản Phẩm Trong Giỏ Hiện Tại</h5>
                         
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Card</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th>Subtotal</th>
+                                        <th>Thẻ Bài</th>
+                                        <th>Số Lượng</th>
+                                        <th>Giá</th>
+                                        <th>Tổng Phụ</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -260,8 +260,8 @@
                                                 <div class="small text-muted">{{ item.card.card_set.name }}</div>
                                             </td>
                                             <td>{{ item.quantity }}</td>
-                                            <td>${{ item.card.price }}</td>
-                                            <td><strong>${{ item.get_subtotal }}</strong></td>
+                                            <td>{{ item.card.price }}đ</td>
+                                            <td><strong>{{ item.get_subtotal }}đ</strong></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

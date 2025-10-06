@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Card - Yu-Gi-Oh Admin</title>
+    <title>Chỉnh Sửa Thẻ - Yu-Gi-Oh Admin</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -176,42 +176,42 @@
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:dashboard' %}">
-                        <i class="fas fa-tachometer-alt"></i>Dashboard
+                        <i class="fas fa-tachometer-alt"></i>Bảng Điều Khiển
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'admin_dashboard:warehouse' %}">
-                        <i class="fas fa-warehouse"></i>Warehouse Management
+                        <i class="fas fa-warehouse"></i>Quản Lý Kho Hàng
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:posts' %}">
-                        <i class="fas fa-newspaper"></i>Posts Management
+                        <i class="fas fa-newspaper"></i>Quản Lý Bài Viết
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:tournaments' %}">
-                        <i class="fas fa-trophy"></i>Tournaments
+                        <i class="fas fa-trophy"></i>Giải Đấu
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:orders' %}">
-                        <i class="fas fa-shopping-cart"></i>Orders
+                        <i class="fas fa-shopping-cart"></i>Đơn Hàng
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:users' %}">
-                        <i class="fas fa-users"></i>Users
+                        <i class="fas fa-users"></i>Người Dùng
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:analytics' %}">
-                        <i class="fas fa-chart-bar"></i>Analytics
+                        <i class="fas fa-chart-bar"></i>Phân Tích
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'admin_dashboard:settings' %}">
-                        <i class="fas fa-cogs"></i>Settings
+                        <i class="fas fa-cogs"></i>Cài Đặt
                     </a>
                 </li>
             </ul>
@@ -230,13 +230,13 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="h3 mb-0">
-                        <i class="fas fa-edit me-3"></i>Edit Card: {{ card.name }}
+                        <i class="fas fa-edit me-3"></i>Chỉnh Sửa Thẻ: {{ card.name }}
                     </h1>
-                    <p class="text-muted mb-0">Update card information and inventory details</p>
+                    <p class="text-muted mb-0">Cập nhật thông tin thẻ bài và chi tiết kho hàng</p>
                 </div>
                 <div class="col-md-4 text-end">
                     <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-arrow-left me-2"></i>Back to Warehouse
+                        <i class="fas fa-arrow-left me-2"></i>Quay Lại Kho Hàng
                     </a>
                 </div>
             </div>
@@ -259,40 +259,40 @@
                 <!-- Form Fields -->
                 <div class="col-lg-8">
                     <div class="dashboard-card">
-                        <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Card Information</h5>
+                        <h5 class="mb-4"><i class="fas fa-info-circle me-2"></i>Thông Tin Thẻ Bài</h5>
                         
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Card Name</label>
+                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Tên Thẻ</label>
                                     {{ form.name|add_class:"form-control form-control-custom" }}
                                     {% if form.name.errors %}
                                         <div class="text-danger small">{{ form.name.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Card Type</label>
+                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Loại Thẻ</label>
                                     {{ form.card_type|add_class:"form-select form-control-custom" }}
                                     {% if form.card_type.errors %}
                                         <div class="text-danger small">{{ form.card_type.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Rarity</label>
+                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Độ Hiếm</label>
                                     {{ form.rarity|add_class:"form-select form-control-custom" }}
                                     {% if form.rarity.errors %}
                                         <div class="text-danger small">{{ form.rarity.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Card Set</label>
+                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Bộ Thẻ</label>
                                     {{ form.card_set|add_class:"form-select form-control-custom" }}
                                     {% if form.card_set.errors %}
                                         <div class="text-danger small">{{ form.card_set.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Condition</label>
+                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Tình Trạng</label>
                                     {{ form.condition|add_class:"form-select form-control-custom" }}
                                     {% if form.condition.errors %}
                                         <div class="text-danger small">{{ form.condition.errors.0 }}</div>
@@ -301,25 +301,25 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Price ($)</label>
+                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Giá (đ)</label>
                                     {{ form.price|add_class:"form-control form-control-custom" }}
                                     {% if form.price.errors %}
                                         <div class="text-danger small">{{ form.price.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Stock Quantity</label>
+                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Số Lượng Kho</label>
                                     {{ form.stock_quantity|add_class:"form-control form-control-custom" }}
                                     {% if form.stock_quantity.errors %}
                                         <div class="text-danger small">{{ form.stock_quantity.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Card Image</label>
+                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Hình Ảnh Thẻ</label>
                                     {{ form.image|add_class:"form-control form-control-custom" }}
                                     {% if card.image %}
                                         <div class="form-text">
-                                            <small class="text-muted">Current image: {{ card.image.name }}</small>
+                                            <small class="text-muted">Hình ảnh hiện tại: {{ card.image.name }}</small>
                                         </div>
                                     {% endif %}
                                     {% if form.image.errors %}
@@ -329,11 +329,11 @@
                                 
                                 <!-- Monster Stats -->
                                 <div id="monsterStats" {% if card.card_type != 'monster' %}style="display: none;"{% endif %}>
-                                    <h6 class="fw-bold text-primary">Monster Stats</h6>
+                                    <h6 class="fw-bold text-primary">Chỉ Số Quái Thú</h6>
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Attack</label>
+                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Tấn Công</label>
                                                 {{ form.attack|add_class:"form-control form-control-custom" }}
                                                 {% if form.attack.errors %}
                                                     <div class="text-danger small">{{ form.attack.errors.0 }}</div>
@@ -342,7 +342,7 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Defense</label>
+                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Phòng Thủ</label>
                                                 {{ form.defense|add_class:"form-control form-control-custom" }}
                                                 {% if form.defense.errors %}
                                                     <div class="text-danger small">{{ form.defense.errors.0 }}</div>
@@ -351,7 +351,7 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.level.id_for_label }}" class="form-label">Level</label>
+                                                <label for="{{ form.level.id_for_label }}" class="form-label">Cấp Độ</label>
                                                 {{ form.level|add_class:"form-control form-control-custom" }}
                                                 {% if form.level.errors %}
                                                     <div class="text-danger small">{{ form.level.errors.0 }}</div>
@@ -363,7 +363,7 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Description</label>
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Mô Tả</label>
                             {{ form.description|add_class:"form-control form-control-custom" }}
                             {% if form.description.errors %}
                                 <div class="text-danger small">{{ form.description.errors.0 }}</div>
@@ -375,31 +375,31 @@
                 <!-- Card Preview -->
                 <div class="col-lg-4">
                     <div class="dashboard-card">
-                        <h5 class="mb-4"><i class="fas fa-eye me-2"></i>Card Preview</h5>
+                        <h5 class="mb-4"><i class="fas fa-eye me-2"></i>Xem Trước Thẻ</h5>
                         
                         <div class="card-preview">
                             {% if card.image %}
                                 <img src="{{ card.image.url }}" alt="{{ card.name }}" class="img-fluid mb-3" id="imagePreview">
                             {% else %}
                                 <i class="fas fa-image fa-4x text-muted mb-3" id="imagePlaceholder"></i>
-                                <p class="text-muted">No image uploaded</p>
+                                <p class="text-muted">Chưa có hình ảnh</p>
                             {% endif %}
                         </div>
                         
                         <div class="mt-3">
                             <h6 class="fw-bold">{{ card.name }}</h6>
                             <p class="text-muted mb-2">{{ card.get_card_type_display }} | {{ card.get_rarity_display }}</p>
-                            <p class="text-muted mb-2">Set: {{ card.card_set.name }}</p>
-                            <p class="text-muted mb-2">Condition: {{ card.get_condition_display }}</p>
+                            <p class="text-muted mb-2">Bộ: {{ card.card_set.name }}</p>
+                            <p class="text-muted mb-2">Tình trạng: {{ card.get_condition_display }}</p>
                             {% if card.card_type == 'monster' %}
                                 <p class="text-muted mb-2">
-                                    ATK: {{ card.attack|default:"?" }} / DEF: {{ card.defense|default:"?" }} / LV: {{ card.level|default:"?" }}
+                                    TẤN: {{ card.attack|default:"?" }} / THỦ: {{ card.defense|default:"?" }} / CẤP: {{ card.level|default:"?" }}
                                 </p>
                             {% endif %}
-                            <h5 class="text-primary">${{ card.price }}</h5>
+                            <h5 class="text-primary">{{ card.price }}đ</h5>
                             <p class="mb-0">
                                 <span class="badge {% if card.stock_quantity > 10 %}bg-success{% elif card.stock_quantity > 0 %}bg-warning{% else %}bg-danger{% endif %}">
-                                    {{ card.stock_quantity }} in stock
+                                    {{ card.stock_quantity }} còn hàng
                                 </span>
                             </p>
                         </div>
@@ -413,15 +413,15 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary me-2">
-                                <i class="fas fa-times me-2"></i>Cancel
+                                <i class="fas fa-times me-2"></i>Hủy
                             </a>
                             <button type="button" class="btn btn-outline-danger" 
                                     onclick="confirmDelete({{ card.id }}, '{{ card.name }}')">
-                                <i class="fas fa-trash me-2"></i>Delete Card
+                                <i class="fas fa-trash me-2"></i>Xóa Thẻ
                             </button>
                         </div>
                         <button type="submit" class="btn btn-primary-custom">
-                            <i class="fas fa-save me-2"></i>Update Card
+                            <i class="fas fa-save me-2"></i>Cập Nhật Thẻ
                         </button>
                     </div>
                 </div>
@@ -464,7 +464,9 @@
 
         // Delete confirmation
         function confirmDelete(cardId, cardName) {
-            window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            if (confirm(`Bạn có chắc chắn muốn xóa thẻ "${cardName}"?`)) {
+                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
+            }
         }
 
         // Image preview
@@ -481,7 +483,7 @@
                         if (preview) {
                             preview.src = e.target.result;
                         } else if (placeholder) {
-                            placeholder.parentElement.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid mb-3" id="imagePreview">`;
+                            placeholder.parentElement.innerHTML = `<img src="${e.target.result}" alt="Xem trước" class="img-fluid mb-3" id="imagePreview">`;
                         }
                     };
                     reader.readAsDataURL(file);

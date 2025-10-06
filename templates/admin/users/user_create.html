@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Create User - Admin Dashboard{% endblock %}
+{% block title %}Tạo Người Dùng - Bảng Điều Khiển Admin{% endblock %}
 
 {% block content %}
     <div class="main-container">
@@ -10,13 +10,13 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-user-plus me-3"></i>Create New User
+                        <i class="fas fa-user-plus me-3"></i>Tạo Người Dùng Mới
                     </h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Users</a></li>
-                            <li class="breadcrumb-item active">Create User</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Người Dùng</a></li>
+                            <li class="breadcrumb-item active">Tạo Người Dùng</li>
                         </ol>
                     </nav>
                 </div>
@@ -33,14 +33,14 @@
                             
                             {% if form.errors %}
                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Error!</strong> Please correct the errors below.
+                                    <strong>Lỗi!</strong> Vui lòng sửa các lỗi bên dưới.
                                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                                 </div>
                             {% endif %}
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Username *</label>
+                                    <label class="form-label fw-bold">Tên Đăng Nhập *</label>
                                     {{ form.username }}
                                     {% if form.username.errors %}
                                         <div class="text-danger small">{{ form.username.errors }}</div>
@@ -58,7 +58,7 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">First Name</label>
+                                    <label class="form-label fw-bold">Tên</label>
                                     {{ form.first_name }}
                                     {% if form.first_name.errors %}
                                         <div class="text-danger small">{{ form.first_name.errors }}</div>
@@ -66,7 +66,7 @@
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Last Name</label>
+                                    <label class="form-label fw-bold">Họ</label>
                                     {{ form.last_name }}
                                     {% if form.last_name.errors %}
                                         <div class="text-danger small">{{ form.last_name.errors }}</div>
@@ -76,16 +76,16 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Password *</label>
+                                    <label class="form-label fw-bold">Mật Khẩu *</label>
                                     {{ form.password1 }}
                                     {% if form.password1.errors %}
                                         <div class="text-danger small">{{ form.password1.errors }}</div>
                                     {% endif %}
-                                    <small class="text-muted">Minimum 8 characters</small>
+                                    <small class="text-muted">Tối thiểu 8 ký tự</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Confirm Password *</label>
+                                    <label class="form-label fw-bold">Xác Nhận Mật Khẩu *</label>
                                     {{ form.password2 }}
                                     {% if form.password2.errors %}
                                         <div class="text-danger small">{{ form.password2.errors }}</div>
@@ -98,20 +98,20 @@
                                     <div class="form-check">
                                         {{ form.is_staff }}
                                         <label class="form-check-label" for="{{ form.is_staff.id_for_label }}">
-                                            <i class="fas fa-user-shield me-1"></i>Staff Status
+                                            <i class="fas fa-user-shield me-1"></i>Trạng Thái Nhân Viên
                                         </label>
                                     </div>
-                                    <small class="text-muted">Designates whether the user can log into this admin site.</small>
+                                    <small class="text-muted">Xác định người dùng có thể đăng nhập vào trang quản trị này.</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
                                     <div class="form-check">
                                         {{ form.is_active }}
                                         <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
-                                            <i class="fas fa-check-circle me-1"></i>Active
+                                            <i class="fas fa-check-circle me-1"></i>Hoạt Động
                                         </label>
                                     </div>
-                                    <small class="text-muted">Designates whether this user should be treated as active.</small>
+                                    <small class="text-muted">Xác định người dùng này có được coi là đang hoạt động.</small>
                                 </div>
                             </div>
 
@@ -119,10 +119,10 @@
 
                             <div class="d-flex justify-content-end gap-2">
                                 <a href="{% url 'admin_dashboard:users' %}" class="btn btn-outline-secondary">
-                                    <i class="fas fa-times me-2"></i>Cancel
+                                    <i class="fas fa-times me-2"></i>Hủy
                                 </a>
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i>Create User
+                                    <i class="fas fa-save me-2"></i>Tạo Người Dùng
                                 </button>
                             </div>
                         </form>

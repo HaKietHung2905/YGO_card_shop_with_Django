@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Tournament Management - Admin Dashboard{% endblock %}
+{% block title %}Quản lý giải đấu - Bảng điều khiển quản trị{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -125,21 +125,21 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-trophy me-3"></i>Tournament Management
+                        <i class="fas fa-trophy me-3"></i>Quản lý giải đấu
                     </h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Tournaments</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item active">Giải đấu</li>
                         </ol>
                     </nav>
                 </div>
                 <div class="col-md-4 text-end">
                     <a href="{% url 'admin_dashboard:create_tournament' %}" class="btn btn-primary me-2">
-                        <i class="fas fa-plus me-2"></i>Create Tournament
+                        <i class="fas fa-plus me-2"></i>Tạo giải đấu
                     </a>
                     <button class="btn btn-light" onclick="exportTournaments()">
-                        <i class="fas fa-download me-2"></i>Export
+                        <i class="fas fa-download me-2"></i>Xuất dữ liệu
                     </button>
                 </div>
             </div>
@@ -149,25 +149,25 @@
         <div class="row mb-4" style="padding: 15px;">
             <div class="col-md-3">
                 <div class="stats-card">
-                    <div class="small mb-1">Total Tournaments</div>
+                    <div class="small mb-1">Tổng số giải đấu</div>
                     <h3>{{ total_tournaments|default:0 }}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <div class="small mb-1">Upcoming</div>
+                    <div class="small mb-1">Sắp diễn ra</div>
                     <h3>{{ upcoming_count|default:0 }}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                    <div class="small mb-1">Ongoing</div>
+                    <div class="small mb-1">Đang diễn ra</div>
                     <h3>{{ ongoing_count|default:0 }}</h3>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                    <div class="small mb-1">Total Participants</div>
+                    <div class="small mb-1">Tổng số người tham gia</div>
                     <h3>{{ total_participants|default:0 }}</h3>
                 </div>
             </div>
@@ -178,33 +178,33 @@
             <form method="get" action="" id="filterForm">
                 <div class="row align-items-end">
                     <div class="col-md-4">
-                        <label class="form-label fw-bold">Search Tournaments</label>
+                        <label class="form-label fw-bold">Tìm kiếm giải đấu</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-search"></i></span>
                             <input type="text" 
                                    class="form-control" 
                                    name="q" 
                                    value="{{ search_query }}" 
-                                   placeholder="Search by name or format...">
+                                   placeholder="Tìm theo tên hoặc thể thức...">
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-bold">Status Filter</label>
+                        <label class="form-label fw-bold">Lọc theo trạng thái</label>
                         <select class="form-select" name="status" onchange="this.form.submit()">
-                            <option value="">All Status</option>
-                            <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Upcoming</option>
-                            <option value="ongoing" {% if status_filter == 'ongoing' %}selected{% endif %}>Ongoing</option>
-                            <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
-                            <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Sắp diễn ra</option>
+                            <option value="ongoing" {% if status_filter == 'ongoing' %}selected{% endif %}>Đang diễn ra</option>
+                            <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Đã kết thúc</option>
+                            <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Đã hủy</option>
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label fw-bold">Date Range</label>
+                        <label class="form-label fw-bold">Khoảng thời gian</label>
                         <input type="date" class="form-control" name="date_from" value="{{ date_from }}">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-filter me-2"></i>Filter
+                            <i class="fas fa-filter me-2"></i>Lọc
                         </button>
                     </div>
                 </div>
@@ -222,30 +222,30 @@
                                     <h3 class="tournament-title">{{ tournament.name }}</h3>
                                     <span class="status-badge status-{{ tournament.status }}">
                                         {% if tournament.status == 'upcoming' %}
-                                            <i class="fas fa-clock me-1"></i>Upcoming
+                                            <i class="fas fa-clock me-1"></i>Sắp diễn ra
                                         {% elif tournament.status == 'ongoing' %}
-                                            <i class="fas fa-play me-1"></i>Ongoing
+                                            <i class="fas fa-play me-1"></i>Đang diễn ra
                                         {% elif tournament.status == 'completed' %}
-                                            <i class="fas fa-check me-1"></i>Completed
+                                            <i class="fas fa-check me-1"></i>Đã kết thúc
                                         {% else %}
-                                            <i class="fas fa-times me-1"></i>Cancelled
+                                            <i class="fas fa-times me-1"></i>Đã hủy
                                         {% endif %}
                                     </span>
                                 </div>
                                 <div class="action-buttons">
                                     <a href="{% url 'admin_dashboard:tournament_detail' tournament.id %}" 
                                        class="btn btn-outline-primary btn-sm" 
-                                       title="View Details">
+                                       title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </a>
                                     <a href="{% url 'admin_dashboard:edit_tournament' tournament.id %}" 
                                        class="btn btn-outline-info btn-sm" 
-                                       title="Edit">
+                                       title="Chỉnh sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <button class="btn btn-outline-danger btn-sm" 
                                             onclick="deleteTournament({{ tournament.id }})" 
-                                            title="Delete">
+                                            title="Xóa">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -254,19 +254,19 @@
                             <div class="tournament-info">
                                 <div class="info-item">
                                     <i class="fas fa-calendar"></i>
-                                    <span>{{ tournament.date|date:"M d, Y" }}</span>
+                                    <span>{{ tournament.date|date:"d/m/Y" }}</span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-clock"></i>
-                                    <span>{{ tournament.start_time|time:"h:i A" }}</span>
+                                    <span>{{ tournament.start_time|time:"H:i" }}</span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ tournament.location|default:"TBA" }}</span>
+                                    <span>{{ tournament.location|default:"Chưa xác định" }}</span>
                                 </div>
                                 <div class="info-item">
                                     <i class="fas fa-gamepad"></i>
-                                    <span>{{ tournament.format|default:"Standard" }}</span>
+                                    <span>{{ tournament.format|default:"Tiêu chuẩn" }}</span>
                                 </div>
                                 <div class="participant-count">
                                     <i class="fas fa-users"></i>
@@ -281,7 +281,7 @@
                             {% if tournament.prize_pool %}
                                 <div class="alert alert-success mb-0">
                                     <i class="fas fa-trophy me-2"></i>
-                                    <strong>Prize Pool:</strong> ${{ tournament.prize_pool }}
+                                    <strong>Giải thưởng:</strong> ${{ tournament.prize_pool }}
                                 </div>
                             {% endif %}
                         </div>
@@ -290,7 +290,7 @@
 
                 <!-- Pagination -->
                 {% if tournaments.has_other_pages %}
-                    <nav aria-label="Page navigation" class="mt-4">
+                    <nav aria-label="Điều hướng trang" class="mt-4">
                         <ul class="pagination justify-content-center">
                             {% if tournaments.has_previous %}
                                 <li class="page-item">
@@ -302,7 +302,7 @@
 
                             <li class="page-item active">
                                 <span class="page-link">
-                                    Page {{ tournaments.number }} of {{ tournaments.paginator.num_pages }}
+                                    Trang {{ tournaments.number }} / {{ tournaments.paginator.num_pages }}
                                 </span>
                             </li>
 
@@ -320,10 +320,10 @@
                 <div class="col-12">
                     <div class="text-center py-5">
                         <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
-                        <h5>No tournaments found</h5>
-                        <p class="text-muted">Create your first tournament to get started!</p>
+                        <h5>Không tìm thấy giải đấu nào</h5>
+                        <p class="text-muted">Tạo giải đấu đầu tiên của bạn để bắt đầu!</p>
                         <a href="{% url 'admin_dashboard:create_tournament' %}" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Create Tournament
+                            <i class="fas fa-plus me-2"></i>Tạo giải đấu
                         </a>
                     </div>
                 </div>
@@ -333,8 +333,8 @@
 
     <script>
         function deleteTournament(tournamentId) {
-            if (confirm('Are you sure you want to delete this tournament? This action cannot be undone.')) {
-                // Implementation for deleting tournament
+            if (confirm('Bạn có chắc chắn muốn xóa giải đấu này? Hành động này không thể hoàn tác.')) {
+                // Triển khai chức năng xóa giải đấu
                 fetch(`/dashboard/tournaments/${tournamentId}/delete/`, {
                     method: 'POST',
                     headers: {
@@ -347,12 +347,12 @@
                     if (data.success) {
                         location.reload();
                     } else {
-                        alert('Error deleting tournament: ' + data.message);
+                        alert('Lỗi khi xóa giải đấu: ' + data.message);
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while deleting the tournament');
+                    console.error('Lỗi:', error);
+                    alert('Đã xảy ra lỗi khi xóa giải đấu');
                 });
             }
         }

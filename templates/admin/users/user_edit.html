@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Edit User - {{ user_to_edit.username }}{% endblock %}
+{% block title %}Chỉnh sửa người dùng - {{ user_to_edit.username }}{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -80,10 +80,10 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Users</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng điều khiển</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:users' %}">Người dùng</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:user_detail' user_to_edit.id %}">{{ user_to_edit.username }}</a></li>
-                <li class="breadcrumb-item active">Edit</li>
+                <li class="breadcrumb-item active">Chỉnh sửa</li>
             </ol>
         </nav>
 
@@ -94,7 +94,7 @@
                     {{ user_to_edit.username|slice:":1"|upper }}
                 </div>
                 <div>
-                    <h4 class="mb-1">Editing: {{ user_to_edit.get_full_name|default:user_to_edit.username }}</h4>
+                    <h4 class="mb-1">Đang chỉnh sửa: {{ user_to_edit.get_full_name|default:user_to_edit.username }}</h4>
                     <p class="mb-0 opacity-75">@{{ user_to_edit.username }}</p>
                 </div>
             </div>
@@ -104,7 +104,7 @@
             <div class="col-lg-8 mx-auto">
                 <div class="form-card">
                     <h3 class="section-header">
-                        <i class="fas fa-user-edit me-2"></i>Edit User Information
+                        <i class="fas fa-user-edit me-2"></i>Chỉnh sửa thông tin người dùng
                     </h3>
 
                     <form method="post" action="">
@@ -114,7 +114,7 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="username" class="form-label">
-                                    <i class="fas fa-user me-2"></i>Username *
+                                    <i class="fas fa-user me-2"></i>Tên đăng nhập *
                                 </label>
                                 <input type="text" 
                                        class="form-control" 
@@ -122,11 +122,11 @@
                                        name="username" 
                                        value="{{ user_to_edit.username }}" 
                                        required>
-                                <small class="text-muted">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</small>
+                                <small class="text-muted">Bắt buộc. Tối đa 150 ký tự. Chỉ cho phép chữ cái, số và @/./+/-/_.</small>
                             </div>
                             <div class="col-md-6">
                                 <label for="email" class="form-label">
-                                    <i class="fas fa-envelope me-2"></i>Email Address *
+                                    <i class="fas fa-envelope me-2"></i>Địa chỉ Email *
                                 </label>
                                 <input type="email" 
                                        class="form-control" 
@@ -141,7 +141,7 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label for="first_name" class="form-label">
-                                    <i class="fas fa-id-card me-2"></i>First Name
+                                    <i class="fas fa-id-card me-2"></i>Tên
                                 </label>
                                 <input type="text" 
                                        class="form-control" 
@@ -151,7 +151,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="last_name" class="form-label">
-                                    <i class="fas fa-id-card me-2"></i>Last Name
+                                    <i class="fas fa-id-card me-2"></i>Họ
                                 </label>
                                 <input type="text" 
                                        class="form-control" 
@@ -163,7 +163,7 @@
 
                         <!-- Permissions Section -->
                         <h5 class="section-header mt-5">
-                            <i class="fas fa-shield-alt me-2"></i>Permissions & Status
+                            <i class="fas fa-shield-alt me-2"></i>Quyền hạn & Trạng thái
                         </h5>
 
                         <div class="mb-4">
@@ -174,8 +174,8 @@
                                        name="is_active"
                                        {% if user_to_edit.is_active %}checked{% endif %}>
                                 <label class="form-check-label" for="is_active">
-                                    <strong>Active Status</strong>
-                                    <div class="small text-muted">Designates whether this user should be treated as active. Unselect this instead of deleting accounts.</div>
+                                    <strong>Trạng thái hoạt động</strong>
+                                    <div class="small text-muted">Xác định người dùng này có được coi là đang hoạt động hay không. Bỏ chọn thay vì xóa tài khoản.</div>
                                 </label>
                             </div>
 
@@ -187,41 +187,41 @@
                                        {% if user_to_edit.is_staff %}checked{% endif %}
                                        {% if user_to_edit.is_superuser %}disabled{% endif %}>
                                 <label class="form-check-label" for="is_staff">
-                                    <strong>Staff Status</strong>
-                                    <div class="small text-muted">Designates whether the user can log into this admin site.</div>
+                                    <strong>Trạng thái nhân viên</strong>
+                                    <div class="small text-muted">Xác định người dùng có thể đăng nhập vào trang quản trị này hay không.</div>
                                 </label>
                             </div>
 
                             {% if user_to_edit.is_superuser %}
                                 <div class="alert alert-info">
                                     <i class="fas fa-crown me-2"></i>
-                                    <strong>Superuser Account</strong>
-                                    <p class="mb-0 small">This user has all permissions without explicitly assigning them. Superuser status cannot be changed here for security reasons.</p>
+                                    <strong>Tài khoản quản trị viên</strong>
+                                    <p class="mb-0 small">Người dùng này có tất cả quyền mà không cần chỉ định rõ ràng. Trạng thái quản trị viên không thể thay đổi ở đây vì lý do bảo mật.</p>
                                 </div>
                             {% endif %}
                         </div>
 
                         <!-- Account Dates -->
                         <h5 class="section-header mt-5">
-                            <i class="fas fa-calendar me-2"></i>Account Information
+                            <i class="fas fa-calendar me-2"></i>Thông tin tài khoản
                         </h5>
 
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <strong class="text-muted d-block mb-1">Date Joined</strong>
-                                    <p class="mb-0">{{ user_to_edit.date_joined|date:"F d, Y H:i" }}</p>
-                                    <small class="text-muted">{{ user_to_edit.date_joined|timesince }} ago</small>
+                                    <strong class="text-muted d-block mb-1">Ngày tham gia</strong>
+                                    <p class="mb-0">{{ user_to_edit.date_joined|date:"d/m/Y H:i" }}</p>
+                                    <small class="text-muted">{{ user_to_edit.date_joined|timesince }} trước</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <strong class="text-muted d-block mb-1">Last Login</strong>
+                                    <strong class="text-muted d-block mb-1">Đăng nhập lần cuối</strong>
                                     {% if user_to_edit.last_login %}
-                                        <p class="mb-0">{{ user_to_edit.last_login|date:"F d, Y H:i" }}</p>
-                                        <small class="text-muted">{{ user_to_edit.last_login|timesince }} ago</small>
+                                        <p class="mb-0">{{ user_to_edit.last_login|date:"d/m/Y H:i" }}</p>
+                                        <small class="text-muted">{{ user_to_edit.last_login|timesince }} trước</small>
                                     {% else %}
-                                        <p class="mb-0 text-muted">Never logged in</p>
+                                        <p class="mb-0 text-muted">Chưa đăng nhập bao giờ</p>
                                     {% endif %}
                                 </div>
                             </div>
@@ -230,10 +230,10 @@
                         <!-- Action Buttons -->
                         <div class="d-flex justify-content-between align-items-center mt-5 pt-4 border-top">
                             <a href="{% url 'admin_dashboard:user_detail' user_to_edit.id %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-times me-2"></i>Cancel
+                                <i class="fas fa-times me-2"></i>Hủy bỏ
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i>Save Changes
+                                <i class="fas fa-save me-2"></i>Lưu thay đổi
                             </button>
                         </div>
                     </form>
@@ -243,19 +243,19 @@
                 {% if not user_to_edit.is_superuser %}
                     <div class="form-card mt-4 border border-danger">
                         <h5 class="text-danger mb-3">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Danger Zone
+                            <i class="fas fa-exclamation-triangle me-2"></i>Vùng nguy hiểm
                         </h5>
-                        <p class="text-muted mb-3">These actions are irreversible. Please be certain.</p>
+                        <p class="text-muted mb-3">Những hành động này không thể hoàn tác. Vui lòng chắc chắn.</p>
                         
                         <div class="d-flex gap-2">
                             <button class="btn btn-outline-danger" onclick="resetPassword()">
-                                <i class="fas fa-key me-2"></i>Reset Password
+                                <i class="fas fa-key me-2"></i>Đặt lại mật khẩu
                             </button>
                             <form method="post" action="{% url 'admin_dashboard:toggle_user_status' user_to_edit.id %}" style="display: inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-warning" onclick="return confirm('Are you sure you want to toggle this user\'s status?')">
+                                <button type="submit" class="btn btn-outline-warning" onclick="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái người dùng này?')">
                                     <i class="fas fa-ban me-2"></i>
-                                    {% if user_to_edit.is_active %}Deactivate{% else %}Activate{% endif %} Account
+                                    {% if user_to_edit.is_active %}Vô hiệu hóa{% else %}Kích hoạt{% endif %} tài khoản
                                 </button>
                             </form>
                         </div>
@@ -267,7 +267,7 @@
 
     <script>
         function resetPassword() {
-            alert('Password reset functionality will be implemented. An email will be sent to the user.');
+            alert('Chức năng đặt lại mật khẩu sẽ được triển khai. Một email sẽ được gửi cho người dùng.');
         }
     </script>
 {% endblock %}
