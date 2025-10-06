@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,38 +10,374 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .page-header {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 60px 0 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header .lead {
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+
+        .breadcrumb-custom {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .breadcrumb-custom a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        .breadcrumb-custom a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
         .card-detail-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 0 20px 60px;
         }
+
+        .card-detail-wrapper {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card-detail-wrapper:hover {
+            box-shadow: var(--hover-shadow);
+        }
+
+        .card-image-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 600px;
+        }
+
         .card-image-container {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
+            position: relative;
+            max-width: 400px;
+            width: 100%;
         }
+
         .card-image {
-            max-width: 100%;
+            width: 100%;
             height: auto;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
         }
+
+        .card-image:hover {
+            transform: scale(1.05);
+        }
+
         .stock-badge {
             position: absolute;
             top: 20px;
             right: 20px;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
+
         .in-stock {
-            background: #28a745;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
         }
+
         .out-of-stock {
-            background: #dc3545;
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
             color: white;
+        }
+
+        .card-info-section {
+            padding: 50px;
+        }
+
+        .card-title-main {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #667eea;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .info-item span {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .badge-custom {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .badge-type {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .badge-rarity {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .monster-stats {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 25px;
+            border-radius: 15px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .monster-stats h5 {
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
+        .stat-box {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box strong {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-box span {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .description-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .description-box h5 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .price-section {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .price-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .price-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-outline-custom {
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+        }
+
+        .related-section {
+            margin-top: 60px;
+        }
+
+        .related-section h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .related-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .related-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .related-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .related-card-body {
+            padding: 20px;
+        }
+
+        .related-card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .related-card-price {
+            color: #667eea;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .placeholder-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+        }
+
+        .placeholder-icon {
+            font-size: 8rem;
+            color: #dee2e6;
+        }
+
+        @media (max-width: 768px) {
+            .card-image-section {
+                min-height: 400px;
+                padding: 20px;
+            }
+
+            .card-info-section {
+                padding: 30px 20px;
+            }
+
+            .card-title-main {
+                font-size: 1.8rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .price-amount {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -49,101 +386,122 @@
 
     <div class="page-header">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-3">{{ card.name }}</h1>
-            <p class="lead">{{ card.card_set.name }}</p>
+            <nav class="breadcrumb-custom">
+                <a href="{% url 'home' %}"><i class="fas fa-home me-2"></i>Home</a>
+                <span class="mx-2">/</span>
+                <a href="{% url 'card_list' %}">Cards</a>
+                <span class="mx-2">/</span>
+                <span>{{ card.name }}</span>
+            </nav>
+            <h1 class="display-4 mt-3">{{ card.name }}</h1>
+            <p class="lead">
+                <i class="fas fa-layer-group me-2"></i>{{ card.card_set.name }}
+            </p>
         </div>
     </div>
 
     <div class="card-detail-container">
-        <div class="row">
-            <div class="col-lg-5 mb-4">
-                <div class="card-image-container position-relative">
-                    {% if card.is_in_stock %}
-                        <span class="stock-badge in-stock">In Stock</span>
-                    {% else %}
-                        <span class="stock-badge out-of-stock">Out of Stock</span>
-                    {% endif %}
-                    
-                    {% if card.image %}
-                        <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
-                    {% else %}
-                        <div style="width: 100%; height: 400px; background: #e9ecef; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-image fa-5x text-muted"></i>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <h2 class="mb-4">{{ card.name }}</h2>
+        <div class="card-detail-wrapper">
+            <div class="row g-0">
+                <div class="col-lg-5">
+                    <div class="card-image-section">
+                        {% if card.is_in_stock %}
+                            <span class="stock-badge in-stock">
+                                <i class="fas fa-check-circle me-2"></i>In Stock
+                            </span>
+                        {% else %}
+                            <span class="stock-badge out-of-stock">
+                                <i class="fas fa-times-circle me-2"></i>Out of Stock
+                            </span>
+                        {% endif %}
                         
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <p class="mb-2"><strong>Type:</strong> <span class="badge bg-primary">{{ card.get_card_type_display }}</span></p>
-                            </div>
-                            <div class="col-6">
-                                <p class="mb-2"><strong>Rarity:</strong> <span class="badge bg-warning text-dark">{{ card.get_rarity_display }}</span></p>
-                            </div>
+                        <div class="card-image-container">
+                            {% if card.image %}
+                                <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
+                            {% else %}
+                                <div class="placeholder-image">
+                                    <i class="fas fa-image placeholder-icon"></i>
+                                </div>
+                            {% endif %}
                         </div>
+                    </div>
+                </div>
 
-                        <div class="row mb-3">
-                            <div class="col-6">
-                                <p class="mb-2"><strong>Condition:</strong> {{ card.get_condition_display }}</p>
+                <div class="col-lg-7">
+                    <div class="card-info-section">
+                        <h2 class="card-title-main">{{ card.name }}</h2>
+                        
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <strong><i class="fas fa-tag me-2"></i>Card Type</strong>
+                                <span class="badge-custom badge-type">{{ card.get_card_type_display }}</span>
                             </div>
-                            <div class="col-6">
-                                <p class="mb-2"><strong>Stock:</strong> {{ card.stock_quantity }} available</p>
+                            <div class="info-item">
+                                <strong><i class="fas fa-star me-2"></i>Rarity</strong>
+                                <span class="badge-custom badge-rarity">{{ card.get_rarity_display }}</span>
+                            </div>
+                            <div class="info-item">
+                                <strong><i class="fas fa-shield-alt me-2"></i>Condition</strong>
+                                <span>{{ card.get_condition_display }}</span>
+                            </div>
+                            <div class="info-item">
+                                <strong><i class="fas fa-boxes me-2"></i>Stock Available</strong>
+                                <span>{{ card.stock_quantity }} units</span>
                             </div>
                         </div>
 
                         {% if card.card_type == 'monster' %}
-                        <div class="row mb-3">
-                            {% if card.attack is not None %}
-                            <div class="col-4">
-                                <p class="mb-2"><strong>ATK:</strong> {{ card.attack }}</p>
+                        <div class="monster-stats">
+                            <h5><i class="fas fa-dragon me-2"></i>Monster Statistics</h5>
+                            <div class="stat-row">
+                                {% if card.attack is not None %}
+                                <div class="stat-box">
+                                    <strong>ATTACK</strong>
+                                    <span>{{ card.attack }}</span>
+                                </div>
+                                {% endif %}
+                                {% if card.defense is not None %}
+                                <div class="stat-box">
+                                    <strong>DEFENSE</strong>
+                                    <span>{{ card.defense }}</span>
+                                </div>
+                                {% endif %}
+                                {% if card.level is not None %}
+                                <div class="stat-box">
+                                    <strong>LEVEL</strong>
+                                    <span>{{ card.level }}</span>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
-                            {% if card.defense is not None %}
-                            <div class="col-4">
-                                <p class="mb-2"><strong>DEF:</strong> {{ card.defense }}</p>
-                            </div>
-                            {% endif %}
-                            {% if card.level is not None %}
-                            <div class="col-4">
-                                <p class="mb-2"><strong>Level:</strong> {{ card.level }}</p>
-                            </div>
-                            {% endif %}
                         </div>
                         {% endif %}
 
-                        <div class="mb-4">
-                            <h5>Description</h5>
-                            <p class="text-muted">{{ card.description }}</p>
+                        <div class="description-box">
+                            <h5><i class="fas fa-align-left me-2"></i>Card Description</h5>
+                            <p class="mb-0">{{ card.description }}</p>
                         </div>
 
-                        <hr>
-
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="text-primary mb-0">${{ card.price }}</h3>
+                        <div class="price-section">
+                            <div class="price-label">Price</div>
+                            <h3 class="price-amount">{% currency_display card.price %}</h3>
                         </div>
 
                         {% if card.is_in_stock %}
                             {% if user.is_authenticated %}
-                                <form method="POST" action="{% url 'add_to_cart' card.id %}">
+                                <form method="POST" action="{% url 'add_to_cart' card.id %}" class="d-grid gap-2">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <button type="submit" class="btn btn-primary-custom">
                                         <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                                     </button>
                                 </form>
                             {% else %}
-                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100">
+                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary-custom d-block text-center">
                                     <i class="fas fa-sign-in-alt me-2"></i>Login to Purchase
                                 </a>
                             {% endif %}
                         {% else %}
-                            <button class="btn btn-secondary btn-lg w-100" disabled>
-                                <i class="fas fa-times-circle me-2"></i>Out of Stock
+                            <button class="btn btn-outline-custom d-block w-100" disabled>
+                                <i class="fas fa-times-circle me-2"></i>Currently Out of Stock
                             </button>
                         {% endif %}
                     </div>
@@ -152,27 +510,26 @@
         </div>
 
         {% if related_cards %}
-        <div class="mt-5">
-            <h3 class="mb-4">Related Cards from {{ card.card_set.name }}</h3>
-            <div class="row">
+        <div class="related-section">
+            <h3><i class="fas fa-layer-group me-3"></i>More from {{ card.card_set.name }}</h3>
+            <div class="row g-4">
                 {% for related_card in related_cards %}
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100 shadow-sm">
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="related-card">
                         {% if related_card.image %}
-                            <img src="{{ related_card.image.url }}" class="card-img-top" alt="{{ related_card.name }}">
+                            <img src="{{ related_card.image.url }}" alt="{{ related_card.name }}">
                         {% else %}
-                            <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                            <div style="width: 100%; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
                                 <i class="fas fa-image fa-3x text-muted"></i>
                             </div>
                         {% endif %}
-                        <div class="card-body">
-                            <h6 class="card-title">{{ related_card.name }}</h6>
-                            <p class="card-text">
-                                <strong>${{ related_card.price }}</strong>
-                                <br>
-                                <small class="text-muted">{{ related_card.get_rarity_display }}</small>
-                            </p>
-                            <a href="{% url 'card_detail' related_card.id %}" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                        <div class="related-card-body">
+                            <h6 class="related-card-title">{{ related_card.name }}</h6>
+                            <div class="related-card-price">{% currency_display related_card.price %}</div>
+                            <small class="text-muted d-block mb-3">{{ related_card.get_rarity_display }}</small>
+                            <a href="{% url 'card_detail' related_card.id %}" class="btn btn-outline-custom btn-sm w-100">
+                                <i class="fas fa-eye me-2"></i>View Details
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -181,6 +538,8 @@
         </div>
         {% endif %}
     </div>
+
+    {% include 'includes/messages.html' %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

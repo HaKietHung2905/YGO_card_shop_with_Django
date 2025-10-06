@@ -61,8 +61,8 @@ urlpatterns = [
     path('tournaments/<int:tournament_id>/edit/', admin_views.edit_tournament, name='edit_tournament'),
     path('tournaments/<int:tournament_id>/delete/', admin_views.delete_tournament, name='delete_tournament'),
     
-
-     path('settings/', admin_views.admin_settings, name='settings'),
+    # Settings URLs
+    path('settings/', admin_views.admin_settings, name='settings'),
     path('settings/update/', admin_views.update_settings, name='update_settings'),
     path('settings/clear-cache/', admin_views.clear_cache, name='clear_cache'),
 ]
