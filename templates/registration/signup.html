@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Yu-Gi-Oh Card Shop</title>
+    <title>Đăng nhập - Cửa hàng thẻ bài Yu-Gi-Oh</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,34 +20,33 @@
             min-height: 100vh;
         }
         
-        .signup-container {
+        .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
         }
         
-        .signup-card {
+        .login-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            max-width: 500px;
+            max-width: 450px;
             width: 100%;
             margin: 20px;
         }
         
-        .signup-header {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 40px 30px;
             text-align: center;
         }
         
-        .signup-body {
-            padding: 30px;
+        .login-body {
+            padding: 40px 30px;
         }
         
         .form-control {
@@ -58,12 +57,12 @@
         }
         
         .form-control:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
         }
         
-        .btn-signup {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 10px;
             padding: 12px;
@@ -73,9 +72,9 @@
             transition: transform 0.3s ease;
         }
         
-        .btn-signup:hover {
+        .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
         
         .floating-cards {
@@ -97,12 +96,11 @@
             animation: float 6s ease-in-out infinite;
         }
         
-        .floating-card:nth-child(1) { top: 15%; left: 15%; animation-delay: 0s; }
-        .floating-card:nth-child(2) { top: 65%; left: 85%; animation-delay: -2s; }
-        .floating-card:nth-child(3) { top: 85%; left: 25%; animation-delay: -4s; }
-        .floating-card:nth-child(4) { top: 25%; left: 75%; animation-delay: -1s; }
-        .floating-card:nth-child(5) { top: 75%; left: 65%; animation-delay: -3s; }
-        .floating-card:nth-child(6) { top: 45%; left: 10%; animation-delay: -5s; }
+        .floating-card:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .floating-card:nth-child(2) { top: 60%; left: 80%; animation-delay: -2s; }
+        .floating-card:nth-child(3) { top: 80%; left: 20%; animation-delay: -4s; }
+        .floating-card:nth-child(4) { top: 30%; left: 70%; animation-delay: -1s; }
+        .floating-card:nth-child(5) { top: 70%; left: 60%; animation-delay: -3s; }
         
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
@@ -142,27 +140,26 @@
         <div class="floating-card"></div>
         <div class="floating-card"></div>
         <div class="floating-card"></div>
-        <div class="floating-card"></div>
     </div>
     
     <!-- Back to Home Button -->
     <div class="back-to-home">
         <a href="{% url 'home' %}" class="btn">
-            <i class="fas fa-arrow-left me-2"></i>Back to Home
+            <i class="fas fa-arrow-left me-2"></i>Về trang chủ
         </a>
     </div>
     
-    <!-- Signup Container -->
-    <div class="signup-container">
-        <div class="signup-card">
-            <div class="signup-header">
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
                 <h1 class="h3 mb-3">
-                    <i class="fas fa-user-plus me-2"></i>Join the Duel!
+                    <i class="fas fa-magic me-2"></i>Chào mừng trở lại, Duelist!
                 </h1>
-                <p class="mb-0">Create your duelist account</p>
+                <p class="mb-0">Đăng nhập để truy cập bộ sưu tập của bạn</p>
             </div>
             
-            <div class="signup-body">
+            <div class="login-body">
                 <!-- Display Errors -->
                 {% if form.errors %}
                     <div class="alert alert-danger mb-4">
@@ -175,109 +172,53 @@
                     </div>
                 {% endif %}
                 
-                <!-- Signup Form -->
+                <!-- Login Form -->
                 <form method="post">
                     {% csrf_token %}
                     
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="id_first_name" class="form-label fw-bold">
-                                <i class="fas fa-user me-2 text-success"></i>First Name
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="id_first_name" 
-                                   name="first_name" 
-                                   placeholder="Your first name"
-                                   value="{{ form.first_name.value|default:'' }}">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="id_last_name" class="form-label fw-bold">
-                                <i class="fas fa-user me-2 text-success"></i>Last Name
-                            </label>
-                            <input type="text" 
-                                   class="form-control" 
-                                   id="id_last_name" 
-                                   name="last_name" 
-                                   placeholder="Your last name"
-                                   value="{{ form.last_name.value|default:'' }}">
-                        </div>
-                    </div>
-                    
                     <div class="mb-3">
                         <label for="id_username" class="form-label fw-bold">
-                            <i class="fas fa-at me-2 text-success"></i>Username
+                            <i class="fas fa-user me-2 text-primary"></i>Tên đăng nhập
                         </label>
                         <input type="text" 
                                class="form-control" 
                                id="id_username" 
                                name="username" 
-                               placeholder="Choose a username"
+                               placeholder="Nhập tên đăng nhập của bạn"
                                value="{{ form.username.value|default:'' }}"
                                required>
-                        <small class="form-text text-muted">This will be your duelist name!</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_email" class="form-label fw-bold">
-                            <i class="fas fa-envelope me-2 text-success"></i>Email
-                        </label>
-                        <input type="email" 
-                               class="form-control" 
-                               id="id_email" 
-                               name="email" 
-                               placeholder="your.email@example.com"
-                               value="{{ form.email.value|default:'' }}"
-                               required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="id_password1" class="form-label fw-bold">
-                            <i class="fas fa-lock me-2 text-success"></i>Password
-                        </label>
-                        <input type="password" 
-                               class="form-control" 
-                               id="id_password1" 
-                               name="password1" 
-                               placeholder="Create a strong password"
-                               required>
                     </div>
                     
                     <div class="mb-4">
-                        <label for="id_password2" class="form-label fw-bold">
-                            <i class="fas fa-lock me-2 text-success"></i>Confirm Password
+                        <label for="id_password" class="form-label fw-bold">
+                            <i class="fas fa-lock me-2 text-primary"></i>Mật khẩu
                         </label>
                         <input type="password" 
                                class="form-control" 
-                               id="id_password2" 
-                               name="password2" 
-                               placeholder="Confirm your password"
+                               id="id_password" 
+                               name="password" 
+                               placeholder="Nhập mật khẩu của bạn"
                                required>
-                    </div>
-                    
-                    <div class="mb-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="terms" required>
-                            <label class="form-check-label" for="terms">
-                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
-                                and <a href="#" class="text-decoration-none">Privacy Policy</a>
-                            </label>
-                        </div>
                     </div>
                     
                     <div class="d-grid mb-4">
-                        <button type="submit" class="btn btn-success btn-signup text-white">
-                            <i class="fas fa-user-plus me-2"></i>Start Your Journey
+                        <button type="submit" class="btn btn-primary btn-login text-white">
+                            <i class="fas fa-sign-in-alt me-2"></i>Bắt đầu đấu bài
                         </button>
                     </div>
                 </form>
                 
                 <!-- Additional Links -->
                 <div class="text-center">
+                    <p class="mb-2">
+                        <a href="#" class="text-decoration-none">
+                            <i class="fas fa-key me-1"></i>Quên mật khẩu?
+                        </a>
+                    </p>
                     <p class="mb-0">
-                        Already have an account? 
-                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
-                            <i class="fas fa-sign-in-alt me-1"></i>Login here
+                        Chưa có tài khoản? 
+                        <a href="{% url 'signup' %}" class="text-decoration-none fw-bold">
+                            <i class="fas fa-user-plus me-1"></i>Đăng ký tại đây
                         </a>
                     </p>
                 </div>

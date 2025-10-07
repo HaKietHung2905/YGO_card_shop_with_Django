@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Order Management - Yu-Gi-Oh Admin{% endblock %}
+{% block title %}Quản lý đơn hàng - Yu-Gi-Oh Admin{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -138,13 +138,13 @@
             <div class="row align-items-center">
                 <div class="col-md-8">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-shopping-cart me-3"></i>Order Management
+                        <i class="fas fa-shopping-cart me-3"></i>Quản lý đơn hàng
                     </h1>
-                    <p class="mb-0 opacity-75">Manage and track all customer orders</p>
+                    <p class="mb-0 opacity-75">Quản lý và theo dõi tất cả đơn hàng của khách hàng</p>
                     <nav aria-label="breadcrumb" class="mt-2">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Đơn hàng</li>
                         </ol>
                     </nav>
                 </div>
@@ -171,7 +171,7 @@
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                         <h3 class="mb-1">{{ total_orders }}</h3>
-                        <p class="text-muted mb-0">Total Orders</p>
+                        <p class="text-muted mb-0">Tổng đơn hàng</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3">
@@ -180,7 +180,7 @@
                             <i class="fas fa-clock"></i>
                         </div>
                         <h3 class="mb-1">{{ pending_orders }}</h3>
-                        <p class="text-muted mb-0">Pending</p>
+                        <p class="text-muted mb-0">Chờ xử lý</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3">
@@ -189,7 +189,7 @@
                             <i class="fas fa-shipping-fast"></i>
                         </div>
                         <h3 class="mb-1">{{ processing_orders|add:shipped_orders }}</h3>
-                        <p class="text-muted mb-0">Processing/Shipped</p>
+                        <p class="text-muted mb-0">Đang xử lý/Đang giao</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3">
@@ -198,7 +198,7 @@
                             <i class="fas fa-dollar-sign"></i>
                         </div>
                         <h3 class="mb-1">${{ total_revenue|floatformat:2 }}</h3>
-                        <p class="text-muted mb-0">Total Revenue</p>
+                        <p class="text-muted mb-0">Tổng doanh thu</p>
                     </div>
                 </div>
             </div>
@@ -207,33 +207,33 @@
             <div class="filter-section">
                 <form method="GET" action="{% url 'admin_dashboard:orders' %}" class="row g-3">
                     <div class="col-md-3">
-                        <label class="form-label fw-bold">Search</label>
-                        <input type="text" name="q" class="form-control" placeholder="Order #, Customer..." value="{{ search_query }}">
+                        <label class="form-label fw-bold">Tìm kiếm</label>
+                        <input type="text" name="q" class="form-control" placeholder="Số đơn hàng, Khách hàng..." value="{{ search_query }}">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Status</label>
+                        <label class="form-label fw-bold">Trạng thái</label>
                         <select name="status" class="form-select">
-                            <option value="">All Status</option>
+                            <option value="">Tất cả trạng thái</option>
                             {% for value, display in status_choices %}
                             <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ display }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Payment</label>
+                        <label class="form-label fw-bold">Thanh toán</label>
                         <select name="payment" class="form-select">
-                            <option value="">All</option>
-                            <option value="paid" {% if payment_filter == 'paid' %}selected{% endif %}>Paid</option>
-                            <option value="unpaid" {% if payment_filter == 'unpaid' %}selected{% endif %}>Unpaid</option>
-                            <option value="refunded" {% if payment_filter == 'refunded' %}selected{% endif %}>Refunded</option>
+                            <option value="">Tất cả</option>
+                            <option value="paid" {% if payment_filter == 'paid' %}selected{% endif %}>Đã thanh toán</option>
+                            <option value="unpaid" {% if payment_filter == 'unpaid' %}selected{% endif %}>Chưa thanh toán</option>
+                            <option value="refunded" {% if payment_filter == 'refunded' %}selected{% endif %}>Đã hoàn tiền</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">From Date</label>
+                        <label class="form-label fw-bold">Từ ngày</label>
                         <input type="date" name="date_from" class="form-control" value="{{ date_from }}">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">To Date</label>
+                        <label class="form-label fw-bold">Đến ngày</label>
                         <input type="date" name="date_to" class="form-control" value="{{ date_to }}">
                     </div>
                     <div class="col-md-1">
@@ -251,14 +251,14 @@
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>Order #</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Items</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th>Payment</th>
-                                <th>Actions</th>
+                                <th>Mã đơn hàng</th>
+                                <th>Khách hàng</th>
+                                <th>Ngày đặt</th>
+                                <th>Sản phẩm</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Thanh toán</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -272,8 +272,8 @@
                                     </div>
                                 </td>
                                 <td>
-                                    {{ order.created_at|date:"M d, Y" }}
-                                    <br><small class="text-muted">{{ order.created_at|time:"g:i A" }}</small>
+                                    {{ order.created_at|date:"d/m/Y" }}
+                                    <br><small class="text-muted">{{ order.created_at|time:"H:i" }}</small>
                                 </td>
                                 <td class="text-center"><strong>{{ order.total_items }}</strong></td>
                                 <td><strong>${{ order.total_amount|floatformat:2 }}</strong></td>
@@ -289,7 +289,7 @@
                                 </td>
                                 <td>
                                     <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-eye"></i> View
+                                        <i class="fas fa-eye"></i> Xem
                                     </a>
                                 </td>
                             </tr>
@@ -297,8 +297,8 @@
                             <tr>
                                 <td colspan="8" class="text-center py-5">
                                     <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                    <h5>No Orders Found</h5>
-                                    <p class="text-muted">No orders match your filters</p>
+                                    <h5>Không tìm thấy đơn hàng</h5>
+                                    <p class="text-muted">Không có đơn hàng nào phù hợp với bộ lọc của bạn</p>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -310,13 +310,13 @@
                 {% if orders.has_other_pages %}
                 <div class="d-flex justify-content-between align-items-center p-3 border-top">
                     <div class="text-muted">
-                        Showing page {{ orders.number }} of {{ orders.paginator.num_pages }}
+                        Hiển thị trang {{ orders.number }} / {{ orders.paginator.num_pages }}
                     </div>
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             {% if orders.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ orders.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+                                <a class="page-link" href="?page={{ orders.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Trước</a>
                             </li>
                             {% endif %}
                             
@@ -326,7 +326,7 @@
                             
                             {% if orders.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ orders.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+                                <a class="page-link" href="?page={{ orders.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Sau</a>
                             </li>
                             {% endif %}
                         </ul>
@@ -340,7 +340,7 @@
 
 {% block extra_js %}
     <script>
-        // Auto-hide alerts after 5 seconds
+        // Tự động ẩn thông báo sau 5 giây
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {

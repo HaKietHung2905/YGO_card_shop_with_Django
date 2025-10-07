@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Settings - Admin Dashboard{% endblock %}
+{% block title %}Cài đặt - Bảng điều khiển quản trị{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -166,12 +166,12 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-cog me-3"></i>Settings
+                        <i class="fas fa-cog me-3"></i>Cài đặt
                     </h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Settings</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item active">Cài đặt</li>
                         </ol>
                     </nav>
                 </div>
@@ -183,22 +183,22 @@
             <div class="stat-card">
                 <i class="fas fa-database fa-2x mb-2"></i>
                 <h3>{{ db_size|default:"N/A" }}</h3>
-                <p>Database Size</p>
+                <p>Dung lượng cơ sở dữ liệu</p>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                 <i class="fas fa-server fa-2x mb-2"></i>
                 <h3>{{ cache_size|default:"N/A" }}</h3>
-                <p>Cache Size</p>
+                <p>Dung lượng bộ nhớ đệm</p>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
                 <i class="fas fa-clock fa-2x mb-2"></i>
                 <h3>{{ uptime|default:"N/A" }}</h3>
-                <p>Uptime</p>
+                <p>Thời gian hoạt động</p>
             </div>
             <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
                 <i class="fas fa-check-circle fa-2x mb-2"></i>
                 <h3>{{ version|default:"1.0.0" }}</h3>
-                <p>Version</p>
+                <p>Phiên bản</p>
             </div>
         </div>
 
@@ -209,8 +209,8 @@
                     <i class="fas fa-sliders-h"></i>
                 </div>
                 <div>
-                    <h2 class="section-title">General Settings</h2>
-                    <p class="section-description">Configure basic application settings</p>
+                    <h2 class="section-title">Cài đặt chung</h2>
+                    <p class="section-description">Cấu hình các thiết lập cơ bản của ứng dụng</p>
                 </div>
             </div>
 
@@ -220,18 +220,18 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Site Name</h5>
-                        <p>The name of your Yu-Gi-Oh card shop</p>
+                        <h5>Tên trang web</h5>
+                        <p>Tên cửa hàng thẻ bài Yu-Gi-Oh của bạn</p>
                     </div>
                     <div style="width: 300px;">
-                        <input type="text" class="form-control" name="site_name" value="{{ site_name|default:'Yu-Gi-Oh Card Shop' }}">
+                        <input type="text" class="form-control" name="site_name" value="{{ site_name|default:'Cửa hàng thẻ bài Yu-Gi-Oh' }}">
                     </div>
                 </div>
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Maintenance Mode</h5>
-                        <p>Put the site in maintenance mode for updates</p>
+                        <h5>Chế độ bảo trì</h5>
+                        <p>Đưa trang web vào chế độ bảo trì để cập nhật</p>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" name="maintenance_mode" {% if maintenance_mode %}checked{% endif %}>
@@ -241,8 +241,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>User Registration</h5>
-                        <p>Allow new users to register accounts</p>
+                        <h5>Đăng ký người dùng</h5>
+                        <p>Cho phép người dùng mới đăng ký tài khoản</p>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" name="allow_registration" {% if allow_registration %}checked{% endif %}>
@@ -252,8 +252,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Email Notifications</h5>
-                        <p>Send email notifications for orders and updates</p>
+                        <h5>Thông báo qua Email</h5>
+                        <p>Gửi thông báo qua email cho đơn hàng và cập nhật</p>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" name="email_notifications" {% if email_notifications %}checked{% endif %}>
@@ -263,7 +263,7 @@
 
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Save General Settings
+                        <i class="fas fa-save me-2"></i>Lưu cài đặt chung
                     </button>
                 </div>
             </form>
@@ -276,8 +276,8 @@
                     <i class="fas fa-store"></i>
                 </div>
                 <div>
-                    <h2 class="section-title">Shop Settings</h2>
-                    <p class="section-description">Configure shop-specific settings</p>
+                    <h2 class="section-title">Cài đặt cửa hàng</h2>
+                    <p class="section-description">Cấu hình các thiết lập liên quan đến cửa hàng</p>
                 </div>
             </div>
 
@@ -287,8 +287,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Currency</h5>
-                        <p>Default currency for the shop</p>
+                        <h5>Đơn vị tiền tệ</h5>
+                        <p>Đơn vị tiền tệ mặc định cho cửa hàng</p>
                     </div>
                     <div style="width: 200px;">
                         <select class="form-select" name="currency">
@@ -303,8 +303,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Tax Rate (%)</h5>
-                        <p>Default tax rate for purchases</p>
+                        <h5>Thuế suất (%)</h5>
+                        <p>Thuế suất mặc định cho giao dịch mua hàng</p>
                     </div>
                     <div style="width: 200px;">
                         <input type="number" class="form-control" name="tax_rate" value="{{ tax_rate|default:0 }}" step="0.01" min="0" max="100">
@@ -313,8 +313,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Minimum Order Amount</h5>
-                        <p>Minimum amount required for orders</p>
+                        <h5>Giá trị đơn hàng tối thiểu</h5>
+                        <p>Giá trị tối thiểu yêu cầu cho đơn hàng</p>
                     </div>
                     <div style="width: 200px;">
                         <input type="number" class="form-control" name="min_order_amount" value="{{ min_order_amount|default:0 }}" step="0.01" min="0">
@@ -323,8 +323,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Low Stock Alert</h5>
-                        <p>Alert when stock falls below this number</p>
+                        <h5>Cảnh báo tồn kho thấp</h5>
+                        <p>Cảnh báo khi tồn kho giảm xuống dưới số lượng này</p>
                     </div>
                     <div style="width: 200px;">
                         <input type="number" class="form-control" name="low_stock_threshold" value="{{ low_stock_threshold|default:5 }}" min="0">
@@ -333,7 +333,7 @@
 
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Save Shop Settings
+                        <i class="fas fa-save me-2"></i>Lưu cài đặt cửa hàng
                     </button>
                 </div>
             </form>
@@ -346,8 +346,8 @@
                     <i class="fas fa-trophy"></i>
                 </div>
                 <div>
-                    <h2 class="section-title">Tournament Settings</h2>
-                    <p class="section-description">Configure tournament-related settings</p>
+                    <h2 class="section-title">Cài đặt giải đấu</h2>
+                    <p class="section-description">Cấu hình các thiết lập liên quan đến giải đấu</p>
                 </div>
             </div>
 
@@ -357,8 +357,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Auto-Approve Registrations</h5>
-                        <p>Automatically approve tournament registrations</p>
+                        <h5>Tự động phê duyệt đăng ký</h5>
+                        <p>Tự động phê duyệt đăng ký tham gia giải đấu</p>
                     </div>
                     <label class="toggle-switch">
                         <input type="checkbox" name="auto_approve_registrations" {% if auto_approve_registrations %}checked{% endif %}>
@@ -368,8 +368,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Default Max Participants</h5>
-                        <p>Default maximum participants for new tournaments</p>
+                        <h5>Số người tham gia tối đa mặc định</h5>
+                        <p>Số người tham gia tối đa mặc định cho giải đấu mới</p>
                     </div>
                     <div style="width: 200px;">
                         <input type="number" class="form-control" name="default_max_participants" value="{{ default_max_participants|default:32 }}" min="1">
@@ -378,8 +378,8 @@
 
                 <div class="setting-item">
                     <div class="setting-info">
-                        <h5>Registration Deadline (hours)</h5>
-                        <p>Hours before tournament start to close registration</p>
+                        <h5>Hạn chót đăng ký (giờ)</h5>
+                        <p>Số giờ trước khi bắt đầu giải đấu để đóng đăng ký</p>
                     </div>
                     <div style="width: 200px;">
                         <input type="number" class="form-control" name="registration_deadline_hours" value="{{ registration_deadline_hours|default:24 }}" min="1">
@@ -388,7 +388,7 @@
 
                 <div class="mt-3">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-2"></i>Save Tournament Settings
+                        <i class="fas fa-save me-2"></i>Lưu cài đặt giải đấu
                     </button>
                 </div>
             </form>
@@ -401,30 +401,30 @@
                     <i class="fas fa-tools"></i>
                 </div>
                 <div>
-                    <h2 class="section-title">System Maintenance</h2>
-                    <p class="section-description">Perform system maintenance tasks</p>
+                    <h2 class="section-title">Bảo trì hệ thống</h2>
+                    <p class="section-description">Thực hiện các tác vụ bảo trì hệ thống</p>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <button class="btn btn-outline-primary w-100" onclick="clearCache()">
-                        <i class="fas fa-broom me-2"></i>Clear Cache
+                        <i class="fas fa-broom me-2"></i>Xóa bộ nhớ đệm
                     </button>
                 </div>
                 <div class="col-md-6 mb-3">
                     <button class="btn btn-outline-info w-100" onclick="optimizeDatabase()">
-                        <i class="fas fa-database me-2"></i>Optimize Database
+                        <i class="fas fa-database me-2"></i>Tối ưu hóa cơ sở dữ liệu
                     </button>
                 </div>
                 <div class="col-md-6 mb-3">
                     <button class="btn btn-outline-success w-100" onclick="backupDatabase()">
-                        <i class="fas fa-download me-2"></i>Backup Database
+                        <i class="fas fa-download me-2"></i>Sao lưu cơ sở dữ liệu
                     </button>
                 </div>
                 <div class="col-md-6 mb-3">
                     <button class="btn btn-outline-warning w-100" onclick="viewLogs()">
-                        <i class="fas fa-file-alt me-2"></i>View System Logs
+                        <i class="fas fa-file-alt me-2"></i>Xem nhật ký hệ thống
                     </button>
                 </div>
             </div>
@@ -433,15 +433,15 @@
         <!-- Danger Zone -->
         <div class="settings-section">
             <div class="danger-zone">
-                <h5><i class="fas fa-exclamation-triangle me-2"></i>Danger Zone</h5>
-                <p class="text-muted mb-3">These actions are irreversible. Please be careful.</p>
+                <h5><i class="fas fa-exclamation-triangle me-2"></i>Vùng nguy hiểm</h5>
+                <p class="text-muted mb-3">Những hành động này không thể hoàn tác. Vui lòng cẩn thận.</p>
                 
                 <div class="d-flex gap-2">
                     <button class="btn btn-danger" onclick="confirmAction('reset_stats')">
-                        <i class="fas fa-redo me-2"></i>Reset Statistics
+                        <i class="fas fa-redo me-2"></i>Đặt lại thống kê
                     </button>
                     <button class="btn btn-danger" onclick="confirmAction('clear_old_data')">
-                        <i class="fas fa-trash me-2"></i>Clear Old Data
+                        <i class="fas fa-trash me-2"></i>Xóa dữ liệu cũ
                     </button>
                 </div>
             </div>
@@ -450,7 +450,7 @@
 
     <script>
         function clearCache() {
-            if (confirm('Are you sure you want to clear the cache?')) {
+            if (confirm('Bạn có chắc chắn muốn xóa bộ nhớ đệm?')) {
                 fetch('/dashboard/settings/clear-cache/', {
                     method: 'POST',
                     headers: {
@@ -459,24 +459,24 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.message || 'Cache cleared successfully!');
+                    alert(data.message || 'Đã xóa bộ nhớ đệm thành công!');
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while clearing cache');
+                    console.error('Lỗi:', error);
+                    alert('Đã xảy ra lỗi khi xóa bộ nhớ đệm');
                 });
             }
         }
 
         function optimizeDatabase() {
-            if (confirm('Are you sure you want to optimize the database? This may take a few minutes.')) {
-                alert('Database optimization started. This will run in the background.');
-                // Add actual implementation
+            if (confirm('Bạn có chắc chắn muốn tối ưu hóa cơ sở dữ liệu? Quá trình này có thể mất vài phút.')) {
+                alert('Đã bắt đầu tối ưu hóa cơ sở dữ liệu. Quá trình này sẽ chạy ngầm.');
+                // Thêm triển khai thực tế
             }
         }
 
         function backupDatabase() {
-            if (confirm('Are you sure you want to create a database backup?')) {
+            if (confirm('Bạn có chắc chắn muốn tạo bản sao lưu cơ sở dữ liệu?')) {
                 window.location.href = '/dashboard/settings/backup-database/';
             }
         }
@@ -487,14 +487,14 @@
 
         function confirmAction(action) {
             const messages = {
-                'reset_stats': 'This will reset all statistics. Are you absolutely sure?',
-                'clear_old_data': 'This will permanently delete old data. Are you absolutely sure?'
+                'reset_stats': 'Điều này sẽ đặt lại tất cả thống kê. Bạn có chắc chắn không?',
+                'clear_old_data': 'Điều này sẽ xóa vĩnh viễn dữ liệu cũ. Bạn có chắc chắn không?'
             };
 
             if (confirm(messages[action])) {
-                if (confirm('This action cannot be undone. Are you really sure?')) {
-                    alert('Action confirmed. Processing...');
-                    // Add actual implementation
+                if (confirm('Hành động này không thể hoàn tác. Bạn có thực sự chắc chắn không?')) {
+                    alert('Đã xác nhận hành động. Đang xử lý...');
+                    // Thêm triển khai thực tế
                 }
             }
         }
@@ -514,15 +514,15 @@
             return cookieValue;
         }
 
-        // Auto-save indication
+        // Hiển thị trạng thái tự động lưu
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 const button = this.querySelector('button[type="submit"]');
                 const originalText = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang lưu...';
                 button.disabled = true;
 
-                // Re-enable after delay (or handle in actual response)
+                // Kích hoạt lại sau một khoảng thời gian (hoặc xử lý trong phản hồi thực tế)
                 setTimeout(() => {
                     button.innerHTML = originalText;
                     button.disabled = false;

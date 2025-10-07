@@ -1,7 +1,7 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
 
-{% block title %}Create Tournament - Admin Dashboard{% endblock %}
+{% block title %}Tạo giải đấu - Bảng điều khiển quản trị{% endblock %}
 
 {% block extra_css %}
     <style>
@@ -65,13 +65,13 @@
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <h1 class="h2 mb-2">
-                        <i class="fas fa-plus-circle me-3"></i>Create New Tournament
+                        <i class="fas fa-plus-circle me-3"></i>Tạo giải đấu mới
                     </h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:tournaments' %}">Tournaments</a></li>
-                            <li class="breadcrumb-item active">Create Tournament</li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng điều khiển</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:tournaments' %}">Giải đấu</a></li>
+                            <li class="breadcrumb-item active">Tạo giải đấu</li>
                         </ol>
                     </nav>
                 </div>
@@ -81,7 +81,7 @@
         <!-- Info Box -->
         <div class="info-box">
             <i class="fas fa-info-circle"></i>
-            <strong>Note:</strong> Fill in all required fields marked with an asterisk (*). The tournament will be created with "Upcoming" status by default.
+            <strong>Lưu ý:</strong> Điền vào tất cả các trường bắt buộc được đánh dấu bằng dấu hoa thị (*). Giải đấu sẽ được tạo với trạng thái "Sắp diễn ra" mặc định.
         </div>
 
         <!-- Create Tournament Form -->
@@ -91,21 +91,21 @@
             <!-- Basic Information -->
             <div class="form-section">
                 <h3 class="section-title">
-                    <i class="fas fa-info-circle me-2"></i>Basic Information
+                    <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
                 </h3>
 
                 <div class="row">
                     <div class="col-md-8 mb-3">
-                        <label class="form-label required-field">Tournament Name</label>
+                        <label class="form-label required-field">Tên giải đấu</label>
                         <input type="text" 
                                class="form-control" 
                                name="name" 
                                required 
-                               placeholder="e.g., Winter Championship 2025">
+                               placeholder="VD: Giải vô địch mùa đông 2025">
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label required-field">Format</label>
+                        <label class="form-label required-field">Thể thức</label>
                         <select class="form-select" name="format" required>
                             {% for value, label in formats %}
                                 <option value="{{ value }}">{{ label }}</option>
@@ -116,11 +116,11 @@
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Description</label>
+                        <label class="form-label">Mô tả</label>
                         <textarea class="form-control" 
                                   name="description" 
                                   rows="4" 
-                                  placeholder="Describe the tournament, rules, and any special information..."></textarea>
+                                  placeholder="Mô tả về giải đấu, thể lệ và các thông tin đặc biệt..."></textarea>
                     </div>
                 </div>
             </div>
@@ -128,12 +128,12 @@
             <!-- Date & Time -->
             <div class="form-section">
                 <h3 class="section-title">
-                    <i class="fas fa-calendar-alt me-2"></i>Date & Time
+                    <i class="fas fa-calendar-alt me-2"></i>Ngày & Giờ
                 </h3>
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label required-field">Date</label>
+                        <label class="form-label required-field">Ngày thi đấu</label>
                         <input type="date" 
                                class="form-control" 
                                name="date" 
@@ -142,7 +142,7 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label required-field">Start Time</label>
+                        <label class="form-label required-field">Giờ bắt đầu</label>
                         <input type="time" 
                                class="form-control" 
                                name="start_time" 
@@ -150,21 +150,21 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">End Time</label>
+                        <label class="form-label">Giờ kết thúc</label>
                         <input type="time" 
                                class="form-control" 
                                name="end_time">
-                        <small class="text-muted">Optional - Estimated end time</small>
+                        <small class="text-muted">Không bắt buộc - Thời gian kết thúc dự kiến</small>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Location</label>
+                        <label class="form-label">Địa điểm</label>
                         <input type="text" 
                                class="form-control" 
                                name="location" 
-                               placeholder="e.g., Main Store - 123 Gaming Street">
+                               placeholder="VD: Cửa hàng chính - 123 Đường Gaming">
                     </div>
                 </div>
             </div>
@@ -172,22 +172,22 @@
             <!-- Participants & Fees -->
             <div class="form-section">
                 <h3 class="section-title">
-                    <i class="fas fa-users me-2"></i>Participants & Fees
+                    <i class="fas fa-users me-2"></i>Người tham gia & Phí
                 </h3>
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Maximum Participants</label>
+                        <label class="form-label">Số người tham gia tối đa</label>
                         <input type="number" 
                                class="form-control" 
                                name="max_participants" 
                                min="1" 
-                               placeholder="Leave blank for unlimited">
-                        <small class="text-muted">Leave empty for unlimited participants</small>
+                               placeholder="Để trống nếu không giới hạn">
+                        <small class="text-muted">Để trống nếu không giới hạn số người</small>
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Entry Fee ($)</label>
+                        <label class="form-label">Phí tham gia ($)</label>
                         <input type="number" 
                                class="form-control" 
                                name="entry_fee" 
@@ -197,13 +197,13 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">Prize Pool ($)</label>
+                        <label class="form-label">Tổng giải thưởng ($)</label>
                         <input type="number" 
                                class="form-control" 
                                name="prize_pool" 
                                step="0.01" 
                                min="0" 
-                               placeholder="Total prize pool">
+                               placeholder="Tổng giá trị giải thưởng">
                     </div>
                 </div>
             </div>
@@ -211,24 +211,24 @@
             <!-- Additional Information -->
             <div class="form-section">
                 <h3 class="section-title">
-                    <i class="fas fa-file-alt me-2"></i>Additional Information
+                    <i class="fas fa-file-alt me-2"></i>Thông tin bổ sung
                 </h3>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Tournament Rules</label>
+                        <label class="form-label">Thể lệ giải đấu</label>
                         <textarea class="form-control" 
                                   name="rules" 
                                   rows="5" 
-                                  placeholder="Special rules, restrictions, or requirements..."></textarea>
+                                  placeholder="Quy định đặc biệt, hạn chế hoặc yêu cầu..."></textarea>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Prize Structure</label>
+                        <label class="form-label">Cơ cấu giải thưởng</label>
                         <textarea class="form-control" 
                                   name="prize_structure" 
                                   rows="5" 
-                                  placeholder="1st Place: $100&#10;2nd Place: $50&#10;3rd-4th Place: $25&#10;etc."></textarea>
+                                  placeholder="Hạng 1: $100&#10;Hạng 2: $50&#10;Hạng 3-4: $25&#10;v.v."></textarea>
                     </div>
                 </div>
             </div>
@@ -237,14 +237,14 @@
             <div class="form-section">
                 <div class="d-flex justify-content-between align-items-center">
                     <a href="{% url 'admin_dashboard:tournaments' %}" class="btn btn-outline-secondary">
-                        <i class="fas fa-times me-2"></i>Cancel
+                        <i class="fas fa-times me-2"></i>Hủy bỏ
                     </a>
                     <div>
                         <button type="reset" class="btn btn-outline-warning me-2">
-                            <i class="fas fa-redo me-2"></i>Reset Form
+                            <i class="fas fa-redo me-2"></i>Đặt lại
                         </button>
                         <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save me-2"></i>Create Tournament
+                            <i class="fas fa-save me-2"></i>Tạo giải đấu
                         </button>
                     </div>
                 </div>
@@ -253,7 +253,7 @@
     </div>
 
     <script>
-        // Form validation
+        // Xác thực form
         document.getElementById('tournamentForm').addEventListener('submit', function(e) {
             const name = document.querySelector('input[name="name"]').value;
             const date = document.querySelector('input[name="date"]').value;
@@ -261,23 +261,23 @@
 
             if (!name || !date || !startTime) {
                 e.preventDefault();
-                alert('Please fill in all required fields (Name, Date, and Start Time)');
+                alert('Vui lòng điền vào tất cả các trường bắt buộc (Tên, Ngày và Giờ bắt đầu)');
                 return false;
             }
 
-            // Check if date is not in the past
+            // Kiểm tra ngày không được là quá khứ
             const selectedDate = new Date(date);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
             if (selectedDate < today) {
                 e.preventDefault();
-                alert('Tournament date cannot be in the past');
+                alert('Ngày thi đấu không thể là ngày trong quá khứ');
                 return false;
             }
         });
 
-        // Set minimum date to today
+        // Đặt ngày tối thiểu là hôm nay
         const dateInput = document.querySelector('input[name="date"]');
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);

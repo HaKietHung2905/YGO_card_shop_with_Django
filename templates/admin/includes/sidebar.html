@@ -11,14 +11,14 @@
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:dashboard' %}">
-                    <i class="fas fa-tachometer-alt"></i>Dashboard
+                    <i class="fas fa-tachometer-alt"></i>Bảng điều khiển
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
                    href="#" data-bs-toggle="collapse" data-bs-target="#warehouseSubmenu" 
                    aria-expanded="{% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' %}true{% else %}false{% endif %}">
-                    <i class="fas fa-warehouse"></i>Warehouse Management
+                    <i class="fas fa-warehouse"></i>Quản lý kho hàng
                     <i class="fas fa-chevron-down ms-auto"></i>
                 </a>
                 <div class="collapse {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'card_sets' or request.resolver_match.url_name == 'edit_card' %}show{% endif %}" 
@@ -27,53 +27,52 @@
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'warehouse' or request.resolver_match.url_name == 'edit_card' %}active{% endif %}" 
                                href="{% url 'admin_dashboard:warehouse' %}">
-                                <i class="fas fa-boxes"></i>Card Inventory
+                                <i class="fas fa-boxes"></i>Kho thẻ bài
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'card_sets' %}active{% endif %}" 
                                href="{% url 'admin_dashboard:card_sets' %}">
-                                <i class="fas fa-layer-group"></i>Card Sets
+                                <i class="fas fa-layer-group"></i>Bộ thẻ bài
                             </a>
                         </li>
                         <li class="nav-item">
-                            <!--<a class="nav-link {% if request.resolver_match.url_name == 'other_products' %}active{% endif %}" -->
                             <a class="nav-link {% if request.resolver_match.url_name == 'other_products' %}active{% endif %}" 
                                href="{% url 'admin_dashboard:other_products' %}">
-                                <i class="fas fa-layer-group"></i>Other Products
+                                <i class="fas fa-layer-group"></i>Sản phẩm khác
                             </a>
-                        </li>>
+                        </li>
                     </ul>
                 </div>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'posts' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:posts' %}">
-                    <i class="fas fa-newspaper"></i>Posts Management
+                    <i class="fas fa-newspaper"></i>Quản lý bài viết
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'tournaments' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:tournaments' %}">
-                    <i class="fas fa-trophy"></i>Tournaments
+                    <i class="fas fa-trophy"></i>Giải đấu
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'orders' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:orders' %}">
-                    <i class="fas fa-shopping-cart"></i>Orders
+                    <i class="fas fa-shopping-cart"></i>Đơn hàng
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'users' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:users' %}">
-                    <i class="fas fa-users"></i>Users
+                    <i class="fas fa-users"></i>Người dùng
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}" 
                    href="{% url 'admin_dashboard:settings' %}">
-                    <i class="fas fa-cogs"></i>Settings
+                    <i class="fas fa-cogs"></i>Cài đặt
                 </a>
             </li>
         </ul>

@@ -1,10 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order #{{ order.order_number }} - Yu-Gi-Oh Card Shop</title>
+    <title>Đơn hàng #{{ order.order_number }} - Cửa hàng thẻ bài Yu-Gi-Oh</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
@@ -16,11 +16,11 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="display-5 fw-bold mb-2">Order #{{ order.order_number }}</h1>
-                    <p class="lead mb-0">Placed on {{ order.created_at|date:"F d, Y - g:i A" }}</p>
+                    <h1 class="display-5 fw-bold mb-2">Đơn hàng #{{ order.order_number }}</h1>
+                    <p class="lead mb-0">Đặt ngày {{ order.created_at|date:"d/m/Y - H:i" }}</p>
                 </div>
                 <a href="{% url 'my_orders' %}" class="btn btn-outline-light">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Orders
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
                 </a>
             </div>
         </div>
@@ -31,7 +31,7 @@
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Order Status</h5>
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Trạng thái đơn hàng</h5>
                     </div>
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -66,10 +66,10 @@
                             </div>
                             <div class="col-md-6 text-md-end">
                                 {% if order.status == 'pending' or order.status == 'confirmed' %}
-                                <form method="POST" action="{% url 'cancel_order' order.id %}" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                <form method="POST" action="{% url 'cancel_order' order.id %}" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?');">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger">
-                                        <i class="fas fa-times me-2"></i>Cancel Order
+                                        <i class="fas fa-times me-2"></i>Hủy đơn hàng
                                     </button>
                                 </form>
                                 {% endif %}
@@ -80,17 +80,17 @@
 
                 <div class="card mb-4">
                     <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0"><i class="fas fa-box me-2"></i>Order Items</h5>
+                        <h5 class="mb-0"><i class="fas fa-box me-2"></i>Sản phẩm trong đơn</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>Product</th>
-                                        <th>Quantity</th>
-                                        <th>Price</th>
-                                        <th class="text-end">Subtotal</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        <th class="text-end">Thành tiền</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -101,14 +101,14 @@
                                                 {% if item.card and item.card.image %}
                                                 <img src="{{ item.card.image.url }}" alt="{{ item.product_name }}" style="width: 60px; height: 80px; object-fit: cover; border-radius: 5px;" class="me-3">
                                                 {% else %}
-                                                <div style="width: 60px; height: 80px; background-color: #f0f0f0; border-radius: 5px; display: flex; align-items-center; justify-content: center;" class="me-3">
+                                                <div style="width: 60px; height: 80px; background-color: #f0f0f0; border-radius: 5px; display: flex; align-items: center; justify-content: center;" class="me-3">
                                                     <i class="fas fa-image text-muted"></i>
                                                 </div>
                                                 {% endif %}
                                                 <div>
                                                     <strong>{{ item.product_name }}</strong>
                                                     {% if item.product_sku %}
-                                                    <br><small class="text-muted">SKU: {{ item.product_sku }}</small>
+                                                    <br><small class="text-muted">Mã: {{ item.product_sku }}</small>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -126,7 +126,7 @@
 
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>Shipping Address</h5>
+                        <h5 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>Địa chỉ giao hàng</h5>
                     </div>
                     <div class="card-body">
                         <address>
@@ -141,7 +141,7 @@
                 {% if order.order_notes %}
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Order Notes</h5>
+                        <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>Ghi chú đơn hàng</h5>
                     </div>
                     <div class="card-body">
                         <p class="mb-0">{{ order.order_notes }}</p>
@@ -153,30 +153,30 @@
             <div class="col-lg-4">
                 <div class="card mb-4 sticky-top" style="top: 20px;">
                     <div class="card-header bg-success text-white">
-                        <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Order Summary</h5>
+                        <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Tóm tắt đơn hàng</h5>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Subtotal:</span>
+                            <span>Tạm tính:</span>
                             <strong>${{ order.subtotal|floatformat:2 }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
-                            <span>Tax:</span>
+                            <span>Thuế:</span>
                             <strong>${{ order.tax|floatformat:2 }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
-                            <span>Shipping:</span>
+                            <span>Phí vận chuyển:</span>
                             <strong>
                                 {% if order.shipping_cost > 0 %}
                                     ${{ order.shipping_cost|floatformat:2 }}
                                 {% else %}
-                                    <span class="text-success">FREE</span>
+                                    <span class="text-success">MIỄN PHÍ</span>
                                 {% endif %}
                             </strong>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between">
-                            <h5>Total:</h5>
+                            <h5>Tổng cộng:</h5>
                             <h5 class="text-success">${{ order.total_amount|floatformat:2 }}</h5>
                         </div>
                     </div>
@@ -184,15 +184,15 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Payment</h5>
+                        <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Thanh toán</h5>
                     </div>
                     <div class="card-body">
                         <p class="mb-2">
-                            <strong>Method:</strong><br>
+                            <strong>Phương thức:</strong><br>
                             {{ order.get_payment_method_display }}
                         </p>
                         <p class="mb-0">
-                            <strong>Status:</strong><br>
+                            <strong>Trạng thái:</strong><br>
                             <span class="badge {% if order.payment_status == 'paid' %}bg-success{% else %}bg-warning{% endif %}">
                                 {{ order.payment_status|title }}
                             </span>
