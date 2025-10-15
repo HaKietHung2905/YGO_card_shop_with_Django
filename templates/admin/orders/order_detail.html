@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -114,8 +115,8 @@
                                             </div>
                                         </td>
                                         <td class="align-middle">{{ item.quantity }}</td>
-                                        <td class="align-middle">${{ item.price|floatformat:2 }}</td>
-                                        <td class="align-middle text-end">${{ item.subtotal|floatformat:2 }}</td>
+                                        <td class="align-middle">{{ item.price|format_currency }}</td>
+                                        <td class="align-middle text-end">{{ item.subtotal|format_currency }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -158,17 +159,17 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tạm tính:</span>
-                            <strong>${{ order.subtotal|floatformat:2 }}</strong>
+                            <strong>{{ order.subtotal|format_currency }}}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Thuế:</span>
-                            <strong>${{ order.tax|floatformat:2 }}</strong>
+                            <strong>{{ order.tax|format_currency }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-3">
                             <span>Phí vận chuyển:</span>
                             <strong>
                                 {% if order.shipping_cost > 0 %}
-                                    ${{ order.shipping_cost|floatformat:2 }}
+                                    {{ order.shipping_cost|format_currency }}
                                 {% else %}
                                     <span class="text-success">MIỄN PHÍ</span>
                                 {% endif %}
@@ -177,7 +178,7 @@
                         <hr>
                         <div class="d-flex justify-content-between">
                             <h5>Tổng cộng:</h5>
-                            <h5 class="text-success">${{ order.total_amount|floatformat:2 }}</h5>
+                            <h5 class="text-success">{{ order.total_amount|format_currency }}</h5>
                         </div>
                     </div>
                 </div>

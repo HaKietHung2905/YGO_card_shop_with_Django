@@ -1,0 +1,517 @@
+{% load static %}
+{% load currency_filters %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng thành công - {{ SITE_NAME }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <style>
+        body {
+            padding-top: 70px;
+            background: #f8f9fa;
+        }
+
+        .confirmation-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 24px;
+        }
+
+        .order-number-box {
+            background: #f0fdf4;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .order-number-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .order-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #059669;
+            font-family: monospace;
+        }
+
+        .order-details-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #ee4d2d;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .order-item-meta {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .order-item-price {
+            font-weight: 600;
+            color: #059669;
+            text-align: right;
+        }
+
+        .summary-total {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #e5e7eb;
+            padding-top: 16px;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .summary-row.total .amount {
+            color: #ee4d2d;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .btn-custom {
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary-custom {
+            background: #ee4d2d;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background: #d73211;
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: white;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-outline-custom:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            color: #374151;
+        }
+
+        .timeline {
+            margin-top: 20px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .timeline-icon {
+            width: 40px;
+            height: 40px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .timeline-icon.pending {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-top: 8px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .success-card {
+                padding: 30px 20px;
+            }
+
+            .order-details-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'includes/navbar.html' %}
+
+    <div class="confirmation-container">
+        <!-- Success Message -->
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-subtitle">
+                Cảm ơn bạn đã đặt hàng. Chúng tôi đã nhận được đơn hàng của bạn và sẽ xử lý trong thời gian sớm nhất.
+            </p>
+
+            <div class="order-number-box">
+                <div class="order-number-label">Mã đơn hàng của bạn</div>
+                <div class="order-number">{{ order.order_number }}</div>
+            </div>
+
+            <p class="text-muted mb-0">
+                <i class="fas fa-envelope me-2"></i>
+                Email xác nhận đã được gửi đến {{ user.email }}
+            </p>
+        </div>
+
+        <!-- Order Items -->
+        <div class="order-details-card">
+            <h3 class="section-title">
+                <i class="fas fa-shopping-bag"></i>
+                Sản phẩm đã đặt
+            </h3>
+
+            <div>
+                {% for item in order.items.all %}
+                <div class="order-item">
+                    {% if item.card and item.card.image %}
+                        <img src="{{ item.card.image.url }}" alt="{{ item.product_name }}" class="order-item-image">
+                    {% else %}
+                        <div class="order-item-image" style="background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-image text-muted"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="order-item-info">
+                        <div class="order-item-name">{{ item.product_name }}</div>
+                        <div class="order-item-meta">
+                            Số lượng: {{ item.quantity }} × {{ item.price|format_currency }}
+                        </div>
+                    </div>
+
+                    <div class="order-item-price">
+                        {{ item.subtotal|format_currency }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Summary -->
+            <div class="summary-total">
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+                    <span>{{ order.subtotal|format_currency }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Thuế:</span>
+                    <span>{{ order.tax|format_currency }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span>
+                        {% if order.shipping_cost == 0 %}
+                            <span class="text-success">Miễn phí</span>
+                        {% else %}
+                            {{ order.shipping_cost|format_currency }}
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="summary-row total">
+                    <span>Tổng cộng:</span>
+                    <span class="amount">{{ order.total_amount|format_currency }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="order-details-card">
+            <h3 class="section-title">
+                <i class="fas fa-shipping-fast"></i>
+                Thông tin giao hàng
+            </h3>
+
+            <div class="info-row">
+                <div class="info-label">Người nhận:</div>
+                <div class="info-value">{{ order.shipping_full_name }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Số điện thoại:</div>
+                <div class="info-value">{{ order.shipping_phone }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Địa chỉ:</div>
+                <div class="info-value">
+                    {{ order.shipping_address }},<br>
+                    {{ order.shipping_city }}, {{ order.shipping_state }}<br>
+                    {% if order.shipping_zip_code %}{{ order.shipping_zip_code }}{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="order-details-card">
+            <h3 class="section-title">
+                <i class="fas fa-credit-card"></i>
+                Thông tin thanh toán
+            </h3>
+
+            <div class="info-row">
+                <div class="info-label">Phương thức thanh toán:</div>
+                <div class="info-value">{{ order.get_payment_method_display }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Trạng thái thanh toán:</div>
+                <div class="info-value">
+                    <span class="badge {% if order.payment_status == 'paid' %}bg-success{% else %}bg-warning{% endif %}">
+                        {{ order.payment_status|title }}
+                    </span>
+                </div>
+            </div>
+            {% if order.order_notes %}
+            <div class="info-row">
+                <div class="info-label">Ghi chú:</div>
+                <div class="info-value">{{ order.order_notes }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Next Steps -->
+        <div class="order-details-card">
+            <h3 class="section-title">
+                <i class="fas fa-tasks"></i>
+                Bước tiếp theo
+            </h3>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Đơn hàng đã được tiếp nhận</div>
+                        <div class="timeline-desc">Chúng tôi đã nhận được đơn hàng của bạn</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon pending">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Đang chuẩn bị hàng</div>
+                        <div class="timeline-desc">Chúng tôi sẽ chuẩn bị và đóng gói đơn hàng của bạn</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon pending">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Đang giao hàng</div>
+                        <div class="timeline-desc">Đơn hàng sẽ được giao đến địa chỉ của bạn</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-icon pending">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-title">Đã giao hàng</div>
+                        <div class="timeline-desc">Đơn hàng đã được giao thành công</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'my_orders' %}" class="btn-custom btn-outline-custom">
+                <i class="fas fa-list"></i>
+                Xem đơn hàng của tôi
+            </a>
+            <a href="{% url 'home' %}" class="btn-custom btn-primary-custom">
+                <i class="fas fa-home"></i>
+                Về trang chủ
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Optional: Add confetti effect or animation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Order confirmed successfully!');
+        });
+    </script>
+</body>
+</html>

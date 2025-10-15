@@ -1,5 +1,6 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
+{% load currency_filters %}
 
 {% block title %}Quản lý đơn hàng - Yu-Gi-Oh Admin{% endblock %}
 
@@ -54,6 +55,18 @@
         .stats-icon.pending { background: linear-gradient(135deg, #ffa726, #ffcc80); }
         .stats-icon.processing { background: linear-gradient(135deg, #42a5f5, #90caf9); }
         .stats-icon.revenue { background: linear-gradient(135deg, #66bb6a, #a5d6a7); }
+
+        .stats-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .revenue-value {
+            color: #059669;
+            font-size: 1.5rem;
+        }
 
         .filter-section {
             background: white;
@@ -110,6 +123,12 @@
         .payment-unpaid { background: #fff3cd; color: #856404; }
         .payment-refunded { background: #e2e3e5; color: #383d41; }
 
+        .price-cell {
+            font-weight: 700;
+            color: #059669;
+            font-size: 1rem;
+        }
+
         .breadcrumb {
             background: transparent;
             padding: 0;
@@ -128,6 +147,15 @@
         .breadcrumb-item.active {
             color: white;
         }
+
+        .currency-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-left: 8px;
+        }
     </style>
 {% endblock %}
 
@@ -139,6 +167,9 @@
                 <div class="col-md-8">
                     <h1 class="h2 mb-2">
                         <i class="fas fa-shopping-cart me-3"></i>Quản lý đơn hàng
+                        <span class="currency-badge">
+                            <i class="fas fa-coins me-1"></i>{{ CURRENCY }}
+                        </span>
                     </h1>
                     <p class="mb-0 opacity-75">Quản lý và theo dõi tất cả đơn hàng của khách hàng</p>
                     <nav aria-label="breadcrumb" class="mt-2">
@@ -170,7 +201,7 @@
                         <div class="stats-icon total">
                             <i class="fas fa-shopping-cart"></i>
                         </div>
-                        <h3 class="mb-1">{{ total_orders }}</h3>
+                        <div class="stats-value">{{ total_orders }}</div>
                         <p class="text-muted mb-0">Tổng đơn hàng</p>
                     </div>
                 </div>
@@ -179,7 +210,7 @@
                         <div class="stats-icon pending">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <h3 class="mb-1">{{ pending_orders }}</h3>
+                        <div class="stats-value">{{ pending_orders }}</div>
                         <p class="text-muted mb-0">Chờ xử lý</p>
                     </div>
                 </div>
@@ -188,16 +219,16 @@
                         <div class="stats-icon processing">
                             <i class="fas fa-shipping-fast"></i>
                         </div>
-                        <h3 class="mb-1">{{ processing_orders|add:shipped_orders }}</h3>
+                        <div class="stats-value">{{ processing_orders|add:shipped_orders }}</div>
                         <p class="text-muted mb-0">Đang xử lý/Đang giao</p>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6 mb-3">
                     <div class="stats-card">
                         <div class="stats-icon revenue">
-                            <i class="fas fa-dollar-sign"></i>
+                            <i class="fas fa-coins"></i>
                         </div>
-                        <h3 class="mb-1">${{ total_revenue|floatformat:2 }}</h3>
+                        <div class="stats-value revenue-value">{{ total_revenue|format_currency }}</div>
                         <p class="text-muted mb-0">Tổng doanh thu</p>
                     </div>
                 </div>
@@ -254,7 +285,7 @@
                                 <th>Mã đơn hàng</th>
                                 <th>Khách hàng</th>
                                 <th>Ngày đặt</th>
-                                <th>Sản phẩm</th>
+                                <th class="text-center">Sản phẩm</th>
                                 <th>Tổng tiền</th>
                                 <th>Trạng thái</th>
                                 <th>Thanh toán</th>
@@ -264,7 +295,9 @@
                         <tbody>
                             {% for order in orders %}
                             <tr>
-                                <td><strong>{{ order.order_number }}</strong></td>
+                                <td>
+                                    <strong class="text-primary">{{ order.order_number }}</strong>
+                                </td>
                                 <td>
                                     <div>
                                         <strong>{{ order.user.username }}</strong>
@@ -275,8 +308,10 @@
                                     {{ order.created_at|date:"d/m/Y" }}
                                     <br><small class="text-muted">{{ order.created_at|time:"H:i" }}</small>
                                 </td>
-                                <td class="text-center"><strong>{{ order.total_items }}</strong></td>
-                                <td><strong>${{ order.total_amount|floatformat:2 }}</strong></td>
+                                <td class="text-center">
+                                    <span class="badge bg-secondary">{{ order.total_items }}</span>
+                                </td>
+                                <td class="price-cell">{{ order.total_amount|format_currency }}</td>
                                 <td>
                                     <span class="status-badge status-{{ order.status }}">
                                         {{ order.get_status_display }}
@@ -288,7 +323,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                    <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i> Xem
                                     </a>
                                 </td>
@@ -296,9 +331,9 @@
                             {% empty %}
                             <tr>
                                 <td colspan="8" class="text-center py-5">
-                                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                    <h5>Không tìm thấy đơn hàng</h5>
-                                    <p class="text-muted">Không có đơn hàng nào phù hợp với bộ lọc của bạn</p>
+                                    <i class="fas fa-inbox fa-3x text-muted mb-3 d-block"></i>
+                                    <h5 class="text-muted">Không tìm thấy đơn hàng</h5>
+                                    <p class="text-muted mb-0">Không có đơn hàng nào phù hợp với bộ lọc của bạn</p>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -311,22 +346,35 @@
                 <div class="d-flex justify-content-between align-items-center p-3 border-top">
                     <div class="text-muted">
                         Hiển thị trang {{ orders.number }} / {{ orders.paginator.num_pages }}
+                        <span class="ms-2">({{ orders.paginator.count }} đơn hàng)</span>
                     </div>
                     <nav>
                         <ul class="pagination pagination-sm mb-0">
                             {% if orders.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ orders.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Trước</a>
+                                <a class="page-link" href="?page={{ orders.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment={{ payment_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                                    <i class="fas fa-chevron-left"></i> Trước
+                                </a>
                             </li>
                             {% endif %}
                             
-                            <li class="page-item active">
-                                <span class="page-link">{{ orders.number }}</span>
-                            </li>
+                            {% for num in orders.paginator.page_range %}
+                                {% if orders.number == num %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ num }}</span>
+                                    </li>
+                                {% elif num > orders.number|add:'-3' and num < orders.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment={{ payment_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">{{ num }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
                             
                             {% if orders.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ orders.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Sau</a>
+                                <a class="page-link" href="?page={{ orders.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment={{ payment_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}">
+                                    Sau <i class="fas fa-chevron-right"></i>
+                                </a>
                             </li>
                             {% endif %}
                         </ul>
@@ -348,5 +396,12 @@
                 bsAlert.close();
             });
         }, 5000);
+
+        // Auto-submit form on filter change
+        document.querySelectorAll('.filter-section select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
     </script>
 {% endblock %}

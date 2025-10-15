@@ -1,4 +1,5 @@
 # Enhanced home view to include other products and better data loading
+import uuid 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -424,7 +425,7 @@ def order_confirmation(request, order_id):
     context = {
         'order': order,
     }
-    return render(request, 'cards/orders/order_confirmation.html', context)
+    return render(request, 'cards/order_confirmation.html', context)
 
 
 @login_required
@@ -446,7 +447,7 @@ def order_detail(request, order_id):
     context = {
         'order': order,
     }
-    return render(request, 'cards/orders/order_detail.html', context)
+    return render(request, 'admin/orders/order_detail.html', context)
 
 
 @login_required

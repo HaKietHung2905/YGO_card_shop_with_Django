@@ -1,5 +1,6 @@
 {% extends 'admin/base_admin.html' %}
 {% load crispy_forms_tags %}
+{% load currency_filters %}
 
 {% block title %}Quản Lý Sản Phẩm Khác - Yu-Gi-Oh Admin{% endblock %}
 
@@ -103,6 +104,12 @@
             margin-left: var(--sidebar-width);
             min-height: 100vh;
             padding: 0;
+        }
+
+        .price-cell {
+            font-weight: 600;
+            color: #059669;
+            font-size: 1rem;
         }
     </style>
 {% endblock %}
@@ -332,7 +339,7 @@
                                     <td>
                                         <span class="sku-badge">{{ product.sku }}</span>
                                     </td>
-                                    <td><strong>{{ product.price }}đ</strong></td>
+                                    <td class="price-cell">{{ product.price|format_currency }}</td>
                                     <td>
                                         <span class="stock-badge {% if product.stock_quantity > 10 %}stock-high{% elif product.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ product.stock_quantity }}
@@ -445,8 +452,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Giá (đ) *</label>
-                                    <input type="number" class="form-control" name="price" required step="0.01" min="0">
+                                    <label class="form-label fw-bold">Giá ({{ CURRENCY_SYMBOL }}) *</label>
+                                    <input type="number" class="form-control" name="price" required step="1000" min="0" placeholder="Nhập giá">
+                                    <small class="text-muted">VND không dùng số thập phân</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Số Lượng Kho *</label>
@@ -522,8 +530,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label fw-bold">Giá (đ) *</label>
-                                    <input type="number" class="form-control" name="price" id="editProductPrice" required step="0.01" min="0">
+                                    <label class="form-label fw-bold">Giá ({{ CURRENCY_SYMBOL }}) *</label>
+                                    <input type="number" class="form-control" name="price" id="editProductPrice" required step="1000" min="0">
+                                    <small class="text-muted">VND không dùng số thập phân</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Số Lượng Kho *</label>

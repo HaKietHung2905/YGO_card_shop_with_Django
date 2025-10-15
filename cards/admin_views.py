@@ -1044,7 +1044,7 @@ def admin_order_detail(request, order_id):
         'order': order,
         'order_items': order_items,
     }
-    return render(request, 'admin/order_detail.html', context)
+    return render(request, 'admin/orders/order_detail.html', context)
 
 
 @staff_member_required

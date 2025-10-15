@@ -128,10 +128,10 @@
                             <div>
                                 <strong>{{ item.card.name }}</strong>
                                 <br>
-                                <small class="text-muted">SL: {{ item.quantity }} × ${{ item.card.price }}</small>
+                                <small class="text-muted">SL: {{ item.quantity }} × {{ item.card.price|format_currency }}</small>
                             </div>
                             <div class="text-end">
-                                ${{ item.total_price|floatformat:2 }}
+                               {{ item.total_price|format_currency }}
                             </div>
                         </div>
                         <hr>
@@ -139,11 +139,11 @@
                         
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tạm tính:</span>
-                            <strong>${{ subtotal|floatformat:2 }}</strong>
+                            <strong>{{ subtotal|format_currency }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Thuế (8.5%):</span>
-                            <strong>${{ tax|floatformat:2 }}</strong>
+                            <strong>{{ tax|format_currency }}}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Phí vận chuyển:</span>
@@ -152,7 +152,7 @@
                         <hr>
                         <div class="d-flex justify-content-between">
                             <h5>Tổng cộng:</h5>
-                            <h5 class="text-primary">${{ total|floatformat:2 }}</h5>
+                            <h5 class="text-primary">{{ total|format_currency }}</h5>
                         </div>
                     </div>
                     <div class="card-footer text-center">
