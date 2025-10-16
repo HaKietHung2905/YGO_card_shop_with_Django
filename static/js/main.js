@@ -66,9 +66,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Navbar background change on scroll
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
+    if (navbar && window.scrollY > 100) {
         navbar.style.background = 'rgba(26, 26, 46, 0.98)';
-    } else {
+    } else if (navbar) {
         navbar.style.background = 'rgba(26, 26, 46, 0.95)';
     }
 });
@@ -76,6 +76,12 @@ window.addEventListener('scroll', () => {
 // Ripple effect for buttons
 document.querySelectorAll('.btn').forEach(btn => {
     btn.addEventListener('click', function(e) {
+        // Don't add ripple to nav buttons to avoid conflicts
+        if (this.classList.contains('navbar-toggler') || 
+            this.classList.contains('nav-link')) {
+            return;
+        }
+        
         // Create ripple effect
         const ripple = document.createElement('span');
         const rect = this.getBoundingClientRect();
@@ -133,22 +139,177 @@ document.querySelectorAll('.yugioh-card').forEach(card => {
     });
 });
 
-// Mobile menu toggle enhancement
-const navbarToggler = document.querySelector('.navbar-toggler');
-const navbarCollapse = document.querySelector('.navbar-collapse');
+// ===================================
+// IMPROVED MOBILE MENU TOGGLE WITH DROPDOWN SUPPORT
+// ===================================
+document.addEventListener('DOMContentLoaded', function() {
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.querySelector('.navbar-collapse');
 
-if (navbarToggler && navbarCollapse) {
-    navbarToggler.addEventListener('click', () => {
-        navbarCollapse.classList.toggle('show');
-    });
-    
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navbarCollapse.classList.remove('show');
+    if (navbarToggler && navbarCollapse) {
+        // Remove Bootstrap's default data-bs-toggle behavior
+        navbarToggler.removeAttribute('data-bs-toggle');
+        navbarToggler.removeAttribute('data-bs-target');
+        
+        // Toggle main menu
+        navbarToggler.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const isCurrentlyOpen = navbarCollapse.classList.contains('show');
+            
+            if (isCurrentlyOpen) {
+                // Close menu
+                navbarCollapse.classList.remove('show');
+                this.setAttribute('aria-expanded', 'false');
+                this.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                // Close all dropdowns
+                navbarCollapse.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            } else {
+                // Open menu
+                navbarCollapse.classList.add('show');
+                this.setAttribute('aria-expanded', 'true');
+                this.classList.add('active');
+                
+                if (window.innerWidth < 992) {
+                    document.body.style.overflow = 'hidden';
+                }
+            }
         });
-    });
-}
+        
+        // Handle dropdown toggles
+        const dropdownToggles = navbarCollapse.querySelectorAll('.dropdown-toggle');
+        dropdownToggles.forEach(toggle => {
+            // Remove Bootstrap's default dropdown behavior on mobile
+            toggle.removeAttribute('data-bs-toggle');
+            
+            toggle.addEventListener('click', function(e) {
+                if (window.innerWidth < 992) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const dropdownMenu = this.nextElementSibling;
+                    if (dropdownMenu && dropdownMenu.classList.contains('dropdown-menu')) {
+                        const isOpen = dropdownMenu.classList.contains('show');
+                        
+                        // Close other dropdowns
+                        navbarCollapse.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                            if (menu !== dropdownMenu) {
+                                menu.classList.remove('show');
+                                menu.previousElementSibling.setAttribute('aria-expanded', 'false');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        if (isOpen) {
+                            dropdownMenu.classList.remove('show');
+                            this.setAttribute('aria-expanded', 'false');
+                        } else {
+                            dropdownMenu.classList.add('show');
+                            this.setAttribute('aria-expanded', 'true');
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Close mobile menu when clicking on a regular nav link (not dropdown)
+        navbarCollapse.querySelectorAll('.nav-link:not(.dropdown-toggle)').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    navbarCollapse.classList.remove('show');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                    navbarToggler.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Close dropdown menu items when clicked
+        navbarCollapse.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    // Close dropdown
+                    const dropdownMenu = item.closest('.dropdown-menu');
+                    if (dropdownMenu) {
+                        dropdownMenu.classList.remove('show');
+                        const toggle = dropdownMenu.previousElementSibling;
+                        if (toggle) {
+                            toggle.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                    
+                    // Close main menu
+                    navbarCollapse.classList.remove('show');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                    navbarToggler.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 992) {
+                const isClickInside = navbarToggler.contains(event.target) || 
+                                     navbarCollapse.contains(event.target);
+                
+                if (!isClickInside && navbarCollapse.classList.contains('show')) {
+                    navbarCollapse.classList.remove('show');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                    navbarToggler.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Close all dropdowns
+                    navbarCollapse.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                        const toggle = menu.previousElementSibling;
+                        if (toggle) {
+                            toggle.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                if (window.innerWidth >= 992) {
+                    navbarCollapse.classList.remove('show');
+                    navbarToggler.setAttribute('aria-expanded', 'false');
+                    navbarToggler.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Close all dropdowns
+                    navbarCollapse.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                        const toggle = menu.previousElementSibling;
+                        if (toggle) {
+                            toggle.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                    
+                    // Re-add Bootstrap attributes for desktop
+                    dropdownToggles.forEach(toggle => {
+                        toggle.setAttribute('data-bs-toggle', 'dropdown');
+                    });
+                } else {
+                    // Remove Bootstrap attributes for mobile
+                    dropdownToggles.forEach(toggle => {
+                        toggle.removeAttribute('data-bs-toggle');
+                    });
+                }
+            }, 250);
+        });
+    }
+});
 
 // Scroll to top functionality
 const scrollToTopBtn = document.createElement('button');
@@ -198,6 +359,12 @@ document.querySelectorAll('form').forEach(form => {
 
 // Toast notifications system
 function showToast(message, type = 'success') {
+    // Check if Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.log(message);
+        return;
+    }
+    
     const toast = document.createElement('div');
     toast.className = `toast align-items-center text-white bg-${type} border-0`;
     toast.setAttribute('role', 'alert');
@@ -231,28 +398,21 @@ function showToast(message, type = 'success') {
     });
 }
 
-// Example usage for toast notifications
-document.querySelectorAll('.btn').forEach(btn => {
-    if (btn.textContent.includes('Add to Cart')) {
-        btn.addEventListener('click', () => {
-            showToast('Card added to cart successfully!', 'success');
-        });
-    }
-});
-
 // Performance optimization: Lazy loading for images
 const images = document.querySelectorAll('img[data-src]');
-const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.classList.remove('lazy');
-            imageObserver.unobserve(img);
-        }
+if (images.length > 0) {
+    const imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy');
+                imageObserver.unobserve(img);
+            }
+        });
     });
-});
 
-images.forEach(img => imageObserver.observe(img));
+    images.forEach(img => imageObserver.observe(img));
+}
 
 console.log('Yu-Gi-Oh Card Shop - JavaScript loaded successfully! 🎴');

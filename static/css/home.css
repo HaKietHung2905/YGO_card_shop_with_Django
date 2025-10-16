@@ -524,7 +524,7 @@ body {
     .navbar.fixed-top {
         position: fixed !important;
         top: 0;
-        width: 100%;
+        width: 81%;
         z-index: 1030;
     }
     
