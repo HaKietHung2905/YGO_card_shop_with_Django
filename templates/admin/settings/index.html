@@ -153,13 +153,414 @@
             margin-bottom: 15px;
         }
 
-        .settings-section {
-            padding: 15px;
+        /* Mobile menu toggle button */
+        .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+        .mobile-menu-toggle:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-menu-toggle i {
+            font-size: 1.2rem;
+        }
+
+        /* Hide toggle on desktop */
+        @media (min-width: 992px) {
+            .mobile-menu-toggle {
+                display: none !important;
+            }
+        }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ===== MOBILE RESPONSIVE STYLES ===== */
+
+        /* Tablet and below */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-container {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .header {
+                padding-left: 3.5rem !important;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .settings-section {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
+            .header {
+                padding: 1rem !important;
+            }
+
+            .header h1 {
+                font-size: 1.25rem;
+                padding-left: 0;
+            }
+
+            .header h1 i {
+                margin-right: 0.5rem !important;
+            }
+
+            /* Stats grid - single column on mobile */
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-card i {
+                font-size: 1.5rem !important;
+            }
+
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .stat-card p {
+                font-size: 0.875rem;
+            }
+
+            /* Settings sections */
+            .settings-section {
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 10px;
+            }
+
+            /* Section header */
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .section-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .section-title {
+                font-size: 1.25rem;
+            }
+
+            .section-description {
+                font-size: 0.813rem;
+                margin-top: 5px;
+            }
+
+            /* Setting items - stack vertically */
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .setting-info {
+                width: 100%;
+            }
+
+            .setting-info h5 {
+                font-size: 1rem;
+            }
+
+            .setting-info p {
+                font-size: 0.813rem;
+            }
+
+            /* Input fields */
+            .setting-item > div[style*="width"] {
+                width: 100% !important;
+            }
+
+            .setting-item .form-control,
+            .setting-item .form-select {
+                width: 100%;
+                min-height: 44px;
+                font-size: 0.875rem;
+            }
+
+            /* Toggle switch */
+            .toggle-switch {
+                align-self: flex-start;
+            }
+
+            /* Form buttons */
+            .mt-3 .btn {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+
+            /* System maintenance buttons */
+            .settings-section .row {
+                gap: 10px;
+            }
+
+            .settings-section .col-md-6 {
+                width: 100%;
+                padding: 0;
+                margin-bottom: 10px !important;
+            }
+
+            .settings-section .col-md-6 .btn {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+
+            /* Danger zone */
+            .danger-zone {
+                padding: 15px;
+            }
+
+            .danger-zone h5 {
+                font-size: 1rem;
+            }
+
+            .danger-zone p {
+                font-size: 0.813rem;
+            }
+
+            .danger-zone .d-flex {
+                flex-direction: column;
+                gap: 10px !important;
+            }
+
+            .danger-zone .btn {
+                width: 100%;
+                padding: 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+
+            /* Breadcrumb */
+            .breadcrumb {
+                font-size: 0.75rem;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 575px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+
+            .section-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+            }
+
+            .section-description {
+                font-size: 0.75rem;
+            }
+
+            .setting-item {
+                padding: 12px;
+            }
+
+            .setting-info h5 {
+                font-size: 0.938rem;
+            }
+
+            .setting-info p {
+                font-size: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 12px;
+            }
+
+            .stat-card h3 {
+                font-size: 1.25rem;
+            }
+
+            .stat-card p {
+                font-size: 0.75rem;
+            }
+
+            .toggle-switch {
+                width: 50px;
+                height: 28px;
+            }
+
+            .slider:before {
+                height: 22px;
+                width: 22px;
+            }
+
+            input:checked + .slider:before {
+                transform: translateX(22px);
+            }
+        }
+
+        /* Tablet landscape adjustments */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .mobile-menu-toggle {
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Touch-friendly targets */
+        @media (max-width: 767px) {
+            .btn-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+            
+            .form-control,
+            .form-select {
+                min-height: 44px;
+            }
+
+            input[type="number"],
+            input[type="text"] {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-card {
+                padding: 10px;
+            }
+
+            .stat-card h3 {
+                font-size: 1.25rem;
+            }
+
+            .setting-item {
+                padding: 10px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar,
+            .mobile-menu-toggle,
+            .sidebar-overlay,
+            .danger-zone,
+            .btn {
+                display: none !important;
+            }
+
+            .main-container {
+                margin: 0;
+                box-shadow: none;
+            }
+
+            .settings-section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
         }
     </style>
 {% endblock %}
 
 {% block content %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -203,7 +604,7 @@
         </div>
 
         <!-- General Settings -->
-        <div class="settings-section" >
+        <div class="settings-section">
             <div class="section-header">
                 <div class="section-icon">
                     <i class="fas fa-sliders-h"></i>
@@ -451,6 +852,25 @@
     </div>
 
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
         function clearCache() {
             if (confirm('Bạn có chắc chắn muốn xóa bộ nhớ đệm?')) {
                 fetch('/dashboard/settings/clear-cache/', {

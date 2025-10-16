@@ -79,12 +79,168 @@
         .main-content {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
-            padding: 0; /* Remove default padding for warehouse layout */
+            padding: 0;
+        }
+
+        /* ===== MOBILE RESPONSIVE STYLES ===== */
+        
+        /* Tablet and below */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
+                border-radius: 0;
+            }
+            
+            .header .col-md-8,
+            .header .col-md-4 {
+                text-align: center !important;
+            }
+            
+            .header .btn-light {
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .content-section {
+                padding: 1rem;
+            }
+            
+            .filter-section {
+                padding: 1rem;
+            }
+            
+            .card-custom .fa-3x {
+                font-size: 2rem !important;
+            }
+            
+            /* Mobile table - card layout */
+            .table-custom thead {
+                display: none;
+            }
+            
+            .table-custom tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                padding: 1rem;
+                background: white;
+            }
+            
+            .table-custom tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border: none;
+                text-align: right;
+            }
+            
+            .table-custom tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                text-align: left;
+                margin-right: 1rem;
+                flex: 1;
+            }
+            
+            .card-image {
+                width: 80px;
+                height: 112px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+                border-radius: 5px !important;
+            }
+            
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .modal-lg {
+                max-width: 95%;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 575px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .filter-section .col-12 .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block content %}
+
+      <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -154,7 +310,7 @@
                             <option value="out" {% if stock_filter == 'out' %}selected{% endif %}>Hết Hàng</option>
                         </select>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Sắp Xếp</label>
                         <select name="order_by" class="form-select">
                             <option value="name" {% if order_by == 'name' %}selected{% endif %}>Tên A-Z</option>
@@ -244,7 +400,7 @@
                             <tbody>
                                 {% for card in cards %}
                                 <tr>
-                                    <td>
+                                    <td data-label="Hình Ảnh">
                                         {% if card.image %}
                                             <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
                                         {% else %}
@@ -253,24 +409,24 @@
                                             </div>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td data-label="Tên">
                                         <strong>{{ card.name }}</strong>
                                         {% if card.card_type == 'monster' %}
-                                            <br><small class="text-muted">
+                                            <br><small class="text-muted d-none d-md-inline">
                                                 TẤN: {{ card.attack|default:"?" }} / THỦ: {{ card.defense|default:"?" }} / CẤP: {{ card.level|default:"?" }}
                                             </small>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td data-label="Loại">
                                         <span class="badge bg-secondary">{{ card.get_card_type_display }}</span>
                                     </td>
-                                    <td>
+                                    <td data-label="Độ Hiếm">
                                         <span class="rarity-badge {{ card.rarity }}">{{ card.get_rarity_display }}</span>
                                     </td>
-                                    <td>{{ card.card_set.name }}</td>
-                                    <td>{{ card.get_condition_display }}</td>
-                                    <td><strong>{{ card.price }}đ</strong></td>
-                                    <td>
+                                    <td data-label="Bộ">{{ card.card_set.name }}</td>
+                                    <td data-label="Tình Trạng">{{ card.get_condition_display }}</td>
+                                    <td data-label="Giá"><strong>{{ card.price }}đ</strong></td>
+                                    <td data-label="Kho">
                                         <span class="stock-badge {% if card.stock_quantity > 10 %}stock-high{% elif card.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ card.stock_quantity }}
                                         </span>
@@ -280,7 +436,7 @@
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
-                                    <td>
+                                    <td data-label="Thao Tác">
                                         <div class="btn-group" role="group">
                                             <a href="{% url 'admin_dashboard:edit_card' card.id %}" 
                                                class="btn btn-sm btn-outline-primary" title="Chỉnh Sửa">
@@ -393,7 +549,7 @@
                                     {{ form.image }}
                                 </div>
                                 
-                                <!-- Monster Stats (shown/hidden based on card type) -->
+                                <!-- Monster Stats -->
                                 <div id="monsterStats" style="display: none;">
                                     <h6 class="fw-bold text-primary">Chỉ Số Quái Thú</h6>
                                     <div class="row">
@@ -550,6 +706,15 @@
 
 {% block extra_js %}
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
         // Show/hide monster stats based on card type
         document.getElementById('{{ form.card_type.id_for_label }}').addEventListener('change', function() {
             const monsterStats = document.getElementById('monsterStats');
@@ -604,6 +769,21 @@
             select.addEventListener('change', function() {
                 this.form.submit();
             });
+        });
+
+        // Close sidebar when clicking on overlay
+        document.querySelector('.sidebar-overlay').addEventListener('click', function() {
+            toggleSidebar();
+        });
+
+        // Close sidebar on window resize if it's open on desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
         });
     </script>
 {% endblock %}

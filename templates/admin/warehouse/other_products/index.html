@@ -99,7 +99,6 @@
             font-size: 0.8rem;
         }
 
-        /* Override main-content style for warehouse design */
         .main-content {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
@@ -111,10 +110,398 @@
             color: #059669;
             font-size: 1rem;
         }
+
+        /* ===== MOBILE RESPONSIVE STYLES ===== */
+        
+        /* Tablet and below */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
+                border-radius: 0;
+            }
+            
+            .header .col-md-8,
+            .header .col-md-4 {
+                text-align: center !important;
+            }
+            
+            .header .btn-light {
+                margin-top: 1rem;
+                width: 100%;
+            }
+            
+            .header .breadcrumb {
+                justify-content: center;
+            }
+            
+           .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header p {
+                font-size: 0.875rem;
+            }
+            
+            .content-section {
+                padding: 1rem;
+            }
+            
+            .filter-section {
+                padding: 1rem;
+            }
+            
+            .stats-card {
+                margin-bottom: 1rem;
+            }
+            
+            .stats-card .fa-2x {
+                font-size: 1.5rem !important;
+            }
+            
+            .stats-card h4 {
+                font-size: 1.5rem;
+            }
+            
+            .card-custom .fa-3x {
+                font-size: 2rem !important;
+            }
+            
+            .card-custom h5 {
+                font-size: 1rem;
+            }
+            
+            .card-custom p {
+                font-size: 0.875rem;
+            }
+            
+            /* Mobile table - card layout */
+            .table-custom thead {
+                display: none;
+            }
+            
+            .table-custom tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                padding: 1rem;
+                background: white;
+            }
+            
+            .table-custom tbody td {
+                display: block;
+                padding: 0.5rem 0;
+                border: none;
+                text-align: left;
+            }
+            
+            .table-custom tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 0.25rem;
+                color: #6c757d;
+                font-size: 0.875rem;
+            }
+            
+            .table-custom tbody td:first-child::before {
+                content: '';
+            }
+            
+            /* Product image larger on mobile */
+            .product-image {
+                width: 80px;
+                height: 80px;
+                margin: 0 auto;
+                display: block;
+            }
+            
+            /* Badge adjustments */
+            .product-type-badge {
+                font-size: 0.7rem;
+                padding: 3px 6px;
+            }
+            
+            .stock-badge {
+                font-size: 0.7rem;
+                padding: 4px 8px;
+            }
+            
+            .sku-badge {
+                font-size: 0.75rem;
+                padding: 3px 6px;
+            }
+            
+            /* Price cell */
+            .price-cell {
+                font-size: 1.1rem;
+            }
+            
+            /* Button groups */
+            .btn-group {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+                width: 100%;
+            }
+            
+            .btn-group .btn {
+                flex: 1;
+                min-width: 40px;
+                border-radius: 5px !important;
+            }
+            
+            /* Pagination */
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pagination .page-item {
+                margin: 0.25rem;
+            }
+            
+            .pagination .page-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            /* Modals */
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .modal-lg {
+                max-width: 95%;
+            }
+            
+            .modal-body {
+                padding: 1rem;
+            }
+            
+            .modal-footer {
+                padding: 0.75rem;
+            }
+            
+            .modal-footer .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .modal .form-label {
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .modal .form-control,
+            .modal .form-select {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            
+            /* Alert adjustments */
+            .alert {
+                font-size: 0.875rem;
+                padding: 0.75rem;
+            }
+            
+            /* Empty state */
+            .text-center.py-5 {
+                padding: 2rem 1rem !important;
+            }
+            
+            .text-center .fa-3x {
+                font-size: 2rem !important;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 575px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .header h1 i {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+            
+            .breadcrumb {
+                font-size: 0.75rem;
+            }
+            
+            /* Filter buttons stack */
+            .filter-section .d-grid {
+                margin-bottom: 0.5rem;
+            }
+            
+            /* Stats cards more compact */
+            .stats-card .card-body {
+                padding: 1rem;
+            }
+            
+            .stats-card h4 {
+                font-size: 1.25rem;
+            }
+            
+            .stats-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Table cards more compact */
+            .table-custom tbody tr {
+                padding: 0.75rem;
+            }
+            
+            .table-custom tbody td {
+                padding: 0.375rem 0;
+                font-size: 0.813rem;
+            }
+            
+            /* Button group full width */
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn-group .btn {
+                width: 100%;
+                margin-bottom: 0.25rem;
+            }
+            
+            /* Modal adjustments */
+            .modal-dialog {
+                margin: 0;
+                max-width: 100%;
+            }
+            
+            .modal-content {
+                min-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .modal-body {
+                max-height: calc(100vh - 150px);
+                overflow-y: auto;
+            }
+        }
+
+        /* Landscape mode */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .modal-body {
+                max-height: calc(100vh - 120px);
+            }
+            
+            .stats-card .card-body {
+                padding: 0.75rem;
+            }
+        }
+
+        /* Touch-friendly targets */
+        @media (max-width: 767px) {
+            .btn-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .btn-outline-primary,
+            .btn-outline-danger {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar,
+            .mobile-menu-toggle,
+            .header .btn,
+            .filter-section,
+            .card-custom .btn,
+            .table-custom .btn-group,
+            .pagination,
+            .breadcrumb {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .table-custom thead {
+                display: table-header-group !important;
+            }
+            
+            .table-custom tbody tr {
+                display: table-row !important;
+                border: 1px solid #dee2e6;
+                page-break-inside: avoid;
+            }
+            
+            .table-custom tbody td {
+                display: table-cell !important;
+                padding: 0.5rem !important;
+            }
+            
+            .table-custom tbody td::before {
+                content: none !important;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -317,7 +704,7 @@
                             <tbody>
                                 {% for product in products %}
                                 <tr>
-                                    <td>
+                                    <td data-label="Hình Ảnh">
                                         {% if product.image %}
                                             <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
                                         {% else %}
@@ -326,21 +713,21 @@
                                             </div>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td data-label="Sản Phẩm">
                                         <strong>{{ product.name }}</strong>
                                         {% if product.description %}
                                             <br><small class="text-muted">{{ product.description|truncatechars:50 }}</small>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td data-label="Loại">
                                         <span class="product-type-badge {{ product.product_type }}">{{ product.get_product_type_display }}</span>
                                     </td>
-                                    <td>{{ product.brand|default:"-" }}</td>
-                                    <td>
+                                    <td data-label="Thương Hiệu">{{ product.brand|default:"-" }}</td>
+                                    <td data-label="SKU">
                                         <span class="sku-badge">{{ product.sku }}</span>
                                     </td>
-                                    <td class="price-cell">{{ product.price|format_currency }}</td>
-                                    <td>
+                                    <td data-label="Giá" class="price-cell">{{ product.price|format_currency }}</td>
+                                    <td data-label="Kho">
                                         <span class="stock-badge {% if product.stock_quantity > 10 %}stock-high{% elif product.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ product.stock_quantity }}
                                         </span>
@@ -350,7 +737,7 @@
                                             <i class="fas fa-edit"></i>
                                         </button>
                                     </td>
-                                    <td>
+                                    <td data-label="Thao Tác">
                                         <div class="btn-group" role="group">
                                             <button class="btn btn-sm btn-outline-primary" 
                                                     onclick="editProduct({{ product.id }})" title="Chỉnh Sửa">
@@ -601,6 +988,25 @@
 
 {% block extra_js %}
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
         // Auto-uppercase SKU
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('input[name="sku"]').forEach(input => {
@@ -764,7 +1170,6 @@
         }
 
         function showAlert(type, message) {
-            // Remove any existing alerts
             const existingAlerts = document.querySelectorAll('.alert-dismissible');
             existingAlerts.forEach(alert => {
                 if (alert.classList.contains('position-fixed')) {
@@ -772,7 +1177,6 @@
                 }
             });
             
-            // Create new alert
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
             alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
@@ -786,7 +1190,6 @@
             
             document.body.appendChild(alertDiv);
             
-            // Auto-remove after 5 seconds
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.remove();

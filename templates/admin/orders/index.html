@@ -156,10 +156,365 @@
             font-size: 0.85rem;
             margin-left: 8px;
         }
+
+        /* ===== MOBILE RESPONSIVE STYLES ===== */
+        
+        /* Tablet and below */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .header {
+                padding: 1.5rem 1rem;
+                border-radius: 15px 15px 0 0;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .header .breadcrumb {
+                justify-content: center;
+            }
+            
+           .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+            }
+            
+            .sidebar-overlay.show {
+                display: block;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
+            .main-container {
+                margin: 5px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.25rem;
+            }
+            
+            .header h1 i {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+            
+            .header p {
+                font-size: 0.875rem;
+            }
+            
+            .currency-badge {
+                display: block;
+                margin-top: 0.5rem;
+                margin-left: 0;
+            }
+            
+            .content-section {
+                padding: 1rem;
+            }
+            
+            /* Stats cards */
+            .stats-card {
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+            
+            .stats-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+            
+            .stats-value {
+                font-size: 1.5rem;
+            }
+            
+            .revenue-value {
+                font-size: 1.25rem;
+            }
+            
+            .stats-card p {
+                font-size: 0.875rem;
+            }
+            
+            /* Filter section */
+            .filter-section {
+                padding: 1rem;
+            }
+            
+            .filter-section .form-label {
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .filter-section .form-control,
+            .filter-section .form-select {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            
+            .filter-section .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            
+            /* Mobile table - card layout */
+            .table thead {
+                display: none;
+            }
+            
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                padding: 1rem;
+                background: white;
+            }
+            
+            .table tbody td {
+                display: block;
+                padding: 0.5rem 0;
+                border: none;
+                text-align: left;
+            }
+            
+            .table tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                display: block;
+                margin-bottom: 0.25rem;
+                color: #6c757d;
+                font-size: 0.875rem;
+            }
+            
+            .table tbody td.text-center {
+                text-align: left !important;
+            }
+            
+            /* Badge adjustments */
+            .status-badge,
+            .payment-badge {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+            
+            /* Price cell */
+            .price-cell {
+                font-size: 1.1rem;
+            }
+            
+            /* Action buttons */
+            .table tbody td .btn {
+                display: block;
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+            
+            /* Pagination */
+            .orders-table .d-flex {
+                flex-direction: column;
+                align-items: stretch !important;
+            }
+            
+            .orders-table .d-flex > div:first-child {
+                text-align: center;
+                margin-bottom: 1rem;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .pagination .page-item {
+                margin: 0.25rem;
+            }
+            
+            .pagination .page-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            /* Empty state */
+            .table tbody td[colspan] {
+                padding: 2rem 1rem !important;
+            }
+            
+            .table tbody td[colspan]::before {
+                content: none !important;
+            }
+            
+            .table tbody td[colspan] i.fa-3x {
+                font-size: 2rem !important;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 575px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            
+            .breadcrumb {
+                font-size: 0.75rem;
+            }
+            
+            /* Stats cards more compact */
+            .stats-card {
+                padding: 0.75rem;
+            }
+            
+            .stats-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .stats-value {
+                font-size: 1.25rem;
+            }
+            
+            .revenue-value {
+                font-size: 1.1rem;
+            }
+            
+            .stats-card p {
+                font-size: 0.75rem;
+            }
+            
+            /* Filter section more compact */
+            .filter-section {
+                padding: 0.75rem;
+            }
+            
+            /* Table cards more compact */
+            .table tbody tr {
+                padding: 0.75rem;
+            }
+            
+            .table tbody td {
+                padding: 0.375rem 0;
+                font-size: 0.813rem;
+            }
+            
+            .table tbody td::before {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Landscape mode */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .stats-card {
+                padding: 0.75rem;
+            }
+            
+            .stats-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Touch-friendly targets */
+        @media (max-width: 767px) {
+            .btn-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+            
+            .form-control,
+            .form-select {
+                min-height: 44px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar,
+            .mobile-menu-toggle,
+            .filter-section,
+            .table .btn,
+            .pagination {
+                display: none !important;
+            }
+            
+            .main-container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .table thead {
+                display: table-header-group !important;
+            }
+            
+            .table tbody tr {
+                display: table-row !important;
+                border: 1px solid #dee2e6;
+                page-break-inside: avoid;
+            }
+            
+            .table tbody td {
+                display: table-cell !important;
+                padding: 0.5rem !important;
+            }
+            
+            .table tbody td::before {
+                content: none !important;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -251,7 +606,7 @@
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label fw-bold">Thanh toán</label>
+                        <label class="form-label fw-bold">T.Toán</label>
                         <select name="payment" class="form-select">
                             <option value="">Tất cả</option>
                             <option value="paid" {% if payment_filter == 'paid' %}selected{% endif %}>Đã thanh toán</option>
@@ -295,34 +650,34 @@
                         <tbody>
                             {% for order in orders %}
                             <tr>
-                                <td>
+                                <td data-label="Mã đơn hàng">
                                     <strong class="text-primary">{{ order.order_number }}</strong>
                                 </td>
-                                <td>
+                                <td data-label="Khách hàng">
                                     <div>
                                         <strong>{{ order.user.username }}</strong>
                                         <br><small class="text-muted">{{ order.shipping_full_name }}</small>
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Ngày đặt">
                                     {{ order.created_at|date:"d/m/Y" }}
                                     <br><small class="text-muted">{{ order.created_at|time:"H:i" }}</small>
                                 </td>
-                                <td class="text-center">
+                                <td data-label="Sản phẩm" class="text-center">
                                     <span class="badge bg-secondary">{{ order.total_items }}</span>
                                 </td>
-                                <td class="price-cell">{{ order.total_amount|format_currency }}</td>
-                                <td>
+                                <td data-label="Tổng tiền" class="price-cell">{{ order.total_amount|format_currency }}</td>
+                                <td data-label="Trạng thái">
                                     <span class="status-badge status-{{ order.status }}">
                                         {{ order.get_status_display }}
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Thanh toán">
                                     <span class="payment-badge payment-{{ order.payment_status }}">
                                         {{ order.payment_status|title }}
                                     </span>
                                 </td>
-                                <td>
+                                <td data-label="Thao tác">
                                     <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i> Xem
                                     </a>
@@ -388,7 +743,26 @@
 
 {% block extra_js %}
     <script>
-        // Tự động ẩn thông báo sau 5 giây
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
+        // Auto-hide alerts after 5 seconds
         setTimeout(function() {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {

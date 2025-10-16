@@ -125,10 +125,275 @@
     .user-details small {
         color: #6c757d;
     }
+
+    /* ============================================ */
+    /* MOBILE RESPONSIVE STYLES */
+    /* ============================================ */
+
+    @media (max-width: 768px) {
+        /* Header adjustments */
+        .header {
+            padding: 15px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .col-md-8,
+        .header .col-md-4 {
+            width: 100%;
+            text-align: left !important;
+            margin-bottom: 10px;
+        }
+
+        .header .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Statistics cards */
+        .row.mb-4 {
+            padding: 10px !important;
+        }
+
+        .stats-card {
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stats-card h3 {
+            font-size: 28px;
+        }
+
+        .stats-card .small {
+            font-size: 11px;
+        }
+
+        /* Search section */
+        .search-section {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-section .col-md-6,
+        .search-section .col-md-3 {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .search-section .form-label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .search-section .btn {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Create user button section */
+        .col-md-4.text-end {
+            width: 100%;
+            text-align: left !important;
+            margin-bottom: 15px;
+            padding: 0 15px;
+        }
+
+        .col-md-4.text-end .btn {
+            width: 48%;
+            margin: 0 1%;
+            font-size: 13px;
+            padding: 8px 10px;
+        }
+
+        /* Table responsive adjustments */
+        .table-responsive {
+            padding: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table-responsive h5 {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* Hide table on mobile, show card view */
+        .table {
+            display: none;
+        }
+
+        /* Mobile card view for users */
+        .mobile-user-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-user-card .user-info {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .mobile-user-card .user-avatar {
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+
+        .mobile-user-card .user-details h6 {
+            font-size: 16px;
+        }
+
+        .mobile-user-card .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .mobile-user-card .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-user-card .info-label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .mobile-user-card .info-value {
+            font-size: 13px;
+            text-align: right;
+        }
+
+        .mobile-user-card .action-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .mobile-user-card .action-buttons .btn {
+            flex: 1;
+            font-size: 12px;
+            padding: 8px 10px;
+        }
+
+        /* Pagination adjustments */
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination .page-item {
+            margin: 2px;
+        }
+
+        .pagination .page-link {
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+
+        /* Badge adjustments */
+        .badge {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            padding: 4px 10px;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        /* Empty state */
+        .text-center.py-5 {
+            padding: 30px 15px !important;
+        }
+
+        .text-center.py-5 .fa-3x {
+            font-size: 2rem !important;
+        }
+
+        .text-center.py-5 h5 {
+            font-size: 16px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        /* Extra small devices */
+        .stats-card h3 {
+            font-size: 24px;
+        }
+
+        .mobile-user-card {
+            padding: 12px;
+        }
+
+        .mobile-user-card .user-avatar {
+            width: 45px;
+            height: 45px;
+            font-size: 18px;
+        }
+
+        .mobile-user-card .action-buttons {
+            flex-direction: column;
+        }
+
+        .mobile-user-card .action-buttons .btn {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .col-md-4.text-end .btn {
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .pagination .page-link {
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+    }
+
+    /* Show table only on desktop */
+    @media (min-width: 769px) {
+        .mobile-user-card {
+            display: none;
+        }
+    }
+    .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
 </style>
 {% endblock %}
 
 {% block content %}
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 <div class="main-container">
     <!-- Header -->
     <div class="header">
@@ -230,7 +495,8 @@
             <i class="fas fa-download me-2"></i>Xuất
         </button>
     </div>
-    <!-- Users Table -->
+
+    <!-- Users Table/Cards -->
     <div class="table-responsive">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mb-0">
@@ -240,6 +506,7 @@
         </div>
 
         {% if users %}
+        <!-- Desktop Table View -->
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -331,6 +598,90 @@
             </tbody>
         </table>
 
+        <!-- Mobile Card View -->
+        {% for user in users %}
+        <div class="mobile-user-card">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ user.username|slice:":1"|upper }}
+                </div>
+                <div class="user-details">
+                    <h6>{{ user.get_full_name|default:user.username }}</h6>
+                    <small>@{{ user.username }}</small>
+                </div>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ user.email|truncatechars:25 }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Vai Trò</span>
+                <span class="info-value">
+                    {% if user.is_superuser %}
+                    <span class="badge bg-danger">
+                        <i class="fas fa-crown me-1"></i>Admin
+                    </span>
+                    {% elif user.is_staff %}
+                    <span class="badge bg-info">
+                        <i class="fas fa-user-shield me-1"></i>Staff
+                    </span>
+                    {% else %}
+                    <span class="badge bg-secondary">
+                        <i class="fas fa-user me-1"></i>User
+                    </span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Trạng Thái</span>
+                <span class="info-value">
+                    {% if user.is_active %}
+                    <span class="status-badge status-active">
+                        <i class="fas fa-check-circle me-1"></i>Active
+                    </span>
+                    {% else %}
+                    <span class="status-badge status-inactive">
+                        <i class="fas fa-times-circle me-1"></i>Inactive
+                    </span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Tham Gia</span>
+                <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">Đăng Nhập Cuối</span>
+                <span class="info-value">
+                    {% if user.last_login %}
+                    {{ user.last_login|date:"d/m/Y" }}
+                    {% else %}
+                    <span class="text-muted">Chưa bao giờ</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'admin_dashboard:user_detail' user.id %}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-eye me-1"></i>Chi Tiết
+                </a>
+                <a href="{% url 'admin_dashboard:edit_user' user.id %}" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-edit me-1"></i>Sửa
+                </a>
+                {% if not user.is_superuser %}
+                <button class="btn btn-outline-danger btn-sm" onclick="toggleUserStatus({{ user.id }})">
+                    <i class="fas fa-ban me-1"></i>Khóa
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
         <!-- Pagination -->
         {% if users.has_other_pages %}
         <nav aria-label="Phân trang">
@@ -384,6 +735,25 @@
 </div>
 
 <script>
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    // Close sidebar on window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    });
+
     function toggleUserStatus(userId) {
         if (confirm('Bạn có chắc chắn muốn đổi trạng thái người dùng này?')) {
             // Implementation for toggling user status

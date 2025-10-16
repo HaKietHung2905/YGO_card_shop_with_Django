@@ -651,3 +651,16 @@ body {
         display: none !important;
     }
 }
+
+body {
+    overflow-x: hidden;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+/* Ensure consistent scrollbar behavior */
+html {
+    overflow-y: scroll; /* Forces scrollbar to always be visible */
+}

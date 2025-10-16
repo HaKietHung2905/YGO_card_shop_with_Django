@@ -115,10 +115,498 @@
             border-radius: 12px;
             font-size: 14px;
         }
+
+        /* Mobile menu toggle button */
+        .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+        .mobile-menu-toggle:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .mobile-menu-toggle i {
+            font-size: 1.2rem;
+        }
+
+        /* Hide toggle on desktop */
+        @media (min-width: 992px) {
+            .mobile-menu-toggle {
+                display: none !important;
+            }
+        }
+
+        /* Sidebar overlay for mobile */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ===== MOBILE RESPONSIVE STYLES ===== */
+
+        /* Tablet and below */
+        @media (max-width: 991px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-container {
+                margin: 10px;
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+
+            .header {
+                padding: 1.5rem 1rem;
+                padding-left: 3.5rem !important;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stats-card {
+                padding: 20px;
+            }
+
+            .stats-card h3 {
+                font-size: 28px;
+            }
+        }
+
+        /* Mobile phones */
+        @media (max-width: 767px) {
+            .main-container {
+                margin: 5px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 1rem !important;
+            }
+
+            .header h1 {
+                font-size: 1.25rem;
+            }
+
+            .header h1 i {
+                margin-right: 0.5rem !important;
+            }
+
+            /* Header buttons */
+            .header .col-md-4 {
+                width: 100%;
+                text-align: left !important;
+                margin-top: 1rem;
+            }
+
+            .header .col-md-4 .btn {
+                width: 48%;
+                margin: 0 1%;
+                font-size: 0.813rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .header .col-md-4 .btn i {
+                display: inline-block;
+                margin-right: 0.25rem;
+            }
+
+            /* Stats cards */
+            .row.mb-4 {
+                padding: 10px !important;
+            }
+
+            .stats-card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+
+            .stats-card h3 {
+                font-size: 24px;
+            }
+
+            .stats-card .small {
+                font-size: 0.813rem;
+            }
+
+            /* Filter section */
+            .filter-section {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+
+            .filter-section .form-label {
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .filter-section .col-md-4,
+            .filter-section .col-md-3,
+            .filter-section .col-md-2 {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .filter-section .form-control,
+            .filter-section .form-select {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+                min-height: 44px;
+            }
+
+            .filter-section .btn {
+                font-size: 0.875rem;
+                padding: 0.75rem;
+                min-height: 44px;
+            }
+
+            /* Tournament cards */
+            .tournament-card {
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 10px;
+            }
+
+            .tournament-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                margin-bottom: 15px;
+            }
+
+            .tournament-title {
+                font-size: 1.1rem;
+                margin-bottom: 8px;
+            }
+
+            .status-badge {
+                font-size: 0.7rem;
+                padding: 5px 10px;
+                display: inline-block;
+            }
+
+            /* Action buttons */
+            .action-buttons {
+                display: flex;
+                gap: 5px;
+                width: 100%;
+            }
+
+            .action-buttons .btn {
+                flex: 1;
+                margin: 0;
+                padding: 8px 10px;
+                font-size: 0.813rem;
+            }
+
+            .action-buttons .btn i {
+                margin-right: 3px;
+            }
+
+            /* Tournament info */
+            .tournament-info {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+
+            .info-item {
+                font-size: 0.875rem;
+            }
+
+            .info-item i {
+                font-size: 0.875rem;
+            }
+
+            .participant-count {
+                font-size: 0.813rem;
+                padding: 5px 10px;
+                width: fit-content;
+            }
+
+            /* Tournament description */
+            .tournament-card p {
+                font-size: 0.875rem;
+                margin-bottom: 10px;
+            }
+
+            /* Prize pool alert */
+            .tournament-card .alert {
+                font-size: 0.875rem;
+                padding: 10px;
+            }
+
+            .tournament-card .alert i {
+                font-size: 0.875rem;
+            }
+
+            /* Pagination */
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .pagination .page-item {
+                margin: 0.25rem;
+            }
+
+            .pagination .page-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.813rem;
+            }
+
+            /* Empty state */
+            .text-center.py-5 {
+                padding: 30px 15px !important;
+            }
+
+            .text-center.py-5 i.fa-3x {
+                font-size: 2rem !important;
+            }
+
+            .text-center.py-5 h5 {
+                font-size: 1rem;
+            }
+
+            .text-center.py-5 p {
+                font-size: 0.875rem;
+            }
+
+            /* Breadcrumb */
+            .breadcrumb {
+                font-size: 0.75rem;
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 575px) {
+            .header h1 {
+                font-size: 1.1rem;
+            }
+
+            .header .col-md-4 .btn {
+                width: 100%;
+                margin: 5px 0;
+                font-size: 0.875rem;
+            }
+
+            .stats-card {
+                padding: 12px;
+            }
+
+            .stats-card h3 {
+                font-size: 20px;
+            }
+
+            .stats-card .small {
+                font-size: 0.75rem;
+            }
+
+            .filter-section {
+                padding: 12px;
+            }
+
+            .tournament-card {
+                padding: 12px;
+            }
+
+            .tournament-title {
+                font-size: 1rem;
+            }
+
+            .status-badge {
+                font-size: 0.65rem;
+                padding: 4px 8px;
+            }
+
+            .action-buttons .btn {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+            }
+
+            .info-item {
+                font-size: 0.813rem;
+            }
+
+            .participant-count {
+                font-size: 0.75rem;
+                padding: 4px 8px;
+            }
+
+            .tournament-card p {
+                font-size: 0.813rem;
+            }
+
+            .tournament-card .alert {
+                font-size: 0.813rem;
+                padding: 8px;
+            }
+
+            .pagination .page-link {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .stats-card {
+                padding: 10px;
+            }
+
+            .stats-card h3 {
+                font-size: 20px;
+            }
+
+            .tournament-card {
+                padding: 12px;
+            }
+
+            .tournament-info {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+        }
+
+        /* Tablet landscape - 2 columns for stats */
+        @media (max-width: 991px) and (min-width: 768px) {
+            .mobile-menu-toggle {
+                top: 1.5rem;
+                left: 1.5rem;
+            }
+
+            .header .col-md-4 .btn {
+                width: auto;
+                margin: 0 0.25rem;
+            }
+
+            .row.mb-4 .col-md-3 {
+                width: 50%;
+            }
+        }
+
+        /* Touch-friendly targets */
+        @media (max-width: 767px) {
+            .btn-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+                min-height: 44px;
+            }
+            
+            .form-control,
+            .form-select {
+                min-height: 44px;
+            }
+
+            input[type="text"],
+            input[type="date"] {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar,
+            .mobile-menu-toggle,
+            .sidebar-overlay,
+            .filter-section,
+            .action-buttons,
+            .btn {
+                display: none !important;
+            }
+
+            .main-container {
+                margin: 0;
+                box-shadow: none;
+            }
+
+            .tournament-card {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .header {
+                background: #667eea !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            .tournament-card,
+            .mobile-menu-toggle,
+            .sidebar,
+            .sidebar-overlay {
+                transition: none;
+            }
+        }
+
+        /* High contrast mode support */
+        @media (prefers-contrast: high) {
+            .tournament-card {
+                border: 2px solid #000;
+            }
+
+            .status-badge {
+                border: 1px solid currentColor;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <div class="main-container">
         <!-- Header -->
         <div class="header">
@@ -236,17 +724,17 @@
                                     <a href="{% url 'admin_dashboard:tournament_detail' tournament.id %}" 
                                        class="btn btn-outline-primary btn-sm" 
                                        title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-eye"></i><span class="d-none d-md-inline"> Chi tiết</span>
                                     </a>
                                     <a href="{% url 'admin_dashboard:edit_tournament' tournament.id %}" 
                                        class="btn btn-outline-info btn-sm" 
                                        title="Chỉnh sửa">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="fas fa-edit"></i><span class="d-none d-md-inline"> Sửa</span>
                                     </a>
                                     <button class="btn btn-outline-danger btn-sm" 
                                             onclick="deleteTournament({{ tournament.id }})" 
                                             title="Xóa">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash"></i><span class="d-none d-md-inline"> Xóa</span>
                                     </button>
                                 </div>
                             </div>
@@ -332,6 +820,25 @@
     </div>
 
     <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        }
+
+        // Close sidebar on window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.sidebar-overlay');
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+
         function deleteTournament(tournamentId) {
             if (confirm('Bạn có chắc chắn muốn xóa giải đấu này? Hành động này không thể hoàn tác.')) {
                 // Triển khai chức năng xóa giải đấu
