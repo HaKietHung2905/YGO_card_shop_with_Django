@@ -12,17 +12,25 @@ except ImportError:
         from django.http import HttpResponse
         return HttpResponse("Signup view not implemented yet")
 
+# Custom logout view
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def custom_logout(request):
+    logout(request)
+    return redirect('home')
+
 urlpatterns = [
     # Main pages
     path('', views.home, name='home'),
     path('cards/', views.card_list, name='card_list'),
-    path('card-detail/<int:pk>/', views.card_detail, name='card_detail'),  # Updated URL pattern
+    path('card-detail/<int:pk>/', views.card_detail, name='card_detail'),
     
     # Cart functionality
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart, name='cart'),
     path('cart/remove/<int:pk>/', views.remove_from_cart, name='remove_from_cart'),
-    path('cart/update/<int:pk>/', views.update_cart_quantity, name='update_cart_quantity'),  # ← ADD THIS LINE
+    path('cart/update/<int:pk>/', views.update_cart_quantity, name='update_cart_quantity'),
     
     # Order URLs
     path('checkout/', views.checkout, name='checkout'),
@@ -31,22 +39,21 @@ urlpatterns = [
     path('my-orders/', views.my_orders, name='my_orders'),
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
     path('order/<int:order_id>/cancel/', views.cancel_order, name='cancel_order'),
-
-
+    
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # Custom logout view that redirects to home
+    path('logout/', custom_logout, name='logout'),
     path('signup/', signup_view, name='signup'),
     path('password-reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
-   # User Management URLs
+    
+    # User Management URLs
     path('users/', admin_views.admin_users, name='users'),
     path('users/create/', admin_views.create_user, name='user_create'),
     path('users/<int:user_id>/', admin_views.admin_user_detail, name='user_detail'),
     path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='user_edit'),
-    path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
-
+    path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status')
 ]
