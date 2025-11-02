@@ -49,16 +49,36 @@ if (statsSection) {
     observer.observe(statsSection);
 }
 
-// Smooth scrolling for navigation links
+// Smooth scrolling for navigation links - FIXED
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
+        // Get href first
+        const href = this.getAttribute('href');
+        
+        // Skip if it's a dropdown toggle (Bootstrap handles these)
+        if (this.hasAttribute('data-bs-toggle')) {
+            return;
+        }
+        
+        // Skip if href is just "#" or empty or too short
+        if (!href || href === '#' || href.length <= 1) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Now it's safe to prevent default and try to find the target
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+        
+        try {
+            const target = document.querySelector(href);
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        } catch (error) {
+            console.log('Invalid selector:', href);
         }
     });
 });
@@ -66,10 +86,12 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Navbar background change on scroll
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 100) {
-        navbar.style.background = 'rgba(26, 26, 46, 0.98)';
-    } else {
-        navbar.style.background = 'rgba(26, 26, 46, 0.95)';
+    if (navbar) {
+        if (window.scrollY > 100) {
+            navbar.style.background = 'rgba(26, 26, 46, 0.98)';
+        } else {
+            navbar.style.background = 'rgba(26, 26, 46, 0.95)';
+        }
     }
 });
 
@@ -145,12 +167,13 @@ if (navbarToggler && navbarCollapse) {
     // Close mobile menu when clicking on a link
     document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
         link.addEventListener('click', () => {
-            navbarCollapse.classList.remove('show');
+            // Don't close if it's a dropdown toggle
+            if (!link.hasAttribute('data-bs-toggle')) {
+                navbarCollapse.classList.remove('show');
+            }
         });
     });
 }
-
-
 
 // Form validation and enhancement (if forms exist)
 document.querySelectorAll('form').forEach(form => {
