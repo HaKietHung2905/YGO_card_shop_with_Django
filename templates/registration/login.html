@@ -173,8 +173,11 @@
                 {% endif %}
                 
                 <!-- Login Form -->
-                <form method="post">
+                <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
+                    
+                    <!-- IMPORTANT: Add next parameter to redirect to home after login -->
+                    <input type="hidden" name="next" value="{% url 'home' %}">
                     
                     <div class="mb-3">
                         <label for="id_username" class="form-label fw-bold">

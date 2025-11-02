@@ -290,6 +290,8 @@ body {
         border-top: 2px solid rgba(255, 255, 255, 0.1);
         max-height: calc(100vh - 80px);
         overflow-y: auto;
+        max-width: 100%;
+        overflow-x: hidden;
     }
     
     .navbar-nav {
@@ -522,7 +524,6 @@ body {
     
     /* Navbar fixed */
     .navbar.fixed-top {
-        position: fixed !important;
         top: 0;
         width: 100%;
         z-index: 1030;
@@ -617,7 +618,9 @@ body {
 
 /* Accessibility */
 @media (max-width: 991.98px) {
-    
+     .navbar-collapse.collapsing {
+        transition: height 0.3s ease;
+    }
     .navbar-nav .nav-link:focus,
     .navbar-toggler:focus {
         outline: 2px solid rgba(255, 255, 255, 0.6);
@@ -663,4 +666,9 @@ html {
 /* Ensure consistent scrollbar behavior */
 html {
     overflow-y: scroll; /* Forces scrollbar to always be visible */
+}
+
+/* Prevent navbar overflow on initial load */
+.navbar-collapse:not(.show) {
+    display: none !important;
 }
