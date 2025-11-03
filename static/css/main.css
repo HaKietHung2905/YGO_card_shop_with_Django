@@ -27,7 +27,7 @@ html {
 
 /* Desktop Navigation */
 .navbar {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: rgba(26, 26, 46, 0.95) !important;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     padding: 1rem 0 !important;
     backdrop-filter: blur(10px);
