@@ -1,181 +1,400 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xóa Thẻ Bài - YGO Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #1e40af;
-            --primary-hover: #1d4ed8;
-            --sidebar-bg: #f8fafc;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Xóa Thẻ Bài - {{ card.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .delete-container {
+        max-width: 900px;
+        padding: 10px !important;
+    }
+
+    .delete-header {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+    }
+
+    .delete-header h1 {
+        font-size: 24px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .warning-box {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        border: 2px solid #ffc107;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 4px 10px rgba(255, 193, 7, 0.2);
+    }
+
+    .warning-box h5 {
+        color: #856404;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .warning-box p {
+        color: #856404;
+        margin: 0;
+        font-size: 15px;
+    }
+
+    .card-preview-section {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-preview-header {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 20px;
+    }
+
+    .card-image-preview {
+        width: 200px;
+        min-width: 200px;
+        height: 280px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 2px solid #e0e0e0;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-image-placeholder {
+        width: 200px;
+        min-width: 200px;
+        height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+        border-radius: 12px;
+        border: 2px dashed #ccc;
+    }
+
+    .card-info {
+        flex: 1;
+    }
+
+    .card-preview-title h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .card-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .badge-monster {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+        color: white;
+    }
+
+    .badge-spell {
+        background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+        color: white;
+    }
+
+    .badge-trap {
+        background: linear-gradient(135deg, #9775fa 0%, #845ef7 100%);
+        color: white;
+    }
+
+    .badge-rarity {
+        background: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+        color: #333;
+    }
+
+    .detail-row {
+        display: flex;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #6c757d;
+        min-width: 140px;
+    }
+
+    .detail-value {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .delete-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+        margin-top: 30px;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 767px) {
+        .delete-header {
+            padding: 20px;
         }
-        
-        .btn-primary-custom {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            color: white;
+
+        .delete-header h1 {
+            font-size: 20px;
         }
-        
-        .btn-primary-custom:hover {
-            background-color: var(--primary-hover);
-            border-color: var(--primary-hover);
+
+        .card-preview-header {
+            flex-direction: column;
+            align-items: center;
         }
-        
-        .card-custom {
-            box-shadow: var(--card-shadow);
-            border: none;
-            border-radius: 12px;
+
+        .card-image-preview,
+        .card-image-placeholder {
+            width: 180px;
+            min-width: 180px;
+            height: 252px;
         }
-        
-        .alert-danger {
-            border-left: 4px solid #dc3545;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            color: #721c24;
+
+        .delete-actions {
+            flex-direction: column-reverse;
         }
-        
-        .card-preview {
-            max-height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+
+        .btn-delete,
+        .btn-cancel {
+            width: 100%;
+            justify-content: center;
         }
-        
-        .rarity-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: bold;
-        }
-        
-        .rarity-badge.common { background-color: #6c757d; color: white; }
-        .rarity-badge.rare { background-color: #0d6efd; color: white; }
-        .rarity-badge.super_rare { background-color: #ffc107; color: black; }
-        .rarity-badge.ultra_rare { background-color: #fd7e14; color: white; }
-        .rarity-badge.secret_rare { background-color: #6610f2; color: white; }
-    </style>
-</head>
-<body class="bg-light">
-    <div class="container mt-4">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h1 class="h2 mb-1">
-                    <i class="fas fa-trash-can text-danger me-2"></i>Xóa Thẻ Bài
-                </h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
-                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}">Kho Hàng</a></li>
-                        <li class="breadcrumb-item active">Xóa Thẻ Bài</li>
-                    </ol>
-                </nav>
-            </div>
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="main-container">
+    <div class="delete-container">
+        <!-- Delete Header -->
+        <div class="delete-header">
+            <h1>
+                <i class="fas fa-exclamation-triangle"></i>
+                Xóa Thẻ Bài
+            </h1>
+            <p class="mb-0 mt-2" style="opacity: 0.9;">Xác nhận xóa thẻ bài khỏi kho hàng</p>
         </div>
 
-        <!-- Delete Confirmation -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card card-custom">
-                    <div class="card-header bg-danger text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Xác Nhận Xóa Thẻ Bài
-                        </h5>
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4" style = "padding-left: 15px;">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}">Kho Hàng</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Xóa Thẻ Bài</li>
+            </ol>
+        </nav>
+
+        <!-- Warning Box -->
+        <div class="warning-box">
+            <h5>
+                <i class="fas fa-exclamation-circle"></i>
+                Cảnh Báo Quan Trọng!
+            </h5>
+            <p>Bạn có chắc chắn muốn xóa thẻ bài này không? Hành động này không thể hoàn tác và tất cả dữ liệu liên quan sẽ bị mất vĩnh viễn.</p>
+        </div>
+
+        <!-- Card Preview -->
+        <div class="card-preview-section">
+            <div class="card-preview-header">
+                {% if card.image %}
+                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image-preview">
+                {% else %}
+                    <div class="card-image-placeholder">
+                        <i class="fas fa-image" style="font-size: 60px; color: #ccc;"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="alert alert-danger" role="alert">
-                            <h6 class="alert-heading">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                Cảnh báo: Hành động này không thể hoàn tác!
-                            </h6>
-                            <p class="mb-0">
-                                Bạn sắp xóa vĩnh viễn thẻ bài này khỏi kho hàng của mình. 
-                                Tất cả dữ liệu liên quan sẽ bị mất.
-                            </p>
+                {% endif %}
+                
+                <div class="card-info">
+                    <div class="card-preview-title">
+                        <h3>{{ card.name }}</h3>
+                        <div>
+                            {% if card.card_type == 'monster' %}
+                                <span class="card-badge badge-monster">
+                                    <i class="fas fa-dragon"></i> Quái Thú
+                                </span>
+                            {% elif card.card_type == 'spell' %}
+                                <span class="card-badge badge-spell">
+                                    <i class="fas fa-magic"></i> Phép Thuật
+                                </span>
+                            {% elif card.card_type == 'trap' %}
+                                <span class="card-badge badge-trap">
+                                    <i class="fas fa-shield-alt"></i> Bẫy
+                                </span>
+                            {% endif %}
+                            
+                            <span class="card-badge badge-rarity">
+                                <i class="fas fa-star"></i> {{ card.get_rarity_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="detail-row">
+                            <div class="detail-label">Bộ Thẻ:</div>
+                            <div class="detail-value">{{ card.card_set.name }}</div>
                         </div>
 
-                        <!-- Card Preview -->
-                        <div class="row">
-                            <div class="col-md-4">
-                                {% if card.image %}
-                                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="img-fluid card-preview">
+                        <div class="detail-row">
+                            <div class="detail-label">Tình Trạng:</div>
+                            <div class="detail-value">{{ card.get_condition_display }}</div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Giá Bán:</div>
+                            <div class="detail-value text-primary" style="font-size: 20px; font-weight: 700;">
+                                {{ card.price|format_currency }}
+                            </div>
+                        </div>
+
+                        <div class="detail-row">
+                            <div class="detail-label">Số Lượng Tồn Kho:</div>
+                            <div class="detail-value">
+                                {% if card.stock_quantity > 10 %}
+                                    <span class="badge bg-success">{{ card.stock_quantity }} thẻ</span>
+                                {% elif card.stock_quantity > 0 %}
+                                    <span class="badge bg-warning text-dark">{{ card.stock_quantity }} thẻ</span>
                                 {% else %}
-                                    <div class="bg-light d-flex align-items-center justify-content-center card-preview">
-                                        <i class="fas fa-image fa-3x text-muted"></i>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="col-md-8">
-                                <h4 class="mb-3">{{ card.name }}</h4>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Loại:</strong></div>
-                                    <div class="col-sm-8">
-                                        <span class="badge bg-secondary">{{ card.get_card_type_display }}</span>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Độ Hiếm:</strong></div>
-                                    <div class="col-sm-8">
-                                        <span class="rarity-badge {{ card.rarity }}">{{ card.get_rarity_display }}</span>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Bộ:</strong></div>
-                                    <div class="col-sm-8">{{ card.card_set.name }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Tình Trạng:</strong></div>
-                                    <div class="col-sm-8">{{ card.get_condition_display }}</div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Giá:</strong></div>
-                                    <div class="col-sm-8">
-                                        <span class="h5 text-primary mb-0">{{ card.price }}đ</span>
-                                    </div>
-                                </div>
-                                <div class="row mb-2">
-                                    <div class="col-sm-4"><strong>Kho:</strong></div>
-                                    <div class="col-sm-8">
-                                        <span class="badge {% if card.stock_quantity > 10 %}bg-success{% elif card.stock_quantity > 0 %}bg-warning{% else %}bg-danger{% endif %}">
-                                            {{ card.stock_quantity }} còn hàng
-                                        </span>
-                                    </div>
-                                </div>
-                                {% if card.card_type == 'monster' %}
-                                    <div class="row mb-2">
-                                        <div class="col-sm-4"><strong>Chỉ Số:</strong></div>
-                                        <div class="col-sm-8">
-                                            TẤN: {{ card.attack|default:"?" }} / 
-                                            THỦ: {{ card.defense|default:"?" }} / 
-                                            CẤP: {{ card.level|default:"?" }}
-                                        </div>
-                                    </div>
+                                    <span class="badge bg-danger">Hết hàng</span>
                                 {% endif %}
                             </div>
                         </div>
 
-                        <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i>Hủy
-                            </a>
-                            <form method="post" class="d-inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-trash me-2"></i>Xóa Thẻ Bài
-                                </button>
-                            </form>
-                        </div>
+                        {% if card.card_type == 'monster' %}
+                            <div class="detail-row">
+                                <div class="detail-label">Chỉ Số Quái Thú:</div>
+                                <div class="detail-value">
+                                    <strong>TẤN:</strong> {{ card.attack|default:"?" }} / 
+                                    <strong>THỦ:</strong> {{ card.defense|default:"?" }} / 
+                                    <strong>CẤP:</strong> {{ card.level|default:"?" }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if card.description %}
+                            <div class="detail-row">
+                                <div class="detail-label">Mô Tả:</div>
+                                <div class="detail-value" style="font-size: 14px;">
+                                    {{ card.description|truncatewords:30 }}
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+        <!-- Delete Form -->
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="delete-actions">
+                <a href="{% url 'admin_dashboard:warehouse' %}" class="btn-cancel">
+                    <i class="fas fa-arrow-left"></i>
+                    Hủy Bỏ
+                </a>
+                
+                <button type="submit" class="btn-delete" onclick="return confirm('Bạn có CHẮC CHẮN muốn xóa thẻ bài &quot;{{ card.name }}&quot;? Hành động này KHÔNG THỂ hoàn tác!')">
+                    <i class="fas fa-trash"></i>
+                    Xác Nhận Xóa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Mobile menu toggle function
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+    
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,682 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+{% load currency_filters %}
+
+{% block title %}Chỉnh Sửa Sản Phẩm - {{ product.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+    }
+
+    .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .section-divider {
+        border-top: 2px solid #e9ecef;
+        margin: 30px 0;
+    }
+
+    .preview-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 20px;
+    }
+
+    .product-preview {
+        border: 2px dashed #dee2e6;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        background: #f8f9fa;
+        margin-bottom: 20px;
+    }
+
+    .product-preview img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-type-badge {
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .deck_box { background-color: #8b5cf6; color: white; }
+    .sleeves { background-color: #3b82f6; color: white; }
+    .playmat { background-color: #10b981; color: white; }
+    .booster_box { background-color: #f59e0b; color: white; }
+    .starter_deck { background-color: #ef4444; color: white; }
+    .structure_deck { background-color: #6366f1; color: white; }
+    .tin { background-color: #f97316; color: white; }
+    .accessory { background-color: #6b7280; color: white; }
+    .merchandise { background-color: #ec4899; color: white; }
+
+    .info-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .info-label {
+        font-size: 0.875rem;
+        color: #6c757d;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        font-size: 1rem;
+        color: #333;
+        font-weight: 500;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 991px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0 !important;
+        }
+        
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        .preview-card {
+            position: static;
+            margin-top: 20px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .form-header {
+            padding: 20px;
+        }
+
+        .form-header h1 {
+            font-size: 20px;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .btn-primary-custom,
+        .btn-outline-secondary,
+        .btn-outline-danger {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+        }
+
+        .d-flex.justify-content-between > div {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="main-container">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1>
+                <i class="fas fa-edit me-2"></i>Chỉnh Sửa Sản Phẩm
+            </h1>
+            <p class="mb-0" style="opacity: 0.9;">{{ product.name }}</p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:other_products' %}">Sản Phẩm Khác</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Chỉnh Sửa</li>
+            </ol>
+        </nav>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <h5 class="mb-4">
+                            <i class="fas fa-info-circle me-2"></i>Thông Tin Sản Phẩm
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_name" class="form-label fw-bold">
+                                        Tên Sản Phẩm <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-custom" 
+                                           id="id_name"
+                                           name="name" 
+                                           value="{{ product.name }}" 
+                                           required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_product_type" class="form-label fw-bold">
+                                        Loại Sản Phẩm <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select form-control-custom" 
+                                            id="id_product_type"
+                                            name="product_type" 
+                                            required>
+                                        <option value="deck_box" {% if product.product_type == 'deck_box' %}selected{% endif %}>Deck Box</option>
+                                        <option value="sleeves" {% if product.product_type == 'sleeves' %}selected{% endif %}>Card Sleeves</option>
+                                        <option value="playmat" {% if product.product_type == 'playmat' %}selected{% endif %}>Playmat</option>
+                                        <option value="booster_box" {% if product.product_type == 'booster_box' %}selected{% endif %}>Booster Box</option>
+                                        <option value="starter_deck" {% if product.product_type == 'starter_deck' %}selected{% endif %}>Starter Deck</option>
+                                        <option value="structure_deck" {% if product.product_type == 'structure_deck' %}selected{% endif %}>Structure Deck</option>
+                                        <option value="tin" {% if product.product_type == 'tin' %}selected{% endif %}>Collector Tin</option>
+                                        <option value="accessory" {% if product.product_type == 'accessory' %}selected{% endif %}>Gaming Accessory</option>
+                                        <option value="merchandise" {% if product.product_type == 'merchandise' %}selected{% endif %}>Merchandise</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_brand" class="form-label fw-bold">Thương Hiệu</label>
+                                    <input type="text" 
+                                           class="form-control form-control-custom" 
+                                           id="id_brand"
+                                           name="brand" 
+                                           value="{{ product.brand|default:'' }}">
+                                    <small class="text-muted">Để trống nếu không có</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_sku" class="form-label fw-bold">
+                                        SKU <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-custom" 
+                                           id="id_sku"
+                                           name="sku" 
+                                           value="{{ product.sku }}" 
+                                           required 
+                                           style="text-transform: uppercase;">
+                                    <small class="text-muted">Mã định danh duy nhất cho sản phẩm</small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_price" class="form-label fw-bold">
+                                        Giá (VND) <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" 
+                                           class="form-control form-control-custom" 
+                                           id="id_price_display"
+                                           placeholder="0₫">
+                                    <input type="hidden" 
+                                           id="id_price"
+                                           name="price" 
+                                           value="{{ product.price|floatformat:'0' }}" 
+                                           required>
+                                    <small class="text-muted d-block">Nhập số tiền (VD: 50000 hoặc 50,000₫)</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_stock_quantity" class="form-label fw-bold">
+                                        Số Lượng Kho <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" 
+                                           class="form-control form-control-custom" 
+                                           id="id_stock_quantity"
+                                           name="stock_quantity" 
+                                           value="{{ product.stock_quantity }}" 
+                                           required 
+                                           min="0">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_condition" class="form-label fw-bold">Tình Trạng</label>
+                                    <select class="form-select form-control-custom" 
+                                            id="id_condition"
+                                            name="condition">
+                                        <option value="new" {% if product.condition == 'new' %}selected{% endif %}>Mới</option>
+                                        <option value="opened" {% if product.condition == 'opened' %}selected{% endif %}>Đã Mở</option>
+                                        <option value="used" {% if product.condition == 'used' %}selected{% endif %}>Đã Sử Dụng</option>
+                                        <option value="damaged" {% if product.condition == 'damaged' %}selected{% endif %}>Hư Hỏng</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="id_image" class="form-label fw-bold">Hình Ảnh Sản Phẩm</label>
+                                    <input type="file" 
+                                           class="form-control form-control-custom" 
+                                           id="id_image"
+                                           name="image" 
+                                           accept="image/*">
+                                    {% if product.image %}
+                                        <small class="text-muted d-block mt-1">
+                                            <i class="fas fa-image me-1"></i>Hình ảnh hiện tại: {{ product.image.name }}
+                                        </small>
+                                        <small class="text-muted d-block">Để trống nếu không muốn thay đổi</small>
+                                    {% else %}
+                                        <small class="text-muted d-block">Chưa có hình ảnh</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label fw-bold">Mô Tả</label>
+                            <textarea class="form-control form-control-custom" 
+                                      id="id_description"
+                                      name="description" 
+                                      rows="4">{{ product.description|default:'' }}</textarea>
+                            <small class="text-muted">Mô tả giúp khách hàng hiểu rõ hơn về sản phẩm</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div>
+                                <a href="{% url 'admin_dashboard:other_products' %}" 
+                                   class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-times me-2"></i>Hủy
+                                </a>
+                                <a href="{% url 'admin_dashboard:delete_other_product' product.id %}" 
+                                   class="btn btn-outline-danger"
+                                   onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm &quot;{{ product.name }}&quot;? Hành động này không thể hoàn tác!')">
+                                    <i class="fas fa-trash me-2"></i>Xóa
+                                </a>
+                            </div>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-save me-2"></i>Cập Nhật Sản Phẩm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Sidebar -->
+            <div class="col-lg-4">
+                <div class="preview-card">
+                    <h5 class="mb-3">
+                        <i class="fas fa-eye me-2"></i>Xem Trước
+                    </h5>
+                    
+                    <div class="product-preview">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" 
+                                 alt="{{ product.name }}" 
+                                 class="img-fluid" 
+                                 id="imagePreview">
+                        {% else %}
+                            <div id="imagePlaceholder">
+                                <i class="fas fa-cube fa-4x text-muted mb-3"></i>
+                                <p class="text-muted mb-0">Chưa có hình ảnh</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">Tên Sản Phẩm</div>
+                        <div class="info-value fw-bold">{{ product.name }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Loại Sản Phẩm</div>
+                        <div class="info-value">
+                            <span class="product-type-badge {{ product.product_type }}">
+                                {{ product.get_product_type_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if product.brand %}
+                    <div class="info-item">
+                        <div class="info-label">Thương Hiệu</div>
+                        <div class="info-value">{{ product.brand }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="info-item">
+                        <div class="info-label">SKU</div>
+                        <div class="info-value">
+                            <span class="badge bg-secondary">{{ product.sku }}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Tình Trạng</div>
+                        <div class="info-value">{{ product.get_condition_display }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Giá Bán</div>
+                        <div class="info-value text-success" style="font-size: 1.5rem; font-weight: 700;">
+                            {{ product.price|format_currency }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Tồn Kho</div>
+                        <div class="info-value">
+                            <span class="badge {% if product.stock_quantity > 10 %}bg-success{% elif product.stock_quantity > 0 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                                {{ product.stock_quantity }} sản phẩm
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    // Close sidebar on window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    });
+
+    // Live price formatting with Vietnamese currency
+    const priceDisplay = document.getElementById('id_price_display');
+    const priceHidden = document.getElementById('id_price');
+    
+    let isFormatting = false; // Prevent infinite loop
+    
+    // Custom formatting function with comma separator
+    function formatVND(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '₫';
+    }
+    
+    // Format initial value on page load
+    if (priceHidden.value) {
+        const initialValue = parseInt(priceHidden.value);
+        if (!isNaN(initialValue)) {
+            priceDisplay.value = formatVND(initialValue);
+        }
+    }
+    
+    priceDisplay.addEventListener('input', function(e) {
+        if (isFormatting) return;
+        isFormatting = true;
+        
+        // Get cursor position before formatting
+        const cursorPosition = this.selectionStart;
+        const oldValue = this.value;
+        
+        // Remove all non-digit characters
+        let value = this.value.replace(/\D/g, '');
+        
+        // Update hidden field with numeric value
+        priceHidden.value = value;
+        
+        // Format display with thousands separator and currency symbol
+        if (value) {
+            const numericValue = parseInt(value);
+            const formatted = formatVND(numericValue);
+            this.value = formatted;
+            
+            // Restore cursor position (accounting for added commas)
+            const digitsBeforeCursor = oldValue.substring(0, cursorPosition).replace(/\D/g, '').length;
+            let newCursorPos = 0;
+            let digitCount = 0;
+            
+            for (let i = 0; i < formatted.length; i++) {
+                if (formatted[i].match(/\d/)) {
+                    digitCount++;
+                    if (digitCount === digitsBeforeCursor) {
+                        newCursorPos = i + 1;
+                        break;
+                    }
+                }
+            }
+            
+            this.setSelectionRange(newCursorPos, newCursorPos);
+        } else {
+            // Allow empty field
+            this.value = '';
+        }
+        
+        isFormatting = false;
+    });
+    
+    // Handle cursor position after formatting
+    priceDisplay.addEventListener('keydown', function(e) {
+        // Allow: backspace, delete, tab, escape, enter, arrows
+        if ([8, 9, 13, 27, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+            // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+            (e.keyCode === 65 && e.ctrlKey === true) ||
+            (e.keyCode === 67 && e.ctrlKey === true) ||
+            (e.keyCode === 86 && e.ctrlKey === true) ||
+            (e.keyCode === 88 && e.ctrlKey === true)) {
+            return;
+        }
+        // Ensure that it is a number and stop the keypress if not
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+    
+    // Format on blur (when user leaves the field)
+    priceDisplay.addEventListener('blur', function() {
+        if (priceHidden.value) {
+            const numericValue = parseInt(priceHidden.value);
+            this.value = formatVND(numericValue);
+        } else {
+            // Clear the display if no value
+            this.value = '';
+        }
+    });
+    
+    // Remove formatting on focus for easier editing
+    priceDisplay.addEventListener('focus', function() {
+        // Keep the formatted value visible, just select it all for easy replacement
+        if (this.value) {
+            this.select();
+        }
+    });
+
+    // Auto-uppercase SKU
+    document.getElementById('id_sku').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Image preview on file selection
+    document.getElementById('id_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước file không được vượt quá 5MB');
+                this.value = '';
+                return;
+            }
+            
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Chỉ chấp nhận file JPG, PNG hoặc GIF');
+                this.value = '';
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                const placeholder = document.getElementById('imagePlaceholder');
+                
+                if (preview) {
+                    preview.src = e.target.result;
+                } else if (placeholder) {
+                    placeholder.innerHTML = `<img src="${e.target.result}" alt="Preview" class="img-fluid" id="imagePreview">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Form validation before submit
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        
+        // Validate price field specifically
+        const priceValue = parseInt(priceHidden.value);
+        if (!priceValue || priceValue <= 0) {
+            isValid = false;
+            priceDisplay.classList.add('is-invalid');
+        } else {
+            priceDisplay.classList.remove('is-invalid');
+        }
+        
+        requiredFields.forEach(field => {
+            if (field.id === 'id_price') return; // Skip hidden price field, already validated above
+            
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Vui lòng điền đầy đủ các trường bắt buộc (*)');
+        }
+    });
+</script>
+{% endblock %}

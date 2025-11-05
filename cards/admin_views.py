@@ -798,72 +798,34 @@ def admin_edit_other_product(request, product_id):
     
     if request.method == 'POST':
         try:
-            name = request.POST.get('name', '').strip()
-            sku = request.POST.get('sku', '').strip().upper()
-            product_type = request.POST.get('product_type', '')
-            brand = request.POST.get('brand', '').strip()
-            condition = request.POST.get('condition', 'new')
-            price = request.POST.get('price', '')
-            stock_quantity = request.POST.get('stock_quantity', '0')
-            description = request.POST.get('description', '').strip()
-            
-            # Validation
-            if not name or not sku or not product_type or not price:
-                return JsonResponse({
-                    'success': False, 
-                    'error': 'All required fields must be filled'
-                })
-            
-            # Check if SKU already exists (excluding current product)
-            if OtherProduct.objects.filter(sku=sku).exclude(id=product_id).exists():
-                return JsonResponse({
-                    'success': False, 
-                    'error': f'A product with SKU "{sku}" already exists'
-                })
-            
-            # Update product
-            product.name = name
-            product.sku = sku
-            product.product_type = product_type
-            product.brand = brand
-            product.condition = condition
-            product.price = Decimal(price)
-            product.stock_quantity = int(stock_quantity)
-            product.description = description
+            # Update product fields
+            product.name = request.POST.get('name', '').strip()
+            product.product_type = request.POST.get('product_type', '')
+            product.brand = request.POST.get('brand', '').strip()
+            product.sku = request.POST.get('sku', '').strip().upper()
+            product.price = Decimal(request.POST.get('price', '0'))
+            product.stock_quantity = int(request.POST.get('stock_quantity', '0'))
+            product.condition = request.POST.get('condition', 'new')
+            product.description = request.POST.get('description', '').strip()
             
             # Handle image upload
             if 'image' in request.FILES:
                 product.image = request.FILES['image']
-                
+            
             product.save()
             
-            messages.success(request, f'Product "{product.name}" updated successfully!')
-            return JsonResponse({
-                'success': True, 
-                'message': f'Product "{product.name}" updated successfully!'
-            })
+            messages.success(request, f'Sản phẩm "{product.name}" đã được cập nhật thành công!')
+            return redirect('admin_dashboard:other_products')
             
         except Exception as e:
-            return JsonResponse({
-                'success': False, 
-                'error': f'Error updating product: {str(e)}'
-            })
+            messages.error(request, f'Lỗi khi cập nhật sản phẩm: {str(e)}')
     
-    # For GET requests, return product data
-    return JsonResponse({
-        'success': True,
-        'data': {
-            'id': product.id,
-            'name': product.name,
-            'sku': product.sku,
-            'product_type': product.product_type,
-            'brand': product.brand,
-            'condition': product.condition,
-            'price': str(product.price),
-            'stock_quantity': product.stock_quantity,
-            'description': product.description,
-        }
-    })
+    # For GET requests, render the edit page
+    context = {
+        'product': product,
+        'product_type_choices': OtherProduct.PRODUCT_TYPE_CHOICES,
+    }
+    return render(request, 'admin/warehouse/other_products/edit.html', context)
 
 @staff_member_required
 def admin_delete_other_product(request, product_id):
@@ -871,23 +833,16 @@ def admin_delete_other_product(request, product_id):
     product = get_object_or_404(OtherProduct, id=product_id)
     
     if request.method == 'POST':
-        try:
-            product_name = product.name
-            product.delete()
-            
-            messages.success(request, f'Product "{product_name}" deleted successfully!')
-            return JsonResponse({
-                'success': True, 
-                'message': f'Product "{product_name}" deleted successfully!'
-            })
-            
-        except Exception as e:
-            return JsonResponse({
-                'success': False, 
-                'error': f'Error deleting product: {str(e)}'
-            })
+        product_name = product.name
+        product.delete()
+        messages.success(request, f'Sản phẩm "{product_name}" đã được xóa thành công!')
+        return redirect('admin_dashboard:other_products')
     
-    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+    # For GET requests, show confirmation page
+    context = {
+        'product': product,
+    }
+    return render(request, 'admin/warehouse/other_products/delete.html', context)
 
 @staff_member_required
 def admin_other_products_stats(request):

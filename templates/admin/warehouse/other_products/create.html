@@ -1,0 +1,406 @@
+{% extends 'admin/base_admin.html' %}
+{% load static %}
+
+{% block title %}Thêm Sản Phẩm Mới - Yu-Gi-Oh Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .form-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+    }
+
+    .form-control-custom {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-custom:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        color: white;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .price-hint {
+        color: #059669;
+        font-weight: bold;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .section-divider {
+        border-top: 2px solid #e9ecef;
+        margin: 30px 0;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 991px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        
+        .main-content {
+            margin-left: 0 !important;
+        }
+        
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .form-header {
+            padding: 20px;
+        }
+
+        .form-header h1 {
+            font-size: 20px;
+        }
+
+        .form-card {
+            padding: 20px;
+        }
+
+        .btn-primary-custom {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<div class="main-container">
+    <div class="form-container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1>
+                <i class="fas fa-plus-circle me-2"></i>Thêm Sản Phẩm Mới
+            </h1>
+            <p class="mb-0" style="opacity: 0.9;">Thêm phụ kiện và sản phẩm khác vào kho</p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}">Bảng Điều Khiển</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:other_products' %}">Sản Phẩm Khác</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Thêm Mới</li>
+            </ol>
+        </nav>
+
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
+        <div class="form-card">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <h5 class="mb-4">
+                    <i class="fas fa-info-circle me-2"></i>Thông Tin Sản Phẩm
+                </h5>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label fw-bold">
+                                Tên Sản Phẩm <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-custom" 
+                                   id="id_name"
+                                   name="name" 
+                                   required 
+                                   placeholder="Nhập tên sản phẩm">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_product_type" class="form-label fw-bold">
+                                Loại Sản Phẩm <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select form-control-custom" 
+                                    id="id_product_type"
+                                    name="product_type" 
+                                    required>
+                                <option value="">Chọn loại sản phẩm...</option>
+                                <option value="deck_box">Deck Box</option>
+                                <option value="sleeves">Card Sleeves</option>
+                                <option value="playmat">Playmat</option>
+                                <option value="booster_box">Booster Box</option>
+                                <option value="starter_deck">Starter Deck</option>
+                                <option value="structure_deck">Structure Deck</option>
+                                <option value="tin">Collector Tin</option>
+                                <option value="accessory">Gaming Accessory</option>
+                                <option value="merchandise">Merchandise</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_brand" class="form-label fw-bold">Thương Hiệu</label>
+                            <input type="text" 
+                                   class="form-control form-control-custom" 
+                                   id="id_brand"
+                                   name="brand" 
+                                   placeholder="Tên thương hiệu">
+                            <small class="text-muted">Để trống nếu không có</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_sku" class="form-label fw-bold">
+                                SKU <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-custom" 
+                                   id="id_sku"
+                                   name="sku" 
+                                   required 
+                                   placeholder="Mã SKU" 
+                                   style="text-transform: uppercase;">
+                            <small class="text-muted">Mã định danh duy nhất cho sản phẩm</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="id_price" class="form-label fw-bold">
+                                Giá (VND) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   class="form-control form-control-custom" 
+                                   id="id_price"
+                                   name="price" 
+                                   required 
+                                   step="1000" 
+                                   min="0" 
+                                   placeholder="Nhập giá">
+                            <small class="text-muted d-block">VND không dùng số thập phân</small>
+                            <small class="price-hint" id="priceHint">Hiển thị: 0₫</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_stock_quantity" class="form-label fw-bold">
+                                Số Lượng Kho <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   class="form-control form-control-custom" 
+                                   id="id_stock_quantity"
+                                   name="stock_quantity" 
+                                   required 
+                                   min="0" 
+                                   value="0">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_condition" class="form-label fw-bold">Tình Trạng</label>
+                            <select class="form-select form-control-custom" 
+                                    id="id_condition"
+                                    name="condition">
+                                <option value="new" selected>Mới</option>
+                                <option value="opened">Đã Mở</option>
+                                <option value="used">Đã Sử Dụng</option>
+                                <option value="damaged">Hư Hỏng</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_image" class="form-label fw-bold">Hình Ảnh Sản Phẩm</label>
+                            <input type="file" 
+                                   class="form-control form-control-custom" 
+                                   id="id_image"
+                                   name="image" 
+                                   accept="image/*">
+                            <small class="text-muted">JPG, PNG, hoặc GIF. Tối đa 5MB</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="mb-3">
+                    <label for="id_description" class="form-label fw-bold">Mô Tả</label>
+                    <textarea class="form-control form-control-custom" 
+                              id="id_description"
+                              name="description" 
+                              rows="4" 
+                              placeholder="Mô tả chi tiết về sản phẩm..."></textarea>
+                    <small class="text-muted">Mô tả giúp khách hàng hiểu rõ hơn về sản phẩm</small>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <a href="{% url 'admin_dashboard:other_products' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Hủy
+                    </a>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fas fa-save me-2"></i>Tạo Sản Phẩm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    // Close sidebar on window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+    });
+
+    // Live price formatting
+    document.getElementById('id_price').addEventListener('input', function() {
+        const priceValue = parseFloat(this.value);
+        const priceHint = document.getElementById('priceHint');
+        
+        if (!isNaN(priceValue) && priceValue > 0) {
+            const formattedPrice = priceValue.toLocaleString('vi-VN') + '₫';
+            priceHint.innerHTML = `Hiển thị: ${formattedPrice}`;
+            priceHint.style.color = '#059669';
+        } else {
+            priceHint.innerHTML = 'Hiển thị: 0₫';
+            priceHint.style.color = '#6c757d';
+        }
+    });
+
+    // Auto-uppercase SKU
+    document.getElementById('id_sku').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    // Form validation before submit
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+        
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Vui lòng điền đầy đủ các trường bắt buộc (*)');
+        }
+    });
+
+    // Image preview
+    document.getElementById('id_image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Kích thước file không được vượt quá 5MB');
+                this.value = '';
+                return;
+            }
+            
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('Chỉ chấp nhận file JPG, PNG hoặc GIF');
+                this.value = '';
+                return;
+            }
+        }
+    });
+</script>
+{% endblock %}

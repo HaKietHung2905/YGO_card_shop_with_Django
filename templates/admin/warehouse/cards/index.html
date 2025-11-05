@@ -1,4 +1,5 @@
 {% extends 'admin/base_admin.html' %}
+{% load currency_filters %}
 {% load crispy_forms_tags %}
 
 {% block title %}Quản Lý Kho Hàng - Yu-Gi-Oh Admin{% endblock %}
@@ -425,7 +426,7 @@
                                     </td>
                                     <td data-label="Bộ">{{ card.card_set.name }}</td>
                                     <td data-label="Tình Trạng">{{ card.get_condition_display }}</td>
-                                    <td data-label="Giá"><strong>{{ card.price }}đ</strong></td>
+                                    <td data-label="Giá"><strong>{{ card.price|format_currency }}</strong></td>
                                     <td data-label="Kho">
                                         <span class="stock-badge {% if card.stock_quantity > 10 %}stock-high{% elif card.stock_quantity > 0 %}stock-medium{% else %}stock-low{% endif %}">
                                             {{ card.stock_quantity }}
