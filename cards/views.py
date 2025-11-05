@@ -346,14 +346,14 @@ def cart(request):
     }
     return render(request, 'cards/cart.html', context)
 
-@login_required
-def remove_from_cart(request, pk):
-    """Remove item from cart"""
-    cart_item = get_object_or_404(CartItem, pk=pk, user=request.user)
-    card_name = cart_item.card.name
-    cart_item.delete()
-    messages.success(request, f'Removed {card_name} from cart.')
-    return redirect('cart')
+# @login_required
+# def remove_from_cart(request, pk):
+#     """Remove item from cart"""
+#     cart_item = get_object_or_404(CartItem, pk=pk, user=request.user)
+#     card_name = cart_item.card.name
+#     cart_item.delete()
+#     messages.success(request, f'Removed {card_name} from cart.')
+#     return redirect('cart')
 
 @login_required
 def checkout(request):
