@@ -606,7 +606,7 @@ def admin_delete_card(request, card_id):
     context = {
         'card': card,
     }
-    return render(request, 'admin/warehouse/card_delete.html', context)
+    return render(request, 'admin/warehouse/cards/card_delete.html', context)
 
 
 @staff_member_required

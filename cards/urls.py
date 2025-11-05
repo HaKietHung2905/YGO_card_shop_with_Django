@@ -55,5 +55,7 @@ urlpatterns = [
     path('users/create/', admin_views.create_user, name='user_create'),
     path('users/<int:user_id>/', admin_views.admin_user_detail, name='user_detail'),
     path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='user_edit'),
-    path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status')
+    path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
+
+    path('dashboard/warehouse/card/delete/<int:card_id>/', admin_views.admin_delete_card, name='admin_delete_card')
 ]

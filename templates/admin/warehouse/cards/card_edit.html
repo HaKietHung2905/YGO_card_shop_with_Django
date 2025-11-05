@@ -264,66 +264,66 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Tên Thẻ</label>
-                                    {{ form.name|add_class:"form-control form-control-custom" }}
-                                    {% if form.name.errors %}
-                                        <div class="text-danger small">{{ form.name.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_name" class="form-label fw-bold">Tên Thẻ</label>
+                                    <input type="text" name="name" value="{{ card.name }}" class="form-control form-control-custom" id="id_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Loại Thẻ</label>
-                                    {{ form.card_type|add_class:"form-select form-control-custom" }}
-                                    {% if form.card_type.errors %}
-                                        <div class="text-danger small">{{ form.card_type.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_card_type" class="form-label fw-bold">Loại Thẻ</label>
+                                    <select name="card_type" class="form-select form-control-custom" id="id_card_type" required>
+                                        <option value="monster" {% if card.card_type == 'monster' %}selected{% endif %}>Quái Thú</option>
+                                        <option value="spell" {% if card.card_type == 'spell' %}selected{% endif %}>Phép Thuật</option>
+                                        <option value="trap" {% if card.card_type == 'trap' %}selected{% endif %}>Bẫy</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Độ Hiếm</label>
-                                    {{ form.rarity|add_class:"form-select form-control-custom" }}
-                                    {% if form.rarity.errors %}
-                                        <div class="text-danger small">{{ form.rarity.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_rarity" class="form-label fw-bold">Độ Hiếm</label>
+                                    <select name="rarity" class="form-select form-control-custom" id="id_rarity" required>
+                                        <option value="common" {% if card.rarity == 'common' %}selected{% endif %}>Common</option>
+                                        <option value="rare" {% if card.rarity == 'rare' %}selected{% endif %}>Rare</option>
+                                        <option value="super_rare" {% if card.rarity == 'super_rare' %}selected{% endif %}>Super Rare</option>
+                                        <option value="ultra_rare" {% if card.rarity == 'ultra_rare' %}selected{% endif %}>Ultra Rare</option>
+                                        <option value="secret_rare" {% if card.rarity == 'secret_rare' %}selected{% endif %}>Secret Rare</option>
+                                        <option value="ghost_rare" {% if card.rarity == 'ghost_rare' %}selected{% endif %}>Ghost Rare</option>
+                                    </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Bộ Thẻ</label>
-                                    {{ form.card_set|add_class:"form-select form-control-custom" }}
-                                    {% if form.card_set.errors %}
-                                        <div class="text-danger small">{{ form.card_set.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_card_set" class="form-label fw-bold">Bộ Thẻ</label>
+                                    <select name="card_set" class="form-select form-control-custom" id="id_card_set" required>
+                                        {% for card_set in card_sets %}
+                                            <option value="{{ card_set.id }}" {% if card.card_set.id == card_set.id %}selected{% endif %}>
+                                                {{ card_set.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Tình Trạng</label>
-                                    {{ form.condition|add_class:"form-select form-control-custom" }}
-                                    {% if form.condition.errors %}
-                                        <div class="text-danger small">{{ form.condition.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_condition" class="form-label fw-bold">Tình Trạng</label>
+                                    <select name="condition" class="form-select form-control-custom" id="id_condition" required>
+                                        <option value="mint" {% if card.condition == 'mint' %}selected{% endif %}>Mint</option>
+                                        <option value="near_mint" {% if card.condition == 'near_mint' %}selected{% endif %}>Near Mint</option>
+                                        <option value="lightly_played" {% if card.condition == 'lightly_played' %}selected{% endif %}>Lightly Played</option>
+                                        <option value="moderately_played" {% if card.condition == 'moderately_played' %}selected{% endif %}>Moderately Played</option>
+                                        <option value="heavily_played" {% if card.condition == 'heavily_played' %}selected{% endif %}>Heavily Played</option>
+                                        <option value="damaged" {% if card.condition == 'damaged' %}selected{% endif %}>Damaged</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ form.price.id_for_label }}" class="form-label fw-bold">Giá (đ)</label>
-                                    {{ form.price|add_class:"form-control form-control-custom" }}
-                                    {% if form.price.errors %}
-                                        <div class="text-danger small">{{ form.price.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_price" class="form-label fw-bold">Giá (đ)</label>
+                                    <input type="number" name="price" value="{{ card.price }}" class="form-control form-control-custom" id="id_price" step="0.01" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Số Lượng Kho</label>
-                                    {{ form.stock_quantity|add_class:"form-control form-control-custom" }}
-                                    {% if form.stock_quantity.errors %}
-                                        <div class="text-danger small">{{ form.stock_quantity.errors.0 }}</div>
-                                    {% endif %}
+                                    <label for="id_stock_quantity" class="form-label fw-bold">Số Lượng Kho</label>
+                                    <input type="number" name="stock_quantity" value="{{ card.stock_quantity }}" class="form-control form-control-custom" id="id_stock_quantity" min="0" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Hình Ảnh Thẻ</label>
-                                    {{ form.image|add_class:"form-control form-control-custom" }}
+                                    <label for="id_image" class="form-label fw-bold">Hình Ảnh Thẻ</label>
+                                    <input type="file" name="image" class="form-control form-control-custom" id="id_image" accept="image/*">
                                     {% if card.image %}
                                         <div class="form-text">
                                             <small class="text-muted">Hình ảnh hiện tại: {{ card.image.name }}</small>
                                         </div>
-                                    {% endif %}
-                                    {% if form.image.errors %}
-                                        <div class="text-danger small">{{ form.image.errors.0 }}</div>
                                     {% endif %}
                                 </div>
                                 
@@ -333,29 +333,20 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.attack.id_for_label }}" class="form-label">Tấn Công</label>
-                                                {{ form.attack|add_class:"form-control form-control-custom" }}
-                                                {% if form.attack.errors %}
-                                                    <div class="text-danger small">{{ form.attack.errors.0 }}</div>
-                                                {% endif %}
+                                                <label for="id_attack" class="form-label">Tấn Công</label>
+                                                <input type="number" name="attack" value="{{ card.attack|default:'' }}" class="form-control form-control-custom" id="id_attack" min="0">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.defense.id_for_label }}" class="form-label">Phòng Thủ</label>
-                                                {{ form.defense|add_class:"form-control form-control-custom" }}
-                                                {% if form.defense.errors %}
-                                                    <div class="text-danger small">{{ form.defense.errors.0 }}</div>
-                                                {% endif %}
+                                                <label for="id_defense" class="form-label">Phòng Thủ</label>
+                                                <input type="number" name="defense" value="{{ card.defense|default:'' }}" class="form-control form-control-custom" id="id_defense" min="0">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="mb-3">
-                                                <label for="{{ form.level.id_for_label }}" class="form-label">Cấp Độ</label>
-                                                {{ form.level|add_class:"form-control form-control-custom" }}
-                                                {% if form.level.errors %}
-                                                    <div class="text-danger small">{{ form.level.errors.0 }}</div>
-                                                {% endif %}
+                                                <label for="id_level" class="form-label">Cấp Độ</label>
+                                                <input type="number" name="level" value="{{ card.level|default:'' }}" class="form-control form-control-custom" id="id_level" min="1" max="12">
                                             </div>
                                         </div>
                                     </div>
@@ -363,11 +354,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Mô Tả</label>
-                            {{ form.description|add_class:"form-control form-control-custom" }}
-                            {% if form.description.errors %}
-                                <div class="text-danger small">{{ form.description.errors.0 }}</div>
-                            {% endif %}
+                            <label for="id_description" class="form-label fw-bold">Mô Tả</label>
+                            <textarea name="description" class="form-control form-control-custom" id="id_description" rows="4">{{ card.description }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -415,10 +403,10 @@
                             <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-outline-secondary me-2">
                                 <i class="fas fa-times me-2"></i>Hủy
                             </a>
-                            <button type="button" class="btn btn-outline-danger" 
-                                    onclick="confirmDelete({{ card.id }}, '{{ card.name }}')">
+                            <a href="{% url 'admin_dashboard:delete_card' card.id %}" class="btn btn-outline-danger" 
+                               onclick="return confirm('Bạn có chắc chắn muốn xóa thẻ &quot;{{ card.name }}&quot;?')">
                                 <i class="fas fa-trash me-2"></i>Xóa Thẻ
-                            </button>
+                            </a>
                         </div>
                         <button type="submit" class="btn btn-primary-custom">
                             <i class="fas fa-save me-2"></i>Cập Nhật Thẻ
@@ -460,13 +448,6 @@
                     document.querySelector('input[name="level"]').value = '';
                 }
             });
-        }
-
-        // Delete confirmation
-        function confirmDelete(cardId, cardName) {
-            if (confirm(`Bạn có chắc chắn muốn xóa thẻ "${cardName}"?`)) {
-                window.location.href = `{% url 'admin_dashboard:delete_card' 0 %}`.replace('0', cardId);
-            }
         }
 
         // Image preview
