@@ -1,4 +1,5 @@
-{% load static %}
+{% load static %} 
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -137,7 +138,7 @@
                                     <span class="badge bg-outline-light">{{ card.get_card_type_display }}</span>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h4 text-success mb-0">{{ card.price }}đ</span>
+                                    <span class="h4 text-success mb-0">{{ card.price|format_currency }}</span>
                                     <small class="text-muted">
                                         {% if card.is_in_stock %}
                                             {{ card.stock_quantity }} còn hàng

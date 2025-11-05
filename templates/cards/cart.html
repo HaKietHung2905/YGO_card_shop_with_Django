@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -67,6 +68,25 @@
             display: inline-block;
             margin-left: 8px;
         }
+
+        .product-type-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .deck_box { background-color: #8b5cf6; color: white; }
+        .sleeves { background-color: #3b82f6; color: white; }
+        .playmat { background-color: #10b981; color: white; }
+        .booster_box { background-color: #f59e0b; color: white; }
+        .starter_deck { background-color: #ef4444; color: white; }
+        .structure_deck { background-color: #6366f1; color: white; }
+        .tin { background-color: #f97316; color: white; }
+        .accessory { background-color: #6b7280; color: white; }
+        .merchandise { background-color: #ec4899; color: white; }
         
         .item-price {
             min-width: 100px;
@@ -209,7 +229,7 @@
 <body>
     {% include 'includes/navbar.html' %}
 
-    <div class="cart-container" >
+    <div class="cart-container">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
@@ -221,41 +241,78 @@
 
         {% if cart_items %}
             <div class="row">
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                     {% for item in cart_items %}
                     <div class="cart-item">
-                        {% if item.card.image %}
-                            <img src="{{ item.card.image.url }}" alt="{{ item.card.name }}" class="item-image">
-                        {% else %}
-                            <div class="item-image" style="background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-image text-muted"></i>
+                        {# Get product based on type #}
+                        {% if item.card %}
+                            {# Card Product #}
+                            {% if item.card.image %}
+                                <img src="{{ item.card.image.url }}" alt="{{ item.card.name }}" class="item-image">
+                            {% else %}
+                                <div class="item-image" style="background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="item-info">
+                                <div class="item-name">{{ item.card.name }}</div>
+                                <div class="item-meta">
+                                    <span class="stock-badge">Tồn kho: {{ item.card.stock_quantity }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="item-price">
+                                {{ item.card.price|format_currency }}
+                            </div>
+                            
+                            <div class="item-quantity">
+                                <form method="POST" action="{% url 'update_cart_quantity' item.pk %}" style="display: flex; gap: 8px; align-items: center;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="qty-btn" {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
+                                    <input type="text" value="{{ item.quantity }}" class="qty-input" readonly>
+                                    <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="qty-btn" {% if item.quantity >= item.card.stock_quantity %}disabled{% endif %}>+</button>
+                                </form>
+                            </div>
+                            
+                            <div class="item-total">
+                                {{ item.total_price|format_currency }}
+                            </div>
+                            
+                        {% elif item.other_product %}
+                            {# Other Product #}
+                            {% if item.other_product.image %}
+                                <img src="{{ item.other_product.image.url }}" alt="{{ item.other_product.name }}" class="item-image">
+                            {% else %}
+                                <div class="item-image" style="background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-cube text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="item-info">
+                                <div class="item-name">{{ item.other_product.name }}</div>
+                                <div class="item-meta">
+                                    <span class="stock-badge">Tồn kho: {{ item.other_product.stock_quantity }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="item-price">
+                                {{ item.other_product.price|format_currency }}
+                            </div>
+                            
+                            <div class="item-quantity">
+                                <form method="POST" action="{% url 'update_cart_quantity' item.pk %}" style="display: flex; gap: 8px; align-items: center;">
+                                    {% csrf_token %}
+                                    <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="qty-btn" {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
+                                    <input type="text" value="{{ item.quantity }}" class="qty-input" readonly>
+                                    <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="qty-btn" {% if item.quantity >= item.other_product.stock_quantity %}disabled{% endif %}>+</button>
+                                </form>
+                            </div>
+                            
+                            <div class="item-total">
+                                {{ item.total_price|format_currency }}
                             </div>
                         {% endif %}
-                        
-                        <div class="item-info">
-                            <div class="item-name">{{ item.card.name }}</div>
-                            <div class="item-meta">
-                                {{ item.card.card_set.name }} • {{ item.card.get_rarity_display }}
-                                <span class="stock-badge">Tồn kho: {{ item.card.stock_quantity }}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="item-price">
-                            ${{ item.card.price }}
-                        </div>
-                        
-                        <div class="item-quantity">
-                            <form method="POST" action="{% url 'update_cart_quantity' item.pk %}" style="display: flex; gap: 8px; align-items: center;">
-                                {% csrf_token %}
-                                <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" class="qty-btn" {% if item.quantity <= 1 %}disabled{% endif %}>−</button>
-                                <input type="text" value="{{ item.quantity }}" class="qty-input" readonly>
-                                <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" class="qty-btn" {% if item.quantity >= item.card.stock_quantity %}disabled{% endif %}>+</button>
-                            </form>
-                        </div>
-                        
-                        <div class="item-total">
-                            ${{ item.total_price }}
-                        </div>
                         
                         <div class="item-actions">
                             <a href="{% url 'remove_from_cart' item.pk %}" class="btn-remove" onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?')">Xóa</a>
@@ -264,13 +321,13 @@
                     {% endfor %}
                 </div>
 
-                <div class="col-lg-4">
+                <div class="col-lg-3">
                     <div class="order-summary">
                         <h5 class="mb-3">Tóm tắt đơn hàng</h5>
                         
                         <div class="summary-row">
                             <span>Tạm tính ({{ cart_items.count }} sản phẩm):</span>
-                            <span>${{ total }}</span>
+                            <span>{{ total|format_currency }}</span>
                         </div>
                         
                         <div class="summary-row">
@@ -281,7 +338,7 @@
                         <div class="summary-total">
                             <div class="summary-row">
                                 <span>Tổng cộng:</span>
-                                <span class="amount">${{ total }}</span>
+                                <span class="amount">{{ total|format_currency }}</span>
                             </div>
                         </div>
                         

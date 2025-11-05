@@ -340,17 +340,6 @@
                             </div>
                         </div>
 
-                        {% if card.card_type == 'monster' %}
-                            <div class="detail-row">
-                                <div class="detail-label">Chỉ Số Quái Thú:</div>
-                                <div class="detail-value">
-                                    <strong>TẤN:</strong> {{ card.attack|default:"?" }} / 
-                                    <strong>THỦ:</strong> {{ card.defense|default:"?" }} / 
-                                    <strong>CẤP:</strong> {{ card.level|default:"?" }}
-                                </div>
-                            </div>
-                        {% endif %}
-
                         {% if card.description %}
                             <div class="detail-row">
                                 <div class="detail-label">Mô Tả:</div>

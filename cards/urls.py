@@ -26,6 +26,12 @@ urlpatterns = [
     path('cards/', views.card_list, name='card_list'),
     path('card-detail/<int:pk>/', views.card_detail, name='card_detail'),
     
+    # List view (no pk required)
+    path('other_products/', views.other_products_list, name='other_products'),
+    
+    # Detail view (requires pk)
+    path('other_products/<int:pk>/', views.other_products_detail, name='other_product_detail'),
+    
     # Cart functionality
     path('add-to-cart/<int:pk>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.cart, name='cart'),

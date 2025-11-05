@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -21,16 +22,16 @@
        {% include 'includes/navbar.html' %}
 
     <!-- Page Header -->
-    <div class="page-header">
+    <!-- <div class="page-header">
         <div class="container">
             <h1 class="display-4 fw-bold mb-3">
                 <i class="fas fa-cards-blank me-3"></i>Tất cả thẻ bài Yu-Gi-Oh
             </h1>
             <p class="lead">Khám phá lá bài mạnh mẽ tiếp theo cho bộ bài của bạn</p>
         </div>
-    </div>
+    </div> -->
 
-    <div class="container">
+    <div class="container" style = "padding-top: 100px;">
         <!-- Search and Filters -->
         <div class="search-filters">
             <form class="row g-3" method="get">
@@ -155,7 +156,7 @@
                                     <small class="text-muted">ATK: {{ card.attack }}{% if card.defense is not None %} / DEF: {{ card.defense }}{% endif %}</small>
                                 </div>
                             {% endif %}
-                            <div class="card-price">${{ card.price }}</div>
+                            <div class="card-price">{{ card.price|format_currency }}</div>
                             <div class="card-stock">
                                 {% if card.is_in_stock %}
                                     <i class="fas fa-check-circle text-success"></i>

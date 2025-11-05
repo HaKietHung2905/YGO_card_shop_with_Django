@@ -23,6 +23,14 @@ class Card(models.Model):
         ('ultra_rare', 'Ultra Rare'),
         ('secret_rare', 'Secret Rare'),
         ('ghost_rare', 'Ghost Rare'),
+        ('parallel_rare', 'Parallel Rare'),
+        ('gold_rare', 'Gold Rare'),
+        ('starlight_rare', 'Starlight Rare'),
+        ('starfoil_rare', 'Starfoil Rare'),
+        ('prismatic_rare', 'Prismatic Secret Rare'),
+        ('quarter_century_rare', 'Quarter Century Secret Rare'),
+        ('ultimate_rare', 'Ultimate Rare'),
+        ('collector_rare', 'Collector Rare')
     ]
     
     CONDITION_CHOICES = [
@@ -70,21 +78,7 @@ class Card(models.Model):
     class Meta:
         ordering = ['name']
 
-class CartItem(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    card = models.ForeignKey(Card, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1)
-    added_at = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.card.name} ({self.quantity})"
-    
-    @property
-    def total_price(self):
-        return self.card.price * self.quantity
-    
-    class Meta:
-        unique_together = ('user', 'card')
+
 
 class OtherProduct(models.Model):
     PRODUCT_TYPE_CHOICES = [
@@ -134,7 +128,49 @@ class OtherProduct(models.Model):
     class Meta:
         ordering = ['name'] 
     
-
+class CartItem(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, null=True, blank=True)
+    other_product = models.ForeignKey(OtherProduct, on_delete=models.CASCADE, null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=1)
+    added_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        if self.card:
+            return f"{self.user.username} - {self.card.name} ({self.quantity})"
+        elif self.other_product:
+            return f"{self.user.username} - {self.other_product.name} ({self.quantity})"
+        return f"{self.user.username} - Empty item"
+    
+    @property
+    def total_price(self):
+        if self.card:
+            return self.card.price * self.quantity
+        elif self.other_product:
+            return self.other_product.price * self.quantity
+        return 0
+    
+    @property
+    def product(self):
+        """Get the actual product (card or other_product)"""
+        return self.card if self.card else self.other_product
+    
+    def clean(self):
+        """Ensure either card or other_product is set, but not both"""
+        from django.core.exceptions import ValidationError
+        if not self.card and not self.other_product:
+            raise ValidationError('Either card or other_product must be set.')
+        if self.card and self.other_product:
+            raise ValidationError('Cannot have both card and other_product set.')
+    
+    class Meta:
+        # Updated to allow multiple types of products per user
+        unique_together = []
+        indexes = [
+            models.Index(fields=['user', 'card']),
+            models.Index(fields=['user', 'other_product']),
+        ]
+        
 class Order(models.Model):
     """Order model to track customer purchases"""
     STATUS_CHOICES = [

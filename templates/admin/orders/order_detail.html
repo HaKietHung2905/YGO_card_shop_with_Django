@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 </head>
-<body>
+<body style="padding-top: 120px;">
     {% include 'includes/navbar.html' %}
 
     <div class="page-header">
@@ -159,7 +159,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tạm tính:</span>
-                            <strong>{{ order.subtotal|format_currency }}}</strong>
+                            <strong>{{ order.subtotal|format_currency }}</strong>
                         </div>
                         <div class="d-flex justify-content-between mb-2">
                             <span>Thuế:</span>

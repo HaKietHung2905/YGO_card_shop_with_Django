@@ -106,9 +106,9 @@ def other_products_list(request):
         'product_type_choices': OtherProduct.PRODUCT_TYPE_CHOICES,
         'query_params': query_params.urlencode(),
     }
-    return render(request, 'cards/other_products_list.html', context)
+    return render(request, 'other_products/other_products_list.html', context)
 
-def other_product_detail(request, pk):
+def other_products_detail(request, pk):
     """Display individual other product details"""
     product = get_object_or_404(OtherProduct, pk=pk, is_active=True)
     
@@ -123,7 +123,7 @@ def other_product_detail(request, pk):
         'product': product,
         'related_products': related_products,
     }
-    return render(request, 'cards/other_product_detail.html', context)
+    return render(request, 'other_products/other_products_detail.html', context)
 
 @login_required
 def add_other_product_to_cart(request, pk):
@@ -132,7 +132,7 @@ def add_other_product_to_cart(request, pk):
     
     if product.stock_quantity <= 0:
         messages.error(request, 'This product is out of stock.')
-        return redirect('other_product_detail', pk=pk)
+        return redirect('other_products_detail', pk=pk)
     
     # Note: You might need to modify CartItem model to support both cards and other products
     # For now, this assumes you have a way to handle other products in the cart
@@ -232,49 +232,113 @@ def card_detail(request, pk):
 
 @login_required
 def add_to_cart(request, pk):
-    """Add card to user's cart"""
-    card = get_object_or_404(Card, pk=pk)
+    if request.method == 'POST':
+        product_type = request.POST.get('product_type', 'card')
+        quantity = int(request.POST.get('quantity', 1))
+        
+        # Determine which model to query
+        if product_type == 'other':
+            product = get_object_or_404(OtherProduct, pk=pk)
+            
+            # Check stock
+            if product.stock_quantity < quantity:
+                messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            
+            # Check if item already in cart
+            cart_item, created = CartItem.objects.get_or_create(
+                user=request.user,
+                other_product=product,
+                defaults={'quantity': quantity}
+            )
+            
+            if not created:
+                # Item already exists, update quantity
+                cart_item.quantity += quantity
+                if cart_item.quantity > product.stock_quantity:
+                    cart_item.quantity = product.stock_quantity
+                cart_item.save()
+                
+        else:  # card
+            product = get_object_or_404(Card, pk=pk)
+            
+            # Check stock
+            if product.stock_quantity < quantity:
+                messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
+                return redirect(request.META.get('HTTP_REFERER', 'home'))
+            
+            # Check if item already in cart
+            cart_item, created = CartItem.objects.get_or_create(
+                user=request.user,
+                card=product,
+                defaults={'quantity': quantity}
+            )
+            
+            if not created:
+                # Item already exists, update quantity
+                cart_item.quantity += quantity
+                if cart_item.quantity > product.stock_quantity:
+                    cart_item.quantity = product.stock_quantity
+                cart_item.save()
+        
+        messages.success(request, f'Đã thêm {product.name} vào giỏ hàng!')
+        return redirect(request.META.get('HTTP_REFERER', 'home'))
     
-    if card.stock_quantity <= 0:
-        messages.error(request, 'This card is out of stock.')
-        return redirect('card_detail', pk=pk)
-    
-    cart_item, created = CartItem.objects.get_or_create(
-        user=request.user,
-        card=card,
-        defaults={'quantity': 1}
-    )
-    
-    print(f"DEBUG: Created new item: {created}")
-    print(f"DEBUG: Cart item ID: {cart_item.id}")
-    print(f"DEBUG: Quantity: {cart_item.quantity}")
+    return redirect('home')
 
-    if not created:
-        if cart_item.quantity >= card.stock_quantity:
-            messages.warning(request, f'Maximum stock ({card.stock_quantity}) reached for {card.name}.')
-        else:
-            cart_item.quantity += 1
-            cart_item.save()
-            messages.success(request, f'Increased {card.name} quantity in cart.')
-    else:
-        messages.success(request, f'Added {card.name} to cart.')
+@login_required
+def view_cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
     
-    # Redirect back to the previous page or card detail
-    next_url = request.META.get('HTTP_REFERER', None)
-    if next_url and 'card' in next_url:
-        return redirect(next_url)
-    return redirect('card_detail', pk=pk)
+    # Calculate total
+    total = sum(item.total_price for item in cart_items)
+    
+    context = {
+        'cart_items': cart_items,
+        'total': total,
+    }
+    return render(request, 'cards/cart.html', context)
+
+@login_required
+def update_cart_quantity(request, pk):
+    if request.method == 'POST':
+        cart_item = get_object_or_404(CartItem, pk=pk, user=request.user)
+        quantity = int(request.POST.get('quantity', 1))
+        
+        if quantity > 0:
+            # Check stock
+            product = cart_item.card if cart_item.card else cart_item.other_product
+            if quantity <= product.stock_quantity:
+                cart_item.quantity = quantity
+                cart_item.save()
+                messages.success(request, 'Đã cập nhật số lượng!')
+            else:
+                messages.error(request, f'Chỉ còn {product.stock_quantity} sản phẩm!')
+        else:
+            cart_item.delete()
+            messages.success(request, 'Đã xóa sản phẩm khỏi giỏ hàng!')
+    
+    return redirect('cart')
+
+@login_required
+def remove_from_cart(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk, user=request.user)
+    product_name = cart_item.card.name if cart_item.card else cart_item.other_product.name
+    cart_item.delete()
+    messages.success(request, f'Đã xóa {product_name} khỏi giỏ hàng!')
+    return redirect('cart')
 
 @login_required
 def cart(request):
     """Display user's cart"""
-    cart_items = CartItem.objects.filter(user=request.user).select_related('card', 'card__card_set')
-    total = sum(item.total_price for item in cart_items)
+    # Add explicit ordering by creation time or ID
+    cart_items = CartItem.objects.filter(user=request.user).select_related(
+        'card', 
+        'card__card_set',
+        'other_product'
+    ).order_by('id')  # Or use 'created_at' if you have that field
     
-    # Debug
-    print(f"DEBUG CART VIEW: Found {cart_items.count()} items")
-    for item in cart_items:
-        print(f"  - {item.card.name} x{item.quantity}")
+    total = sum(item.total_price for item in cart_items)
     
     context = {
         'cart_items': cart_items,
@@ -289,25 +353,6 @@ def remove_from_cart(request, pk):
     card_name = cart_item.card.name
     cart_item.delete()
     messages.success(request, f'Removed {card_name} from cart.')
-    return redirect('cart')
-
-@login_required
-def update_cart_quantity(request, pk):
-    """Update cart item quantity"""
-    if request.method == 'POST':
-        cart_item = get_object_or_404(CartItem, pk=pk, user=request.user)
-        quantity = int(request.POST.get('quantity', 1))
-        
-        if quantity <= 0:
-            cart_item.delete()
-            messages.success(request, f'Removed {cart_item.card.name} from cart.')
-        elif quantity > cart_item.card.stock_quantity:
-            messages.error(request, f'Only {cart_item.card.stock_quantity} units available.')
-        else:
-            cart_item.quantity = quantity
-            cart_item.save()
-            messages.success(request, f'Updated {cart_item.card.name} quantity.')
-    
     return redirect('cart')
 
 @login_required

@@ -287,7 +287,7 @@ html {
     .card-image-container {
         position: relative;
         width: 100%;
-        padding-top: 140%;
+        /* padding-top: 140%; */
         overflow: hidden;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
@@ -643,7 +643,7 @@ html {
     .card-image-container {
         position: relative;
         width: 100%;
-        padding-top: 140%;
+        padding-top: 140%; 
         overflow: hidden;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 12px;
