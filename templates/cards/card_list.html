@@ -146,16 +146,16 @@
                                     {% endif %}
                                 </div>
                             {% endif %}
-                            <div class="card-rarity rarity-{{ card.rarity|slugify }}">{{ card.get_rarity_display }}</div>
+                            <!-- <div class="card-rarity rarity-{{ card.rarity|slugify }}">{{ card.get_rarity_display }}</div> -->
                         </div>
                         <div class="card-info">
                             <h3 class="card-title">{{ card.name }}</h3>
-                            <div class="card-type">{{ card.get_card_type_display }}{% if card.card_type == 'monster' and card.level %} | Cấp {{ card.level }}{% endif %}</div>
+                            <!-- <div class="card-type">{{ card.get_card_type_display }}{% if card.card_type == 'monster' and card.level %} | Cấp {{ card.level }}{% endif %}</div>
                             {% if card.card_type == 'monster' and card.attack is not None %}
                                 <div class="mb-2">
                                     <small class="text-muted">ATK: {{ card.attack }}{% if card.defense is not None %} / DEF: {{ card.defense }}{% endif %}</small>
                                 </div>
-                            {% endif %}
+                            {% endif %} -->
                             <div class="card-price">{{ card.price|format_currency }}</div>
                             <div class="card-stock">
                                 {% if card.is_in_stock %}
