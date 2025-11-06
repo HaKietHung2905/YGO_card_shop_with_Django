@@ -1,0 +1,275 @@
+{% extends 'admin/base_admin.html' %}
+{% load currency_filters %}
+
+{% block title %}{{ title }} - Yu-Gi-Oh Admin{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 991px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .mobile-menu-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border: none;
+                padding: 0.75rem;
+                border-radius: 8px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="h2 mb-2">
+                        <i class="fas fa-plus me-3"></i>{{ title }}
+                    </h1>
+                    <nav aria-label="breadcrumb" class="mt-2">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}" class="text-light">Bảng Điều Khiển</a></li>
+                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:other_products' %}" class="text-light">Sản Phẩm Khác</a></li>
+                            <li class="breadcrumb-item active text-light">{{ title }}</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'admin_dashboard:other_products' %}" class="btn btn-light">
+                        <i class="fas fa-arrow-left me-2"></i>Quay Lại
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content-section">
+            <div class="form-card">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <h6>Vui lòng sửa các lỗi sau:</h6>
+                            {{ form.errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">
+                                    Tên Sản Phẩm <span class="text-danger">*</span>
+                                </label>
+                                {{ form.name }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.product_type.id_for_label }}" class="form-label fw-bold">
+                                    Loại Sản Phẩm <span class="text-danger">*</span>
+                                </label>
+                                {{ form.product_type }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.brand.id_for_label }}" class="form-label fw-bold">Thương Hiệu</label>
+                                {{ form.brand }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.sku.id_for_label }}" class="form-label fw-bold">Mã SKU</label>
+                                {{ form.sku }}
+                                <small class="text-muted d-block">Để trống để tự động tạo</small>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="price_display" class="form-label fw-bold">
+                                    Giá (VND) <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="price_display"
+                                       placeholder="0₫">
+                                <input type="hidden" 
+                                       id="{{ form.price.id_for_label }}"
+                                       name="price" 
+                                       required>
+                                <small class="text-muted d-block">Nhập số tiền (VD: 50000)</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">
+                                    Số Lượng Kho <span class="text-danger">*</span>
+                                </label>
+                                {{ form.stock_quantity }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Hình Ảnh</label>
+                                {{ form.image }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Mô Tả</label>
+                        {{ form.description }}
+                    </div>
+                    
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary-custom">
+                            <i class="fas fa-save me-2"></i>Tạo Sản Phẩm
+                        </button>
+                        <a href="{% url 'admin_dashboard:other_products' %}" class="btn btn-outline-secondary ms-2">
+                            <i class="fas fa-times me-2"></i>Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
+        }
+
+        // Price formatting
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceDisplay = document.getElementById('price_display');
+            const priceHidden = document.getElementById('{{ form.price.id_for_label }}');
+            
+            if (priceDisplay && priceHidden) {
+                let isFormatting = false;
+                
+                function formatVND(number) {
+                    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '₫';
+                }
+                
+                priceDisplay.addEventListener('input', function(e) {
+                    if (isFormatting) return;
+                    isFormatting = true;
+                    
+                    const cursorPosition = this.selectionStart;
+                    const oldValue = this.value;
+                    
+                    // Remove all non-digit characters
+                    let value = this.value.replace(/\D/g, '');
+                    
+                    // Update hidden field with numeric value
+                    priceHidden.value = value;
+                    
+                    // Format display with thousands separator and currency symbol
+                    if (value) {
+                        const numericValue = parseInt(value);
+                        const formatted = formatVND(numericValue);
+                        this.value = formatted;
+                        
+                        // Restore cursor position
+                        const digitsBeforeCursor = oldValue.substring(0, cursorPosition).replace(/\D/g, '').length;
+                        let newCursorPos = 0;
+                        let digitCount = 0;
+                        
+                        for (let i = 0; i < formatted.length; i++) {
+                            if (formatted[i].match(/\d/)) {
+                                digitCount++;
+                                if (digitCount === digitsBeforeCursor) {
+                                    newCursorPos = i + 1;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        this.setSelectionRange(newCursorPos, newCursorPos);
+                    } else {
+                        this.value = '';
+                    }
+                    
+                    isFormatting = false;
+                });
+                
+                // Handle keyboard input
+                priceDisplay.addEventListener('keydown', function(e) {
+                    // Allow: backspace, delete, tab, escape, enter, arrows
+                    if ([8, 9, 13, 27, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                        // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true)) {
+                        return;
+                    }
+                    // Ensure that it is a number and stop the keypress
+                    if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+                
+                // Format on blur
+                priceDisplay.addEventListener('blur', function() {
+                    if (priceHidden.value) {
+                        const numericValue = parseInt(priceHidden.value);
+                        this.value = formatVND(numericValue);
+                    } else {
+                        this.value = '';
+                    }
+                });
+                
+                // Keep formatted value on focus
+                priceDisplay.addEventListener('focus', function() {
+                    if (this.value) {
+                        this.select();
+                    }
+                });
+            }
+        });
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const priceHidden = document.getElementById('{{ form.price.id_for_label }}');
+            const priceValue = parseInt(priceHidden.value);
+            
+            if (!priceValue || priceValue <= 0) {
+                e.preventDefault();
+                alert('Vui lòng nhập giá hợp lệ');
+                return false;
+            }
+        });
+    </script>
+{% endblock %}

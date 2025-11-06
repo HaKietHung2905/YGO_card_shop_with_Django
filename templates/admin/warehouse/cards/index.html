@@ -499,9 +499,82 @@
             {% endif %}
         </div>
     </div>
-
     <!-- Add Card Modal -->
-    <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardModalLabel">
+                    <i class="fas fa-plus me-2"></i>Thêm Thẻ Mới
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label fw-bold">Tên Thẻ</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.card_type.id_for_label }}" class="form-label fw-bold">Loại Thẻ</label>
+                                {{ form.card_type }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.rarity.id_for_label }}" class="form-label fw-bold">Độ Hiếm</label>
+                                {{ form.rarity }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.card_set.id_for_label }}" class="form-label fw-bold">Bộ Thẻ</label>
+                                {{ form.card_set }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.condition.id_for_label }}" class="form-label fw-bold">Tình Trạng</label>
+                                {{ form.condition }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="modal_price_display" class="form-label fw-bold">Giá (VND) <span class="text-danger">*</span></label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="modal_price_display"
+                                       placeholder="0₫">
+                                <input type="hidden" 
+                                       id="{{ form.price.id_for_label }}"
+                                       name="price" 
+                                       required>
+                                <small class="text-muted d-block">Nhập số tiền (VD: 50000 hoặc 50,000₫)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.stock_quantity.id_for_label }}" class="form-label fw-bold">Số Lượng Kho</label>
+                                {{ form.stock_quantity }}
+                            </div>
+                            <div class="mb-3">
+                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Hình Ảnh Thẻ</label>
+                                {{ form.image }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">Mô Tả</label>
+                        {{ form.description }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" name="create_card" class="btn btn-primary-custom">
+                        <i class="fas fa-save me-2"></i>Tạo Thẻ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <!-- Add Card Modal -->
+    <!-- <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -550,8 +623,8 @@
                                     {{ form.image }}
                                 </div>
                                 
-                                <!-- Monster Stats -->
-                                <!-- <div id="monsterStats" style="display: none;">
+                                
+                                <div id="monsterStats" style="display: none;">
                                     <h6 class="fw-bold text-primary">Chỉ Số Quái Thú</h6>
                                     <div class="row">
                                         <div class="col-4">
@@ -573,7 +646,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -590,7 +663,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Add Card Set Modal -->
     <div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
@@ -786,5 +859,122 @@
                 overlay.classList.remove('show');
             }
         });
+       
+
+// Price formatting for Add Card Modal
+document.addEventListener('DOMContentLoaded', function() {
+    const modalPriceDisplay = document.getElementById('modal_price_display');
+    const modalPriceHidden = document.getElementById('id_price'); // This matches {{ form.price.id_for_label }}
+    
+    if (modalPriceDisplay && modalPriceHidden) {
+        let isModalFormatting = false;
+        
+        // Custom formatting function with comma separator
+        function formatVND(number) {
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '₫';
+        }
+        
+        modalPriceDisplay.addEventListener('input', function(e) {
+            if (isModalFormatting) return;
+            isModalFormatting = true;
+            
+            const cursorPosition = this.selectionStart;
+            const oldValue = this.value;
+            
+            // Remove all non-digit characters
+            let value = this.value.replace(/\D/g, '');
+            
+            // Update hidden field with numeric value
+            modalPriceHidden.value = value;
+            
+            // Format display with thousands separator and currency symbol
+            if (value) {
+                const numericValue = parseInt(value);
+                const formatted = formatVND(numericValue);
+                this.value = formatted;
+                
+                // Restore cursor position
+                const digitsBeforeCursor = oldValue.substring(0, cursorPosition).replace(/\D/g, '').length;
+                let newCursorPos = 0;
+                let digitCount = 0;
+                
+                for (let i = 0; i < formatted.length; i++) {
+                    if (formatted[i].match(/\d/)) {
+                        digitCount++;
+                        if (digitCount === digitsBeforeCursor) {
+                            newCursorPos = i + 1;
+                            break;
+                        }
+                    }
+                }
+                
+                this.setSelectionRange(newCursorPos, newCursorPos);
+            } else {
+                this.value = '';
+            }
+            
+            isModalFormatting = false;
+        });
+        
+        // Handle keyboard input
+        modalPriceDisplay.addEventListener('keydown', function(e) {
+            // Allow: backspace, delete, tab, escape, enter, arrows
+            if ([8, 9, 13, 27, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+        
+        // Format on blur
+        modalPriceDisplay.addEventListener('blur', function() {
+            if (modalPriceHidden.value) {
+                const numericValue = parseInt(modalPriceHidden.value);
+                this.value = formatVND(numericValue);
+            } else {
+                this.value = '';
+            }
+        });
+        
+        // Keep formatted value on focus
+        modalPriceDisplay.addEventListener('focus', function() {
+            if (this.value) {
+                this.select();
+            }
+        });
+        
+        // Clear values when modal is closed
+        const addCardModal = document.getElementById('addCardModal');
+        if (addCardModal) {
+            addCardModal.addEventListener('hidden.bs.modal', function() {
+                modalPriceDisplay.value = '';
+                modalPriceHidden.value = '';
+            });
+        }
+    }
+    
+    // Form validation before submit
+    const addCardForm = document.querySelector('#addCardModal form');
+    if (addCardForm) {
+        addCardForm.addEventListener('submit', function(e) {
+            const priceValue = parseInt(modalPriceHidden.value);
+            if (!priceValue || priceValue <= 0) {
+                e.preventDefault();
+                modalPriceDisplay.classList.add('is-invalid');
+                alert('Vui lòng nhập giá hợp lệ');
+                return false;
+            } else {
+                modalPriceDisplay.classList.remove('is-invalid');
+            }
+        });
+    }
+});
     </script>
 {% endblock %}

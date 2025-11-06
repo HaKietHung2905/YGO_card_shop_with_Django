@@ -12,6 +12,7 @@ from decimal import Decimal
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .forms import OtherProductForm
 
 def home(request):
     """Enhanced homepage view with featured cards and other products"""
@@ -518,3 +519,23 @@ def cancel_order(request, order_id):
     
     return redirect('order_detail', order_id=order_id)
 
+@login_required
+def create_other_product(request):
+    if request.method == 'POST':
+        form = OtherProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save()
+            messages.success(request, f'Sản phẩm "{product.name}" đã được tạo thành công!')
+            return redirect('admin_dashboard:other_products')
+        else:
+            messages.error(request, 'Vui lòng kiểm tra lại thông tin.')
+    else:
+        # Handle GET request - display empty form
+        form = OtherProductForm()
+    
+    context = {
+        'form': form,
+        'title': 'Thêm Sản Phẩm Mới',
+        'action': 'create',
+    }
+    return render(request, 'admin/other_products/form.html', context)

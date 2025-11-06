@@ -1,6 +1,6 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import JsonResponse
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -14,7 +14,8 @@ import json
 from .models import Order, SiteSettings
 from django.db.models import Sum, Count
 from django import forms
-  
+from django.template.exceptions import TemplateDoesNotExist
+
 @staff_member_required
 def admin_dashboard(request):
     """Admin dashboard overview"""
@@ -1591,3 +1592,68 @@ def update_settings(request):
         messages.error(request, f'Error updating settings: {str(e)}')
     
     return redirect('admin_dashboard:settings')
+# In cards/admin_views.py
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def admin_create_other_product(request):
+    # Create the form class inline if not defined elsewhere
+    from django import forms
+    from .models import OtherProduct
+    
+    class OtherProductForm(forms.ModelForm):
+        class Meta:
+            model = OtherProduct
+            fields = ['name', 'description', 'product_type', 'brand', 'sku', 'price', 'stock_quantity', 'image']
+            widgets = {
+                'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nhập tên sản phẩm'}),
+                'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+                'product_type': forms.Select(attrs={'class': 'form-select'}),
+                'brand': forms.TextInput(attrs={'class': 'form-control'}),
+                'sku': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Để trống để tự động tạo'}),
+                'price': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+                'stock_quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'value': '0'}),
+                'image': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
+            }
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['brand'].required = False
+            self.fields['sku'].required = False
+            self.fields['description'].required = False
+            self.fields['image'].required = False
+
+    if request.method == 'POST':
+        form = OtherProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            
+            # Auto-generate SKU if not provided
+            if not product.sku:
+                product.save()  # Save first to get ID
+                sku_prefix = product.get_product_type_display()[:3].upper()
+                product.sku = f"{sku_prefix}-{product.pk:05d}"
+                product.save()
+            else:
+                product.save()
+            
+            messages.success(request, f'Sản phẩm "{product.name}" đã được tạo thành công!')
+            return redirect('admin_dashboard:other_products')
+        else:
+            messages.error(request, 'Vui lòng kiểm tra lại thông tin.')
+    else:
+        # Handle GET request - display empty form
+        form = OtherProductForm()
+    
+    context = {
+        'form': form,
+        'title': 'Thêm Sản Phẩm Mới',
+        'action': 'create',
+    }
+    
+    # Try to render the template
+    try:
+        return render(request, 'admin/warehouse/other_products/form.html', context)
+    except TemplateDoesNotExist:
+        # If template doesn't exist, create a basic form
+        return render(request, 'admin/warehouse/other_products/index.html', context)  # Fallback to a template you know exists
