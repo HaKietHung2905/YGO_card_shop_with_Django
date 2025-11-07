@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -41,6 +42,15 @@
         .out-of-stock {
             background: #dc3545;
             color: white;
+        }
+        .price-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .related-price {
+            color: #dc3545;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -135,7 +145,7 @@
                         <hr>
 
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h3 class="text-primary mb-0">${{ card.price }}</h3>
+                            <h3 class="price-display mb-0">{{ card.price|format_currency }}</h3>
                         </div>
 
                         {% if card.is_in_stock %}
@@ -178,7 +188,7 @@
                         <div class="card-body">
                             <h6 class="card-title">{{ related_card.name }}</h6>
                             <p class="card-text">
-                                <strong>${{ related_card.price }}</strong>
+                                <span class="related-price">{{ related_card.price|currency }}</span>
                                 <br>
                                 <small class="text-muted">{{ related_card.get_rarity_display }}</small>
                             </p>
