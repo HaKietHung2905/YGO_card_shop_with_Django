@@ -107,22 +107,24 @@
                     <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter|add:100 }}">
                         <div class="card-showcase h-100">
                             <div class="card-image-container">
-                                {% if card.image %}
-                                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="w-100 h-100 object-cover">
-                                {% else %}
-                                    <div class="card-placeholder">
-                                        {% if card.card_type == 'monster' %}
-                                            <i class="fas fa-dragon fa-4x text-white"></i>
-                                        {% elif card.card_type == 'spell' %}
-                                            <i class="fas fa-magic fa-4x text-white"></i>
-                                        {% else %}
-                                            <i class="fas fa-shield-alt fa-4x text-white"></i>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
+                                <a href="{% url 'card_detail' card.pk %}">
+                                    {% if card.image %}
+                                        <img src="{{ card.image.url }}" alt="{{ card.name }}" class="w-100 h-100 object-cover">
+                                    {% else %}
+                                        <div class="card-placeholder">
+                                            {% if card.card_type == 'monster' %}
+                                                <i class="fas fa-dragon fa-4x text-white"></i>
+                                            {% elif card.card_type == 'spell' %}
+                                                <i class="fas fa-magic fa-4x text-white"></i>
+                                            {% else %}
+                                                <i class="fas fa-shield-alt fa-4x text-white"></i>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </a>
                                 <div class="card-overlay">
                                     <div class="card-actions">
-                                        <a href="{% url 'card_detail' card.pk %}" class="btn btn-light btn-sm">Xem Chi Tiết</a>
+                                        <a href="{% url 'card_detail' card.pk %}" class="btn btn-light btn-sm">Chi Tiết</a>
                                         {% if user.is_authenticated and card.is_in_stock %}
                                             <a href="{% url 'add_to_cart' card.pk %}" class="btn btn-primary btn-sm">Thêm Vào Giỏ</a>
                                         {% elif not user.is_authenticated %}
@@ -137,7 +139,7 @@
                                     <span class="badge bg-warning me-2">{{ card.get_rarity_display }}</span>
                                     <span class="badge bg-outline-light">{{ card.get_card_type_display }}</span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
                                     <span class="h4 text-success mb-0">{{ card.price|format_currency }}</span>
                                     <small class="text-muted">
                                         {% if card.is_in_stock %}
@@ -147,6 +149,9 @@
                                         {% endif %}
                                     </small>
                                 </div>
+                                <a href="{% url 'card_detail' card.pk %}" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -155,9 +160,11 @@
                     <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
                         <div class="card-showcase h-100">
                             <div class="card-image-container">
-                                <div class="card-placeholder">
-                                    <i class="fas fa-dragon fa-4x text-white"></i>
-                                </div>
+                                <a href="{% url 'card_list' %}">
+                                    <div class="card-placeholder">
+                                        <i class="fas fa-dragon fa-4x text-white"></i>
+                                    </div>
+                                </a>
                                 <div class="card-overlay">
                                     <div class="card-actions">
                                         <a href="{% url 'card_list' %}" class="btn btn-light btn-sm">Duyệt Thẻ Bài</a>
@@ -170,10 +177,13 @@
                                     <span class="badge bg-warning me-2">Cực Hiếm</span>
                                     <span class="badge bg-outline-light">Quái Thú</span>
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h4 text-success mb-0">299.999đ</span>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="h4 text-success mb-0">299.999₫</span>
                                     <small class="text-muted">5 còn hàng</small>
                                 </div>
+                                <a href="{% url 'card_list' %}" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-eye me-2"></i>Xem chi tiết
+                                </a>
                             </div>
                         </div>
                     </div>
