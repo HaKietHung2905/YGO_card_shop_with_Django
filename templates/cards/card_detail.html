@@ -188,7 +188,7 @@
                         <div class="card-body">
                             <h6 class="card-title">{{ related_card.name }}</h6>
                             <p class="card-text">
-                                <span class="related-price">{{ related_card.price|currency }}</span>
+                                <span class="related-price">{{ related_card.price|format_currency }}</span>
                                 <br>
                                 <small class="text-muted">{{ related_card.get_rarity_display }}</small>
                             </p>
