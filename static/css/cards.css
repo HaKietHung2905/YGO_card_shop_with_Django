@@ -200,7 +200,7 @@
     }
 }
 
-
+/* Desktop styles */
 body {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     min-height: 100vh;
@@ -221,6 +221,7 @@ body {
     margin-bottom: 30px;
 }
 
+/* Card Grid - Desktop Default */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -436,3 +437,300 @@ body {
     border: none;
 }
 
+/* ===================================
+   MOBILE RESPONSIVE - 2 COLUMN GRID
+   =================================== */
+
+/* Small Phones (up to 575px) - 2 Column Layout */
+@media (max-width: 575.98px) {
+    
+    /* Container adjustments */
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Search Filters - Mobile Optimized */
+    .search-filters {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .search-filters .form-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .search-filters .form-control,
+    .search-filters .form-select {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+    
+    .search-filters .col-md-6,
+    .search-filters .col-md-2 {
+        margin-bottom: 0.75rem;
+    }
+    
+    .search-filters .btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    /* Results Summary - Mobile */
+    .results-summary {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .results-summary h5 {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .results-summary .form-select {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+    
+    .filter-tag {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    /* 2-Column Card Grid for Mobile */
+    .card-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+        margin-bottom: 2rem;
+    }
+    
+    /* Card Item - Compact Mobile Version */
+    .yugioh-card-item {
+        background: transparent;
+        border-radius: 0;
+        overflow: visible;
+        box-shadow: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    /* Card Image - Mobile */
+    .card-image {
+        height: 0;
+        padding-top: 140%;
+        position: relative;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-image img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .card-image .card-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 2rem;
+    }
+    
+    /* Card Info - Mobile */
+    .card-info {
+        padding: 0.5rem 0;
+        background: transparent;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+    
+    /* Card Title */
+    .card-title {
+        font-size: 0.85rem !important;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        min-height: 2.2em;
+        color: #333;
+    }
+    
+    /* Card Type Badge */
+    .card-type {
+        font-size: 0.65rem !important;
+        padding: 0.25rem 0.5rem !important;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Card Price */
+    .card-price {
+        font-size: 1.1rem !important;
+        font-weight: 700;
+        margin: 0 !important;
+        color: #28a745;
+    }
+    
+    /* Card Stock */
+    .card-stock {
+        font-size: 0.7rem !important;
+        line-height: 1.2;
+        color: #6c757d;
+        margin: 0;
+    }
+    
+    .card-stock i.fa-check-circle {
+        color: #28a745;
+    }
+    
+    .card-stock i.fa-times-circle {
+        color: #dc3545;
+    }
+    
+    /* Card Actions - Mobile */
+    .card-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+    }
+    
+    .card-actions .btn-view,
+    .card-actions .btn-cart {
+        flex: 1;
+        font-size: 0.7rem;
+        padding: 0.4rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    .card-actions i {
+        font-size: 0.7rem;
+    }
+    
+    /* Pagination - Mobile */
+    .pagination-custom {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin: 2rem 0;
+    }
+    
+    .pagination-custom .page-item {
+        margin: 0.125rem;
+    }
+    
+    .pagination-custom .page-link {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+        margin: 0;
+    }
+    
+    .pagination-custom .page-item.active .page-link {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    /* Empty State - Mobile */
+    .text-center.py-5 {
+        padding: 2rem 1rem !important;
+    }
+    
+    .text-center.py-5 i {
+        font-size: 2rem !important;
+    }
+    
+    .text-center.py-5 h3 {
+        font-size: 1.1rem !important;
+    }
+    
+    .text-center.py-5 p {
+        font-size: 0.85rem !important;
+    }
+}
+
+/* Tablets (576px - 767px) - 3 Column Layout */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    
+    .card-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1rem !important;
+    }
+    
+    .card-info {
+        padding: 0.75rem;
+    }
+    
+    .card-title {
+        font-size: 0.9rem !important;
+    }
+    
+    .card-price {
+        font-size: 1.2rem !important;
+    }
+    
+    .card-actions .btn-view,
+    .card-actions .btn-cart {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Tablets Landscape (768px - 991px) - 3 Column Layout */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    
+    .card-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1.25rem !important;
+    }
+    
+    .card-image {
+        height: 280px;
+    }
+    
+    .card-info {
+        padding: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1rem !important;
+    }
+}
+
+/* Touch Devices - Active States */
+@media (hover: none) and (pointer: coarse) {
+    
+    .yugioh-card-item:active {
+        transform: scale(0.98);
+    }
+    
+    .btn-view:active,
+    .btn-cart:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Loading State */
+.yugioh-card-item.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
