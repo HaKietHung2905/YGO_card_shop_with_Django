@@ -1,100 +1,156 @@
 {% load static %}
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">
-            <i class="fas fa-magic me-2"></i>Cửa Hàng Yu-Gi-Oh
-        </a>
-        
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">
-                        <i class="fas fa-home me-1"></i>Trang Chủ
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'card_list' %}active{% endif %}" href="{% url 'card_list' %}">
-                        <i class="fas fa-layer-group me-1"></i>Thẻ Bài
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'other_products_list' %}active{% endif %}" href="{% url 'other_products' %}">
-                        <i class="fas fa-cube me-1"></i>Phụ Kiện & Sản Phẩm
-                    </a>
-                </li>
-                
-                {# Admin Dashboard Button - Only visible for staff users #}
-                {% if user.is_authenticated and user.is_staff %}
-                <li class="nav-item">
-                    <a class="nav-link text-warning {% if 'admin_dashboard' in request.resolver_match.namespace %}active{% endif %}" href="{% url 'admin_dashboard:dashboard' %}">
-                        <i class="fas fa-tachometer-alt me-1"></i>Quản Trị
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
-            
-            <ul class="navbar-nav">
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link position-relative {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'cart' %}">
-                            <i class="fas fa-shopping-cart me-1"></i>Giỏ Hàng
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="w-100">
+        <!-- Top Header Row -->
+        <div class="navbar-header-top w-100">
+            <div class="container-fluid px-4">
+                <div class="navbar-header-content">
+                    <!-- Search Bar (Left) -->
+                    <div class="navbar-left d-none d-lg-block">
+                        <form action="{% url 'card_list' %}" method="get" class="search-form">
+                            <div class="search-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" name="q" class="form-control search-input"
+                                    placeholder="Tìm kiếm thẻ bài..." value="{{ request.GET.q }}">
+                                <button type="submit" class="btn btn-search">Tìm kiếm</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Logo (Center - Absolute Position) -->
+                    <div class="navbar-center">
+                        <a class="navbar-brand" href="{% url 'home' %}">
+                            <i class="fas fa-magic me-2"></i>YUTOPIA SHOP
+                        </a>
+                    </div>
+
+                    <!-- User Actions (Right) -->
+                    <div class="navbar-right d-flex align-items-center">
+                        <!-- Mobile Search Icon -->
+                        <a href="#" class="nav-action-link d-lg-none me-3"
+                            onclick="document.getElementById('mobileSearch').classList.toggle('d-none'); return false;">
+                            <i class="fas fa-search"></i>
+                        </a>
+
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'cart' %}" class="nav-action-link position-relative me-3">
+                            <i class="fas fa-shopping-cart"></i>
                             {% if cart_count > 0 %}
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                {{ cart_count }}
-                                <span class="visually-hidden">items in cart</span>
-                            </span>
+                            <span class="cart-badge">{{ cart_count }}</span>
                             {% endif %}
+                        </a>
+                        <a href="{% url 'logout' %}" class="nav-action-link me-3" title="Đăng xuất">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="nav-action-link me-3" title="Đăng nhập">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </a>
+                        {% endif %}
+                        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar (Hidden by default) -->
+        <div id="mobileSearch" class="mobile-search-bar w-100 d-none d-lg-none">
+            <div class="container-fluid px-4">
+                <form action="{% url 'card_list' %}" method="get" class="d-flex">
+                    <input type="text" name="q" class="form-control me-2" placeholder="Tìm kiếm thẻ bài..."
+                        value="{{ request.GET.q }}">
+                    <button type="submit" class="btn btn-search">Tìm</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Row -->
+        <div class="navbar-nav-bottom w-100 collapse navbar-collapse" id="navbarNav">
+            <div class="container-fluid px-4">
+                <!-- Desktop Navigation Links (Always visible) -->
+                <ul class="navbar-nav mx-auto justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
+                            <i class="fas fa-home"></i> Trang Chủ
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user me-1"></i>{{ user.username }}
+                        <a class="nav-link dropdown-toggle {% if 'cards' in request.path %}active{% endif %}" href="#"
+                            id="cardsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-layer-group"></i> Thẻ Bài
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
+                        <ul class="dropdown-menu dropdown-menu-card-sets" aria-labelledby="cardsDropdown">
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user me-2"></i>Hồ Sơ
+                                <a class="dropdown-item" href="{% url 'card_list' %}">
+                                    <i class="fas fa-th-large me-2"></i>Xem Tất Cả
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="{% url 'my_orders' %}">
-                                    <i class="fas fa-shopping-bag me-2"></i>Đơn Hàng Của Tôi
-                                </a>
+                                <hr class="dropdown-divider">
                             </li>
-                            {% if user.is_staff %}
-                            <li><hr class="dropdown-divider"></li>
+                            {% for card_set in all_card_sets %}
                             <li>
-                                <a class="dropdown-item text-primary" href="{% url 'admin_dashboard:dashboard' %}">
-                                    <i class="fas fa-cog me-2"></i>Quản Trị
+                                <a class="dropdown-item" href="{% url 'card_list' %}?set={{ card_set.id }}">
+                                    {{ card_set.name }}
                                 </a>
                             </li>
-                            {% endif %}
-                            <li><hr class="dropdown-divider"></li>
+                            {% empty %}
                             <li>
-                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Đăng Xuất
-                                </a>
+                                <span class="dropdown-item text-muted">Không có bộ thẻ nào</span>
                             </li>
+                            {% endfor %}
                         </ul>
                     </li>
-                {% else %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if 'other_products' in request.path %}active{% endif %}"
+                            href="#" id="productsDropdown" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="fas fa-box"></i> Phụ Kiện & Sản Phẩm
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-card-sets" aria-labelledby="productsDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'other_products' %}">
+                                    <i class="fas fa-th-large me-2"></i>Xem Tất Cả
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            {% for type_value, type_label in all_product_types %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'other_products' %}?type={{ type_value }}">
+                                    {{ type_label }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% if user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">
-                            <i class="fas fa-sign-in-alt me-1"></i>Đăng Nhập
+                        <a class="nav-link" href="{% url 'admin_dashboard:dashboard' %}">
+                            <i class="fas fa-cog"></i> Quản Trị
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_orders' %}">
+                            <i class="fas fa-shopping-bag"></i> Đơn Hàng
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-outline-light ms-2" href="{% url 'signup' %}">
-                            <i class="fas fa-user-plus me-1"></i>Đăng Ký
+                        <a class="nav-link text-danger" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Đăng Xuất
                         </a>
                     </li>
-                {% endif %}
-            </ul>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
     </div>
 </nav>

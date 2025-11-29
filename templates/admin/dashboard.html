@@ -4,908 +4,885 @@
 {% block title %}Dashboard - Yu-Gi-Oh Admin{% endblock %}
 
 {% block extra_css %}
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <style>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    .main-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        margin: 20px;
+        min-height: calc(100vh - 40px);
+    }
+
+    .header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .content-section {
+        padding: 2rem;
+    }
+
+    /* Stats Cards */
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .stat-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    /* Table */
+    .table-custom {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .table thead th {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 15px;
+    }
+
+    .table tbody td {
+        padding: 15px;
+        vertical-align: middle;
+    }
+
+    /* Status badges */
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-draft {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-low {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-high {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    /* Chart container */
+    .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 20px 0;
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+    }
+
+    .breadcrumb a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        color: white;
+    }
+
+    .breadcrumb-item.active {
+        color: white;
+    }
+
+    /* Mobile menu toggle button */
+    .mobile-menu-toggle {
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1001;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-menu-toggle:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-menu-toggle:active {
+        transform: scale(0.95);
+    }
+
+    .mobile-menu-toggle i {
+        font-size: 1.2rem;
+    }
+
+    /* Hide toggle on desktop */
+    @media (min-width: 992px) {
+        .mobile-menu-toggle {
+            display: none !important;
+        }
+    }
+
+    /* Sidebar overlay for mobile */
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    /* ===== MOBILE RESPONSIVE STYLES ===== */
+
+    /* Tablet and below */
+    @media (max-width: 991px) {
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.show {
+            transform: translateX(0);
+        }
+
         .main-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            min-height: calc(100vh - 40px);
+            margin: 10px;
+            margin-left: 0 !important;
+            width: 100% !important;
+            border-radius: 15px;
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            padding: 2rem;
-            border-radius: 20px 20px 0 0;
+            padding: 1.5rem 1rem;
+            padding-left: 3.5rem !important;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
         }
 
         .content-section {
-            padding: 2rem;
+            padding: 1.5rem 1rem;
         }
 
-        /* Stats Cards */
         .dashboard-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            height: 100%;
-        }
-
-        .dashboard-card:hover {
-            transform: translateY(-5px);
+            padding: 20px;
         }
 
         .stat-card {
-            text-align: center;
-            padding: 30px 20px;
+            padding: 20px 15px;
         }
 
         .stat-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 2rem;
-            color: white;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
         }
 
         .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+    }
+
+    /* Mobile phones */
+    @media (max-width: 767px) {
+        .main-container {
+            margin: 5px;
+            border-radius: 10px;
         }
 
-        /* Table */
-        .table-custom {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        .header {
+            padding: 1rem !important;
         }
 
-        .table thead th {
-            background: var(--primary-color);
-            color: white;
-            border: none;
+        .header h1 {
+            font-size: 1.25rem;
+        }
+
+        .header h1 i {
+            display: block;
+            margin-bottom: 0.5rem;
+            margin-right: 0 !important;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+        }
+
+        .header .col-md-4 {
+            width: 100%;
+            text-align: left !important;
+            margin-top: 0.5rem;
+        }
+
+        .header .col-md-4 span {
+            font-size: 0.75rem;
+        }
+
+        .content-section {
+            padding: 1rem;
+        }
+
+        /* Stats cards */
+        .dashboard-card {
             padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            padding: 15px 10px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+        }
+
+        .stat-number {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .text-muted {
+            font-size: 0.875rem;
+        }
+
+        .stat-card small {
+            font-size: 0.75rem;
+        }
+
+        /* Chart containers */
+        .chart-container {
+            height: 250px;
+            margin: 15px 0;
+        }
+
+        .dashboard-card h5 {
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        /* Tables - mobile card view */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            font-size: 0.813rem;
+        }
+
+        .table thead {
+            display: none;
+        }
+
+        .table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 12px;
+            background: #f8f9fa;
         }
 
         .table tbody td {
-            padding: 15px;
-            vertical-align: middle;
+            display: block;
+            padding: 8px 0;
+            border: none;
+            text-align: left;
+        }
+
+        .table tbody td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: inline-block;
+            width: 100px;
+            margin-right: 10px;
+            color: #6c757d;
+            font-size: 0.75rem;
         }
 
         /* Status badges */
         .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            font-size: 0.7rem;
+            padding: 4px 10px;
         }
 
-        .status-active { background: #d4edda; color: #155724; }
-        .status-draft { background: #fff3cd; color: #856404; }
-        .status-low { background: #f8d7da; color: #721c24; }
-        .status-high { background: #d4edda; color: #155724; }
-
-        /* Chart container */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 20px 0;
+        /* Low stock alerts */
+        .alert {
+            font-size: 0.875rem;
+            padding: 10px;
         }
 
+        .list-unstyled li {
+            font-size: 0.875rem;
+            padding: 8px 0;
+        }
+
+        .list-unstyled .badge {
+            font-size: 0.7rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem;
+            font-size: 0.813rem;
+        }
+
+        /* Breadcrumb */
         .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin: 0;
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 575px) {
+        .header h1 {
+            font-size: 1.1rem;
         }
 
-        .breadcrumb a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
+        .header p {
+            font-size: 0.813rem;
         }
 
-        .breadcrumb a:hover {
-            color: white;
-        }
-
-        .breadcrumb-item.active {
-            color: white;
-        }
-
-        /* Mobile menu toggle button */
-        .mobile-menu-toggle {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+        .content-section {
             padding: 0.75rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .mobile-menu-toggle:hover {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            transform: scale(1.05);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        .dashboard-card {
+            padding: 12px;
         }
 
-        .mobile-menu-toggle:active {
-            transform: scale(0.95);
+        .stat-card {
+            padding: 12px 8px;
         }
 
-        .mobile-menu-toggle i {
-            font-size: 1.2rem;
+        .stat-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
         }
 
-        /* Hide toggle on desktop */
-        @media (min-width: 992px) {
-            .mobile-menu-toggle {
-                display: none !important;
-            }
+        .stat-number {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
         }
 
-        /* Sidebar overlay for mobile */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .stat-card .text-muted {
+            font-size: 0.813rem;
+        }
+
+        .stat-card small {
+            font-size: 0.688rem;
+        }
+
+        .chart-container {
+            height: 200px;
+            margin: 10px 0;
+        }
+
+        .dashboard-card h5 {
+            font-size: 0.938rem;
+        }
+
+        .table tbody tr {
+            padding: 10px;
+        }
+
+        .table tbody td {
+            padding: 6px 0;
+            font-size: 0.75rem;
+        }
+
+        .table tbody td::before {
+            width: 80px;
+            font-size: 0.688rem;
+        }
+
+        .alert {
+            font-size: 0.813rem;
+            padding: 8px;
+        }
+
+        .list-unstyled li {
+            font-size: 0.813rem;
+            padding: 6px 0;
+        }
+    }
+
+    /* Landscape mode optimization */
+    @media (max-width: 767px) and (orientation: landscape) {
+        .stat-card {
+            padding: 10px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+        }
+
+        .chart-container {
+            height: 180px;
+        }
+    }
+
+    /* Tablet landscape - 2 columns for stats */
+    @media (max-width: 991px) and (min-width: 768px) {
+        .mobile-menu-toggle {
+            top: 1.5rem;
+            left: 1.5rem;
+        }
+
+        .col-lg-3.col-md-6 {
+            width: 50%;
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            font-size: 1.75rem;
+        }
+
+        .stat-number {
+            font-size: 2.25rem;
+        }
+    }
+
+    /* Chart responsiveness */
+    @media (max-width: 991px) {
+
+        .col-lg-8,
+        .col-lg-4 {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
-        .sidebar-overlay.show {
-            display: block;
-            opacity: 1;
+        .chart-container {
+            height: 280px;
+        }
+    }
+
+    /* Touch-friendly targets */
+    @media (max-width: 767px) {
+        .btn {
+            min-height: 44px;
+            padding: 0.5rem 1rem;
         }
 
-        /* ===== MOBILE RESPONSIVE STYLES ===== */
+        .btn-sm {
+            min-height: 40px;
+        }
+    }
 
-        /* Tablet and below */
-        @media (max-width: 991px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 1000;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
+    /* Print styles */
+    @media print {
 
-            .main-container {
-                margin: 10px;
-                margin-left: 0 !important;
-                width: 100% !important;
-                border-radius: 15px;
-            }
-
-            .header {
-                padding: 1.5rem 1rem;
-                padding-left: 3.5rem !important;
-                border-radius: 15px 15px 0 0;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .content-section {
-                padding: 1.5rem 1rem;
-            }
-
-            .dashboard-card {
-                padding: 20px;
-            }
-
-            .stat-card {
-                padding: 20px 15px;
-            }
-
-            .stat-icon {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-                margin-bottom: 15px;
-            }
-
-            .stat-number {
-                font-size: 2rem;
-            }
+        .sidebar,
+        .mobile-menu-toggle,
+        .sidebar-overlay,
+        .btn {
+            display: none !important;
         }
 
-        /* Mobile phones */
-        @media (max-width: 767px) {
-            .main-container {
-                margin: 5px;
-                border-radius: 10px;
-            }
-
-            .header {
-                padding: 1rem !important;
-            }
-
-            .header h1 {
-                font-size: 1.25rem;
-            }
-
-            .header h1 i {
-                display: block;
-                margin-bottom: 0.5rem;
-                margin-right: 0 !important;
-            }
-
-            .header p {
-                font-size: 0.875rem;
-            }
-
-            .header .col-md-4 {
-                width: 100%;
-                text-align: left !important;
-                margin-top: 0.5rem;
-            }
-
-            .header .col-md-4 span {
-                font-size: 0.75rem;
-            }
-
-            .content-section {
-                padding: 1rem;
-            }
-
-            /* Stats cards */
-            .dashboard-card {
-                padding: 15px;
-                margin-bottom: 15px;
-            }
-
-            .stat-card {
-                padding: 15px 10px;
-            }
-
-            .stat-icon {
-                width: 50px;
-                height: 50px;
-                font-size: 1.25rem;
-                margin-bottom: 12px;
-            }
-
-            .stat-number {
-                font-size: 1.75rem;
-                margin-bottom: 8px;
-            }
-
-            .stat-card .text-muted {
-                font-size: 0.875rem;
-            }
-
-            .stat-card small {
-                font-size: 0.75rem;
-            }
-
-            /* Chart containers */
-            .chart-container {
-                height: 250px;
-                margin: 15px 0;
-            }
-
-            .dashboard-card h5 {
-                font-size: 1rem;
-                margin-bottom: 15px;
-            }
-
-            /* Tables - mobile card view */
-            .table-responsive {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-
-            .table {
-                font-size: 0.813rem;
-            }
-
-            .table thead {
-                display: none;
-            }
-
-            .table tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border: 1px solid #dee2e6;
-                border-radius: 10px;
-                padding: 12px;
-                background: #f8f9fa;
-            }
-
-            .table tbody td {
-                display: block;
-                padding: 8px 0;
-                border: none;
-                text-align: left;
-            }
-
-            .table tbody td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                display: inline-block;
-                width: 100px;
-                margin-right: 10px;
-                color: #6c757d;
-                font-size: 0.75rem;
-            }
-
-            /* Status badges */
-            .status-badge {
-                font-size: 0.7rem;
-                padding: 4px 10px;
-            }
-
-            /* Low stock alerts */
-            .alert {
-                font-size: 0.875rem;
-                padding: 10px;
-            }
-
-            .list-unstyled li {
-                font-size: 0.875rem;
-                padding: 8px 0;
-            }
-
-            .list-unstyled .badge {
-                font-size: 0.7rem;
-            }
-
-            .btn-sm {
-                padding: 0.5rem;
-                font-size: 0.813rem;
-            }
-
-            /* Breadcrumb */
-            .breadcrumb {
-                font-size: 0.75rem;
-            }
+        .main-container {
+            margin: 0;
+            box-shadow: none;
         }
 
-        /* Extra small phones */
-        @media (max-width: 575px) {
-            .header h1 {
-                font-size: 1.1rem;
-            }
-
-            .header p {
-                font-size: 0.813rem;
-            }
-
-            .content-section {
-                padding: 0.75rem;
-            }
-
-            .dashboard-card {
-                padding: 12px;
-            }
-
-            .stat-card {
-                padding: 12px 8px;
-            }
-
-            .stat-icon {
-                width: 45px;
-                height: 45px;
-                font-size: 1.1rem;
-                margin-bottom: 10px;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-                margin-bottom: 5px;
-            }
-
-            .stat-card .text-muted {
-                font-size: 0.813rem;
-            }
-
-            .stat-card small {
-                font-size: 0.688rem;
-            }
-
-            .chart-container {
-                height: 200px;
-                margin: 10px 0;
-            }
-
-            .dashboard-card h5 {
-                font-size: 0.938rem;
-            }
-
-            .table tbody tr {
-                padding: 10px;
-            }
-
-            .table tbody td {
-                padding: 6px 0;
-                font-size: 0.75rem;
-            }
-
-            .table tbody td::before {
-                width: 80px;
-                font-size: 0.688rem;
-            }
-
-            .alert {
-                font-size: 0.813rem;
-                padding: 8px;
-            }
-
-            .list-unstyled li {
-                font-size: 0.813rem;
-                padding: 6px 0;
-            }
+        .dashboard-card {
+            page-break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid #ddd;
         }
 
-        /* Landscape mode optimization */
-        @media (max-width: 767px) and (orientation: landscape) {
-            .stat-card {
-                padding: 10px;
-            }
-
-            .stat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 1rem;
-                margin-bottom: 8px;
-            }
-
-            .stat-number {
-                font-size: 1.5rem;
-            }
-
-            .chart-container {
-                height: 180px;
-            }
+        .header {
+            background: #667eea !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
-        /* Tablet landscape - 2 columns for stats */
-        @media (max-width: 991px) and (min-width: 768px) {
-            .mobile-menu-toggle {
-                top: 1.5rem;
-                left: 1.5rem;
-            }
-
-            .col-lg-3.col-md-6 {
-                width: 50%;
-            }
-
-            .stat-icon {
-                width: 70px;
-                height: 70px;
-                font-size: 1.75rem;
-            }
-
-            .stat-number {
-                font-size: 2.25rem;
-            }
+        .table thead {
+            display: table-header-group !important;
         }
 
-        /* Chart responsiveness */
-        @media (max-width: 991px) {
-            .col-lg-8,
-            .col-lg-4 {
-                width: 100%;
-            }
-
-            .chart-container {
-                height: 280px;
-            }
+        .table tbody tr {
+            display: table-row !important;
+            border: 1px solid #dee2e6;
         }
 
-        /* Touch-friendly targets */
-        @media (max-width: 767px) {
-            .btn {
-                min-height: 44px;
-                padding: 0.5rem 1rem;
-            }
-
-            .btn-sm {
-                min-height: 40px;
-            }
+        .table tbody td {
+            display: table-cell !important;
+            padding: 8px !important;
         }
 
-        /* Print styles */
-        @media print {
-            .sidebar,
-            .mobile-menu-toggle,
-            .sidebar-overlay,
-            .btn {
-                display: none !important;
-            }
+        .table tbody td::before {
+            content: none !important;
+        }
+    }
 
-            .main-container {
-                margin: 0;
-                box-shadow: none;
-            }
+    /* Accessibility improvements */
+    @media (prefers-reduced-motion: reduce) {
 
-            .dashboard-card {
-                page-break-inside: avoid;
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
+        .dashboard-card,
+        .mobile-menu-toggle,
+        .sidebar,
+        .sidebar-overlay {
+            transition: none;
+        }
+    }
 
-            .header {
-                background: #667eea !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .table thead {
-                display: table-header-group !important;
-            }
-
-            .table tbody tr {
-                display: table-row !important;
-                border: 1px solid #dee2e6;
-            }
-
-            .table tbody td {
-                display: table-cell !important;
-                padding: 8px !important;
-            }
-
-            .table tbody td::before {
-                content: none !important;
-            }
+    /* Dark mode support (optional) */
+    @media (prefers-color-scheme: dark) {
+        .table tbody tr {
+            background: #2d3748;
+            border-color: #4a5568;
         }
 
-        /* Accessibility improvements */
-        @media (prefers-reduced-motion: reduce) {
-            .dashboard-card,
-            .mobile-menu-toggle,
-            .sidebar,
-            .sidebar-overlay {
-                transition: none;
-            }
+        .dashboard-card {
+            background: #2d3748;
+            color: #e2e8f0;
+        }
+    }
+
+    /* Better spacing for mobile cards */
+    @media (max-width: 767px) {
+        .row.mb-4 {
+            margin-bottom: 1rem !important;
         }
 
-        /* Dark mode support (optional) */
-        @media (prefers-color-scheme: dark) {
-            .table tbody tr {
-                background: #2d3748;
-                border-color: #4a5568;
-            }
+        .col-lg-3.col-md-6.mb-4,
+        .col-lg-8.mb-4,
+        .col-lg-4.mb-4 {
+            margin-bottom: 1rem !important;
+        }
+    }
 
-            .dashboard-card {
-                background: #2d3748;
-                color: #e2e8f0;
-            }
+    /* Fix for long text overflow */
+    @media (max-width: 767px) {
+        .table tbody td {
+            word-wrap: break-word;
+            white-space: normal;
         }
 
-        /* Better spacing for mobile cards */
-        @media (max-width: 767px) {
-            .row.mb-4 {
-                margin-bottom: 1rem !important;
-            }
-
-            .col-lg-3.col-md-6.mb-4,
-            .col-lg-8.mb-4,
-            .col-lg-4.mb-4 {
-                margin-bottom: 1rem !important;
-            }
+        .stat-card .text-muted,
+        .stat-card small {
+            white-space: normal;
+            line-height: 1.4;
         }
-
-        /* Fix for long text overflow */
-        @media (max-width: 767px) {
-            .table tbody td {
-                word-wrap: break-word;
-                white-space: normal;
-            }
-
-            .stat-card .text-muted,
-            .stat-card small {
-                white-space: normal;
-                line-height: 1.4;
-            }
-        }
-    </style>
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
 
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="h2 mb-2">
-                        <i class="fas fa-tachometer-alt me-3"></i>Dashboard Overview
-                    </h1>
-                    <p class="mb-0 opacity-75">Welcome back! Here's what's happening in your store today.</p>
-                    <nav aria-label="breadcrumb" class="mt-2">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                        </ol>
-                    </nav>
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-tachometer-alt me-3"></i>Dashboard Overview
+                </h1>
+                <p class="mb-0 opacity-75">Welcome back! Here's what's happening in your store today.</p>
+                <nav aria-label="breadcrumb" class="mt-2">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-4 text-end">
+                <span class="opacity-75">Last updated: <span id="lastUpdated"></span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-section">
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(45deg, #28a745, #20c997);">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-number text-success">$12,847</div>
+                    <div class="text-muted">Today's Revenue</div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +15.3% from yesterday</small>
                 </div>
-                <div class="col-md-4 text-end">
-                    <span class="opacity-75">Last updated: <span id="lastUpdated"></span></span>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-number text-primary">147</div>
+                    <div class="text-muted">Orders Today</div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +8.2% from yesterday</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(45deg, #ffc107, #fd7e14);">
+                        <i class="fas fa-cards-blank"></i>
+                    </div>
+                    <div class="stat-number text-warning">8,924</div>
+                    <div class="text-muted">Cards in Stock</div>
+                    <small class="text-danger"><i class="fas fa-arrow-down"></i> 245 sold today</small>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(45deg, #dc3545, #e83e8c);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number text-danger">2,847</div>
+                    <div class="text-muted">Active Users</div>
+                    <small class="text-success"><i class="fas fa-arrow-up"></i> +12 new today</small>
                 </div>
             </div>
         </div>
 
-        <!-- Content -->
-        <div class="content-section">
-            <!-- Stats Cards -->
-            <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="dashboard-card stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(45deg, #28a745, #20c997);">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="stat-number text-success">$12,847</div>
-                        <div class="text-muted">Today's Revenue</div>
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +15.3% from yesterday</small>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="dashboard-card stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(45deg, #667eea, #764ba2);">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                        <div class="stat-number text-primary">147</div>
-                        <div class="text-muted">Orders Today</div>
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +8.2% from yesterday</small>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="dashboard-card stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(45deg, #ffc107, #fd7e14);">
-                            <i class="fas fa-cards-blank"></i>
-                        </div>
-                        <div class="stat-number text-warning">8,924</div>
-                        <div class="text-muted">Cards in Stock</div>
-                        <small class="text-danger"><i class="fas fa-arrow-down"></i> 245 sold today</small>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4">
-                    <div class="dashboard-card stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(45deg, #dc3545, #e83e8c);">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-number text-danger">2,847</div>
-                        <div class="text-muted">Active Users</div>
-                        <small class="text-success"><i class="fas fa-arrow-up"></i> +12 new today</small>
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-lg-8 mb-4">
+                <div class="dashboard-card">
+                    <h5 class="mb-3">Sales Analytics</h5>
+                    <div class="chart-container">
+                        <canvas id="salesChart"></canvas>
                     </div>
                 </div>
             </div>
-
-            <!-- Charts Row -->
-            <div class="row mb-4">
-                <div class="col-lg-8 mb-4">
-                    <div class="dashboard-card">
-                        <h5 class="mb-3">Sales Analytics</h5>
-                        <div class="chart-container">
-                            <canvas id="salesChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-4">
-                    <div class="dashboard-card">
-                        <h5 class="mb-3">Top Categories</h5>
-                        <div class="chart-container">
-                            <canvas id="categoryChart"></canvas>
-                        </div>
+            <div class="col-lg-4 mb-4">
+                <div class="dashboard-card">
+                    <h5 class="mb-3">Top Categories</h5>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Recent Activities -->
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="dashboard-card">
-                        <h5 class="mb-3">Recent Orders</h5>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Order ID</th>
-                                        <th>Customer</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td data-label="Order ID">#YGO-2024-001</td>
-                                        <td data-label="Customer">Yugi Muto</td>
-                                        <td data-label="Amount">$299.99</td>
-                                        <td data-label="Status"><span class="status-badge status-active">Completed</span></td>
-                                        <td data-label="Date">2 hours ago</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Order ID">#YGO-2024-002</td>
-                                        <td data-label="Customer">Kaiba Seto</td>
-                                        <td data-label="Amount">$1,299.97</td>
-                                        <td data-label="Status"><span class="status-badge status-draft">Processing</span></td>
-                                        <td data-label="Date">4 hours ago</td>
-                                    </tr>
-                                    <tr>
-                                        <td data-label="Order ID">#YGO-2024-003</td>
-                                        <td data-label="Customer">Joey Wheeler</td>
-                                        <td data-label="Amount">$89.99</td>
-                                        <td data-label="Status"><span class="status-badge status-active">Shipped</span></td>
-                                        <td data-label="Date">6 hours ago</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+        <!-- Recent Activities -->
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="dashboard-card">
+                    <h5 class="mb-3">Low Stock Alerts</h5>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>5 cards</strong> are running low on stock
                     </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="dashboard-card">
-                        <h5 class="mb-3">Low Stock Alerts</h5>
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            <strong>5 cards</strong> are running low on stock
-                        </div>
-                        <ul class="list-unstyled">
-                            <li class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Blue-Eyes White Dragon</span>
-                                <span class="badge bg-warning">2 left</span>
-                            </li>
-                            <li class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Dark Magician</span>
-                                <span class="badge bg-warning">3 left</span>
-                            </li>
-                            <li class="d-flex justify-content-between align-items-center mb-2">
-                                <span>Exodia the Forbidden One</span>
-                                <span class="badge bg-danger">1 left</span>
-                            </li>
-                        </ul>
-                        <button class="btn btn-outline-warning btn-sm w-100">View All Alerts</button>
-                    </div>
+                    <ul class="list-unstyled">
+                        <li class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Blue-Eyes White Dragon</span>
+                            <span class="badge bg-warning">2 left</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Dark Magician</span>
+                            <span class="badge bg-warning">3 left</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Exodia the Forbidden One</span>
+                            <span class="badge bg-danger">1 left</span>
+                        </li>
+                    </ul>
+                    <button class="btn btn-outline-warning btn-sm w-100">View All Alerts</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
+<script>
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    // Close sidebar on window resize
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 992) {
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
         }
+    });
 
-        // Close sidebar on window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 992) {
-                const sidebar = document.querySelector('.sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize charts
-            initializeCharts();
-            
-            // Update last updated time
-            updateLastUpdated();
-        });
-
-        // Chart initialization
-        function initializeCharts() {
-            // Sales Chart
-            const salesCtx = document.getElementById('salesChart');
-            if (salesCtx) {
-                new Chart(salesCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Sales ($)',
-                            data: [12000, 19000, 15000, 25000, 22000, 30000],
-                            borderColor: 'rgb(102, 126, 234)',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Category Chart
-            const categoryCtx = document.getElementById('categoryChart');
-            if (categoryCtx) {
-                new Chart(categoryCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Monster Cards', 'Spell Cards', 'Trap Cards'],
-                        datasets: [{
-                            data: [60, 25, 15],
-                            backgroundColor: [
-                                'rgb(102, 126, 234)',
-                                'rgb(40, 167, 69)',
-                                'rgb(255, 193, 7)'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
-                            }
-                        }
-                    }
-                });
-            }
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize charts
+        initializeCharts();
 
         // Update last updated time
-        function updateLastUpdated() {
-            const lastUpdatedElement = document.getElementById('lastUpdated');
-            if (lastUpdatedElement) {
-                lastUpdatedElement.textContent = new Date().toLocaleTimeString();
-            }
+        updateLastUpdated();
+    });
+
+    // Chart initialization
+    function initializeCharts() {
+        // Sales Chart
+        const salesCtx = document.getElementById('salesChart');
+        if (salesCtx) {
+            new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: [12000, 19000, 15000, 25000, 22000, 30000],
+                        borderColor: 'rgb(102, 126, 234)',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
 
-        // Refresh data every 30 seconds
-        setInterval(updateLastUpdated, 30000);
-    </script>
+        // Category Chart
+        const categoryCtx = document.getElementById('categoryChart');
+        if (categoryCtx) {
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Monster Cards', 'Spell Cards', 'Trap Cards'],
+                    datasets: [{
+                        data: [60, 25, 15],
+                        backgroundColor: [
+                            'rgb(102, 126, 234)',
+                            'rgb(40, 167, 69)',
+                            'rgb(255, 193, 7)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Update last updated time
+    function updateLastUpdated() {
+        const lastUpdatedElement = document.getElementById('lastUpdated');
+        if (lastUpdatedElement) {
+            lastUpdatedElement.textContent = new Date().toLocaleTimeString();
+        }
+    }
+
+    // Refresh data every 30 seconds
+    setInterval(updateLastUpdated, 30000);
+</script>
 {% endblock %}

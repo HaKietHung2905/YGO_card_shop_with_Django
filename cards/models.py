@@ -8,6 +8,7 @@ class CardSet(models.Model):
     name = models.CharField(max_length=200)
     code = models.CharField(max_length=10, unique=True)
     release_date = models.DateField()
+    image = models.ImageField(upload_to='sets/', blank=True, null=True)
     
     def __str__(self):
         return self.name

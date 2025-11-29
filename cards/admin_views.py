@@ -82,6 +82,7 @@ def admin_create_card_set(request):
             code = request.POST.get('code', '').strip().upper()
             release_date = request.POST.get('release_date', '')
             description = request.POST.get('description', '').strip()
+            image = request.FILES.get('image')
             
             # Validation
             if not name or not code or not release_date:
@@ -110,7 +111,8 @@ def admin_create_card_set(request):
             card_set = CardSet.objects.create(
                 name=name,
                 code=code,
-                release_date=release_date_obj
+                release_date=release_date_obj,
+                image=image
             )
             
             messages.success(request, f'Card set "{card_set.name}" created successfully!')
@@ -140,6 +142,7 @@ def admin_edit_card_set(request, set_id):
             name = request.POST.get('name', '').strip()
             code = request.POST.get('code', '').strip().upper()
             release_date = request.POST.get('release_date', '')
+            image = request.FILES.get('image')
             
             # Validation
             if not name or not code or not release_date:
@@ -159,6 +162,10 @@ def admin_edit_card_set(request, set_id):
             card_set.name = name
             card_set.code = code
             card_set.release_date = datetime.strptime(release_date, '%Y-%m-%d').date()
+            
+            if image:
+                card_set.image = image
+                
             card_set.save()
             
             messages.success(request, f'Card set "{card_set.name}" updated successfully!')
@@ -181,6 +188,8 @@ def admin_edit_card_set(request, set_id):
             'name': card_set.name,
             'code': card_set.code,
             'release_date': card_set.release_date.isoformat(),
+            'image_url': card_set.image.url if card_set.image else None,
+            'description': getattr(card_set, 'description', '') # Assuming description might be added later or handled elsewhere
         }
     })
 

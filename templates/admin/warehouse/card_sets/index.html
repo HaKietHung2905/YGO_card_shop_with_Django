@@ -4,979 +4,1000 @@
 {% block title %}Quản Lý Bộ Thẻ - Yu-Gi-Oh Admin{% endblock %}
 
 {% block extra_css %}
-    <style>
-        .filter-section {
-            background: #f8fafc;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
+<style>
+    .filter-section {
+        background: #f8fafc;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .table-custom {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-custom thead {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .table-custom tbody tr {
+        transition: background-color 0.3s ease;
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: rgba(102, 126, 234, 0.05);
+    }
+
+    .stats-card {
+        transition: transform 0.2s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .set-code-badge {
+        font-family: monospace;
+        font-weight: bold;
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: #6c757d;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .status-active {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-draft {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-upcoming {
+        background: #cff4fc;
+        color: #055160;
+    }
+
+    .status-discontinued {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .stock-status-badge {
+        padding: 4px 8px;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .stock-available {
+        background-color: var(--success-color);
+        color: white;
+    }
+
+    .stock-limited {
+        background-color: var(--warning-color);
+        color: white;
+    }
+
+    .stock-out {
+        background-color: var(--danger-color);
+        color: white;
+    }
+
+    .upcoming-set {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+    }
+
+    .discontinued-set {
+        background-color: #f8d7da;
+        border-left: 4px solid #dc3545;
+        opacity: 0.8;
+    }
+
+    .table-actions {
+        white-space: nowrap;
+    }
+
+    .main-content {
+        margin-left: var(--sidebar-width);
+        min-height: 100vh;
+        padding: 0;
+    }
+
+    /* ===== MOBILE RESPONSIVE STYLES ===== */
+
+    /* Tablet and below */
+    @media (max-width: 991px) {
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
 
-        .table-custom {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-custom thead {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-        }
-
-        .table-custom tbody tr {
-            transition: background-color 0.3s ease;
-        }
-
-        .table-custom tbody tr:hover {
-            background-color: rgba(102, 126, 234, 0.05);
-        }
-
-        .stats-card {
-            transition: transform 0.2s ease;
-            border-radius: 15px;
-            overflow: hidden;
-        }
-
-        .stats-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .modal-content {
-            border-radius: 20px;
-            border: none;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .set-code-badge {
-            font-family: monospace;
-            font-weight: bold;
-            padding: 6px 12px;
-            border-radius: 20px;
-            background: #6c757d;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        .status-active { background: #d4edda; color: #155724; }
-        .status-draft { background: #fff3cd; color: #856404; }
-        .status-upcoming { background: #cff4fc; color: #055160; }
-        .status-discontinued { background: #f8d7da; color: #721c24; }
-
-        .stock-status-badge {
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .stock-available { background-color: var(--success-color); color: white; }
-        .stock-limited { background-color: var(--warning-color); color: white; }
-        .stock-out { background-color: var(--danger-color); color: white; }
-
-        .upcoming-set {
-            background-color: #fff3cd;
-            border-left: 4px solid #ffc107;
-        }
-
-        .discontinued-set {
-            background-color: #f8d7da;
-            border-left: 4px solid #dc3545;
-            opacity: 0.8;
-        }
-
-        .table-actions {
-            white-space: nowrap;
+        .sidebar.show {
+            transform: translateX(0);
         }
 
         .main-content {
-            margin-left: var(--sidebar-width);
+            margin-left: 0 !important;
+        }
+
+        .header {
+            padding: 1.5rem 1rem;
+            border-radius: 0;
+        }
+
+        .header .col-md-8,
+        .header .col-md-4 {
+            text-align: center !important;
+        }
+
+        .header .btn-light {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .header .breadcrumb {
+            justify-content: center;
+        }
+
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+    }
+
+    /* Mobile phones */
+    @media (max-width: 767px) {
+        .header h1 {
+            font-size: 1.5rem;
+        }
+
+        .header p {
+            font-size: 0.875rem;
+        }
+
+        .content-section {
+            padding: 1rem;
+        }
+
+        .filter-section {
+            padding: 1rem;
+        }
+
+        .stats-card {
+            margin-bottom: 1rem;
+        }
+
+        .stats-card .fa-2x {
+            font-size: 1.5rem !important;
+        }
+
+        .stats-card h4 {
+            font-size: 1.5rem;
+        }
+
+        .card-custom .fa-3x {
+            font-size: 2rem !important;
+        }
+
+        .card-custom h5 {
+            font-size: 1rem;
+        }
+
+        .card-custom p {
+            font-size: 0.875rem;
+        }
+
+        .table-custom thead {
+            display: none;
+        }
+
+        .table-custom tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 1rem;
+            background: white;
+        }
+
+        .table-custom tbody tr.upcoming-set {
+            border-left: 4px solid #ffc107;
+        }
+
+        .table-custom tbody td {
+            display: block;
+            padding: 0.5rem 0;
+            border: none;
+            text-align: left;
+        }
+
+        .table-custom tbody td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+
+        .table-custom tbody td:first-child::before {
+            content: '';
+        }
+
+        .table-custom tbody td:first-child .d-flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+
+        .table-custom tbody td:first-child .me-3 {
+            margin-bottom: 0.5rem;
+            margin-right: 0 !important;
+        }
+
+        .set-code-badge {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
+        .stock-status-badge {
+            font-size: 0.7rem;
+            padding: 3px 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            width: 100%;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            min-width: 40px;
+            border-radius: 5px !important;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination .page-item {
+            margin: 0.25rem;
+        }
+
+        .pagination .page-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+
+        .modal-lg,
+        .modal-xl {
+            max-width: 95%;
+        }
+
+        .modal-body {
+            padding: 1rem;
+        }
+
+        .modal-footer {
+            padding: 0.75rem;
+        }
+
+        .modal-footer .btn {
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .modal .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal .form-control,
+        .modal .form-select {
+            font-size: 0.875rem;
+            padding: 0.5rem;
+        }
+
+        .alert {
+            font-size: 0.875rem;
+            padding: 0.75rem;
+        }
+
+        .text-center.py-5 {
+            padding: 2rem 1rem !important;
+        }
+
+        .text-center .fa-3x {
+            font-size: 2rem !important;
+        }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 575px) {
+        .header h1 {
+            font-size: 1.25rem;
+        }
+
+        .header h1 i {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .breadcrumb {
+            font-size: 0.75rem;
+        }
+
+        .filter-section .d-grid {
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-card .card-body {
+            padding: 1rem;
+        }
+
+        .stats-card h4 {
+            font-size: 1.25rem;
+        }
+
+        .stats-card p {
+            font-size: 0.75rem;
+        }
+
+        .table-custom tbody tr {
+            padding: 0.75rem;
+        }
+
+        .table-custom tbody td {
+            padding: 0.375rem 0;
+            font-size: 0.813rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            width: 100%;
+            margin-bottom: 0.25rem;
+        }
+
+        .modal-dialog {
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .modal-content {
             min-height: 100vh;
-            padding: 0;
+            border-radius: 0;
         }
 
-        /* ===== MOBILE RESPONSIVE STYLES ===== */
-        
-        /* Tablet and below */
-        @media (max-width: 991px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-            }
-            
-            .header {
-                padding: 1.5rem 1rem;
-                border-radius: 0;
-            }
-            
-            .header .col-md-8,
-            .header .col-md-4 {
-                text-align: center !important;
-            }
-            
-            .header .btn-light {
-                margin-top: 1rem;
-                width: 100%;
-            }
-            
-            .header .breadcrumb {
-                justify-content: center;
-            }
-            
-           .mobile-menu-toggle {
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 1001;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                border: none;
-                padding: 0.75rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            
-            .sidebar-overlay {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 999;
-                display: none;
-            }
-            
-            .sidebar-overlay.show {
-                display: block;
-            }
+        .modal-xl .modal-body {
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+    }
+
+    /* Landscape mode */
+    @media (max-width: 767px) and (orientation: landscape) {
+        .modal-body {
+            max-height: calc(100vh - 120px);
         }
 
-        /* Mobile phones */
-        @media (max-width: 767px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            
-            .header p {
-                font-size: 0.875rem;
-            }
-            
-            .content-section {
-                padding: 1rem;
-            }
-            
-            .filter-section {
-                padding: 1rem;
-            }
-            
-            .stats-card {
-                margin-bottom: 1rem;
-            }
-            
-            .stats-card .fa-2x {
-                font-size: 1.5rem !important;
-            }
-            
-            .stats-card h4 {
-                font-size: 1.5rem;
-            }
-            
-            .card-custom .fa-3x {
-                font-size: 2rem !important;
-            }
-            
-            .card-custom h5 {
-                font-size: 1rem;
-            }
-            
-            .card-custom p {
-                font-size: 0.875rem;
-            }
-            
-            .table-custom thead {
-                display: none;
-            }
-            
-            .table-custom tbody tr {
-                display: block;
-                margin-bottom: 1rem;
-                border: 1px solid #dee2e6;
-                border-radius: 10px;
-                padding: 1rem;
-                background: white;
-            }
-            
-            .table-custom tbody tr.upcoming-set {
-                border-left: 4px solid #ffc107;
-            }
-            
-            .table-custom tbody td {
-                display: block;
-                padding: 0.5rem 0;
-                border: none;
-                text-align: left;
-            }
-            
-            .table-custom tbody td::before {
-                content: attr(data-label);
-                font-weight: bold;
-                display: block;
-                margin-bottom: 0.25rem;
-                color: #6c757d;
-                font-size: 0.875rem;
-            }
-            
-            .table-custom tbody td:first-child::before {
-                content: '';
-            }
-            
-            .table-custom tbody td:first-child .d-flex {
-                flex-direction: column;
-                align-items: flex-start !important;
-            }
-            
-            .table-custom tbody td:first-child .me-3 {
-                margin-bottom: 0.5rem;
-                margin-right: 0 !important;
-            }
-            
-            .set-code-badge {
-                font-size: 0.8rem;
-                padding: 4px 8px;
-            }
-            
-            .stock-status-badge {
-                font-size: 0.7rem;
-                padding: 3px 6px;
-            }
-            
-            .btn-group {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.25rem;
-                width: 100%;
-            }
-            
-            .btn-group .btn {
-                flex: 1;
-                min-width: 40px;
-                border-radius: 5px !important;
-            }
-            
-            .pagination {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .pagination .page-item {
-                margin: 0.25rem;
-            }
-            
-            .pagination .page-link {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.875rem;
-            }
-            
-            .modal-dialog {
-                margin: 0.5rem;
-            }
-            
-            .modal-lg,
-            .modal-xl {
-                max-width: 95%;
-            }
-            
-            .modal-body {
-                padding: 1rem;
-            }
-            
-            .modal-footer {
-                padding: 0.75rem;
-            }
-            
-            .modal-footer .btn {
-                font-size: 0.875rem;
-                padding: 0.5rem 1rem;
-            }
-            
-            .modal .form-label {
-                font-size: 0.875rem;
-                margin-bottom: 0.25rem;
-            }
-            
-            .modal .form-control,
-            .modal .form-select {
-                font-size: 0.875rem;
-                padding: 0.5rem;
-            }
-            
-            .alert {
-                font-size: 0.875rem;
-                padding: 0.75rem;
-            }
-            
-            .text-center.py-5 {
-                padding: 2rem 1rem !important;
-            }
-            
-            .text-center .fa-3x {
-                font-size: 2rem !important;
-            }
+        .stats-card .card-body {
+            padding: 0.75rem;
+        }
+    }
+
+    /* Touch-friendly targets */
+    @media (max-width: 767px) {
+        .btn-sm {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
         }
 
-        /* Extra small phones */
-        @media (max-width: 575px) {
-            .header h1 {
-                font-size: 1.25rem;
-            }
-            
-            .header h1 i {
-                display: block;
-                margin-bottom: 0.5rem;
-            }
-            
-            .breadcrumb {
-                font-size: 0.75rem;
-            }
-            
-            .filter-section .d-grid {
-                margin-bottom: 0.5rem;
-            }
-            
-            .stats-card .card-body {
-                padding: 1rem;
-            }
-            
-            .stats-card h4 {
-                font-size: 1.25rem;
-            }
-            
-            .stats-card p {
-                font-size: 0.75rem;
-            }
-            
-            .table-custom tbody tr {
-                padding: 0.75rem;
-            }
-            
-            .table-custom tbody td {
-                padding: 0.375rem 0;
-                font-size: 0.813rem;
-            }
-            
-            .btn-group {
-                flex-direction: column;
-            }
-            
-            .btn-group .btn {
-                width: 100%;
-                margin-bottom: 0.25rem;
-            }
-            
-            .modal-dialog {
-                margin: 0;
-                max-width: 100%;
-            }
-            
-            .modal-content {
-                min-height: 100vh;
-                border-radius: 0;
-            }
-            
-            .modal-xl .modal-body {
-                max-height: calc(100vh - 150px);
-                overflow-y: auto;
-            }
+        .btn-outline-primary,
+        .btn-outline-info,
+        .btn-outline-success,
+        .btn-outline-danger {
+            min-width: 44px;
+            min-height: 44px;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+
+        .sidebar,
+        .mobile-menu-toggle,
+        .header .btn,
+        .filter-section,
+        .card-custom .btn,
+        .table-custom .btn-group,
+        .pagination,
+        .breadcrumb {
+            display: none !important;
         }
 
-        /* Landscape mode */
-        @media (max-width: 767px) and (orientation: landscape) {
-            .modal-body {
-                max-height: calc(100vh - 120px);
-            }
-            
-            .stats-card .card-body {
-                padding: 0.75rem;
-            }
+        .main-content {
+            margin-left: 0 !important;
         }
 
-        /* Touch-friendly targets */
-        @media (max-width: 767px) {
-            .btn-sm {
-                padding: 0.5rem 0.75rem;
-                font-size: 0.875rem;
-            }
-            
-            .btn-outline-primary,
-            .btn-outline-info,
-            .btn-outline-success,
-            .btn-outline-danger {
-                min-width: 44px;
-                min-height: 44px;
-            }
+        .table-custom thead {
+            display: table-header-group !important;
         }
 
-        /* Print styles */
-        @media print {
-            .sidebar,
-            .mobile-menu-toggle,
-            .header .btn,
-            .filter-section,
-            .card-custom .btn,
-            .table-custom .btn-group,
-            .pagination,
-            .breadcrumb {
-                display: none !important;
-            }
-            
-            .main-content {
-                margin-left: 0 !important;
-            }
-            
-            .table-custom thead {
-                display: table-header-group !important;
-            }
-            
-            .table-custom tbody tr {
-                display: table-row !important;
-                border: 1px solid #dee2e6;
-                page-break-inside: avoid;
-            }
-            
-            .table-custom tbody td {
-                display: table-cell !important;
-                padding: 0.5rem !important;
-            }
-            
-            .table-custom tbody td::before {
-                content: none !important;
-            }
+        .table-custom tbody tr {
+            display: table-row !important;
+            border: 1px solid #dee2e6;
+            page-break-inside: avoid;
         }
-    </style>
+
+        .table-custom tbody td {
+            display: table-cell !important;
+            padding: 0.5rem !important;
+        }
+
+        .table-custom tbody td::before {
+            content: none !important;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
 
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </button>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+<!-- Mobile Menu Toggle -->
+<button class="mobile-menu-toggle d-lg-none" onclick="toggleSidebar()">
+    <i class="fas fa-bars"></i>
+</button>
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <div class="main-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1 class="h2 mb-2">
-                        <i class="fas fa-layer-group me-3"></i>Quản Lý Bộ Thẻ
-                    </h1>
-                    <p class="mb-0 opacity-75">Quản lý bộ thẻ, phát hành và bộ sưu tập</p>
-                    <nav aria-label="breadcrumb" class="mt-2">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}" class="text-light">Bảng Điều Khiển</a></li>
-                            <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}" class="text-light">Kho Hàng</a></li>
-                            <li class="breadcrumb-item active text-light" aria-current="page">Bộ Thẻ</li>
-                        </ol>
-                    </nav>
+<div class="main-container">
+    <!-- Header -->
+    <div class="header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">
+                    <i class="fas fa-layer-group me-3"></i>Quản Lý Bộ Thẻ
+                </h1>
+                <p class="mb-0 opacity-75">Quản lý bộ thẻ, phát hành và bộ sưu tập</p>
+                <nav aria-label="breadcrumb" class="mt-2">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:dashboard' %}"
+                                class="text-light">Bảng Điều Khiển</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'admin_dashboard:warehouse' %}"
+                                class="text-light">Kho Hàng</a></li>
+                        <li class="breadcrumb-item active text-light" aria-current="page">Bộ Thẻ</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                    <i class="fas fa-plus me-2"></i>Thêm Bộ Thẻ Mới
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-section">
+        <!-- Messages -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stats-card border-primary">
+                    <div class="card-body text-center">
+                        <div class="text-primary mb-2">
+                            <i class="fas fa-layer-group fa-2x"></i>
+                        </div>
+                        <h4 class="mb-1">{{ total_sets }}</h4>
+                        <p class="text-muted mb-0">Tổng Bộ Thẻ</p>
+                    </div>
                 </div>
-                <div class="col-md-4 text-end">
-                    <button class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
-                        <i class="fas fa-plus me-2"></i>Thêm Bộ Thẻ Mới
-                    </button>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stats-card border-success">
+                    <div class="card-body text-center">
+                        <div class="text-success mb-2">
+                            <i class="fas fa-calendar-plus fa-2x"></i>
+                        </div>
+                        <h4 class="mb-1">{{ sets_this_year }}</h4>
+                        <p class="text-muted mb-0">Phát Hành Năm Nay</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stats-card border-warning">
+                    <div class="card-body text-center">
+                        <div class="text-warning mb-2">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                        <h4 class="mb-1">{{ upcoming_sets }}</h4>
+                        <p class="text-muted mb-0">Sắp Phát Hành</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card stats-card border-info">
+                    <div class="card-body text-center">
+                        <div class="text-info mb-2">
+                            <i class="fas fa-cards-blank fa-2x"></i>
+                        </div>
+                        <h4 class="mb-1">{{ total_cards }}</h4>
+                        <p class="text-muted mb-0">Tổng Thẻ Bài</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Content -->
-        <div class="content-section">
-            <!-- Messages -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
 
-            <!-- Stats Cards -->
-            <div class="row mb-4">
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stats-card border-primary">
-                        <div class="card-body text-center">
-                            <div class="text-primary mb-2">
-                                <i class="fas fa-layer-group fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1">{{ total_sets }}</h4>
-                            <p class="text-muted mb-0">Tổng Bộ Thẻ</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stats-card border-success">
-                        <div class="card-body text-center">
-                            <div class="text-success mb-2">
-                                <i class="fas fa-calendar-plus fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1">{{ sets_this_year }}</h4>
-                            <p class="text-muted mb-0">Phát Hành Năm Nay</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stats-card border-warning">
-                        <div class="card-body text-center">
-                            <div class="text-warning mb-2">
-                                <i class="fas fa-clock fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1">{{ upcoming_sets }}</h4>
-                            <p class="text-muted mb-0">Sắp Phát Hành</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-3">
-                    <div class="card stats-card border-info">
-                        <div class="card-body text-center">
-                            <div class="text-info mb-2">
-                                <i class="fas fa-cards-blank fa-2x"></i>
-                            </div>
-                            <h4 class="mb-1">{{ total_cards }}</h4>
-                            <p class="text-muted mb-0">Tổng Thẻ Bài</p>
-                        </div>
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card-custom h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
+                        <h5>Thêm Bộ Thẻ Mới</h5>
+                        <p class="text-muted">Tạo bộ sưu tập thẻ bài mới</p>
+                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
+                            Thêm Bộ Thẻ
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Filters -->
-            <div class="filter-section">
-                <form method="GET" class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Tìm Kiếm Bộ Thẻ</label>
-                        <input type="text" name="q" class="form-control" 
-                               placeholder="Tìm theo tên hoặc mã..." value="{{ search_query }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">Năm Phát Hành</label>
-                        <select name="year" class="form-select">
-                            <option value="">Tất Cả Năm</option>
-                            <option value="2024" {% if year_filter == "2024" %}selected{% endif %}>2024</option>
-                            <option value="2023" {% if year_filter == "2023" %}selected{% endif %}>2023</option>
-                            <option value="2022" {% if year_filter == "2022" %}selected{% endif %}>2022</option>
-                            <option value="2021" {% if year_filter == "2021" %}selected{% endif %}>2021</option>
-                            <option value="2020" {% if year_filter == "2020" %}selected{% endif %}>2020</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-bold">&nbsp;</label>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary-custom">
-                                <i class="fas fa-search me-2"></i>Lọc
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card-custom h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-plus-circle fa-3x text-primary mb-3"></i>
-                            <h5>Thêm Bộ Thẻ Mới</h5>
-                            <p class="text-muted">Tạo bộ sưu tập thẻ bài mới</p>
-                            <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
-                                Thêm Bộ Thẻ
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card-custom h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-boxes fa-3x text-success mb-3"></i>
-                            <h5>Quản Lý Thẻ Bài</h5>
-                            <p class="text-muted">Thêm và quản lý từng thẻ bài</p>
-                            <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-success">
-                                Kho Thẻ Bài
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card-custom h-100">
-                        <div class="card-body text-center">
-                            <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
-                            <h5>Xem Báo Cáo</h5>
-                            <p class="text-muted">Phân tích hiệu suất và thống kê bộ thẻ</p>
-                            <a href="{% url 'admin_dashboard:analytics' %}" class="btn btn-warning">
-                                Phân Tích
-                            </a>
-                        </div>
+            <div class="col-md-4">
+                <div class="card-custom h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-boxes fa-3x text-success mb-3"></i>
+                        <h5>Quản Lý Thẻ Bài</h5>
+                        <p class="text-muted">Thêm và quản lý từng thẻ bài</p>
+                        <a href="{% url 'admin_dashboard:warehouse' %}" class="btn btn-success">
+                            Kho Thẻ Bài
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Card Sets Table -->
-            <div class="card-custom">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">
-                        <i class="fas fa-list me-2"></i>Bộ Thẻ
-                        <small class="text-muted">({{ card_sets.paginator.count }} tổng)</small>
-                    </h5>
+            <div class="col-md-4">
+                <div class="card-custom h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-bar fa-3x text-warning mb-3"></i>
+                        <h5>Xem Báo Cáo</h5>
+                        <p class="text-muted">Phân tích hiệu suất và thống kê bộ thẻ</p>
+                        <a href="{% url 'admin_dashboard:analytics' %}" class="btn btn-warning">
+                            Phân Tích
+                        </a>
+                    </div>
                 </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-custom table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Thông Tin Bộ Thẻ</th>
-                                    <th>Mã</th>
-                                    <th>Ngày Phát Hành</th>
-                                    <th>Thẻ Bài</th>
-                                    <th>Tình Trạng Kho</th>
-                                    <th>Thao Tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for card_set in card_sets %}
-                                <tr class="{% if card_set.release_date > today %}upcoming-set{% endif %}">
-                                    <td data-label="Thông Tin">
-                                        <div class="d-flex align-items-center">
-                                            <div class="me-3">
-                                                <i class="fas fa-box fa-2x text-primary"></i>
-                                            </div>
-                                            <div>
-                                                <div class="fw-bold">{{ card_set.name }}</div>
-                                                <small class="text-muted">
-                                                    {% if card_set.release_date > today %}
-                                                        Sắp Phát Hành
-                                                    {% else %}
-                                                        Phát hành {{ card_set.release_date|date:"M Y" }}
-                                                    {% endif %}
-                                                </small>
-                                            </div>
+            </div>
+        </div>
+
+        <!-- Card Sets Table -->
+        <div class="card-custom">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>Bộ Thẻ
+                    <small class="text-muted">({{ card_sets.paginator.count }} tổng)</small>
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-custom table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Thông Tin Bộ Thẻ</th>
+                                <th>Mã</th>
+                                <th>Ngày Phát Hành</th>
+                                <th>Thẻ Bài</th>
+                                <th>Tình Trạng Kho</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for card_set in card_sets %}
+                            <tr class="{% if card_set.release_date > today %}upcoming-set{% endif %}">
+                                <td data-label="Thông Tin">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-box fa-2x text-primary"></i>
                                         </div>
-                                    </td>
-                                    <td data-label="Mã">
-                                        <span class="set-code-badge">{{ card_set.code }}</span>
-                                    </td>
-                                    <td data-label="Ngày Phát Hành">
-                                        {{ card_set.release_date|date:"d/m/Y" }}
-                                        {% if card_set.release_date > today %}
-                                            <br><small class="text-warning">Sắp Tới</small>
-                                        {% endif %}
-                                    </td>
-                                    <td data-label="Thẻ Bài">
-                                        <div class="fw-bold">{{ card_set.total_cards }}</div>
-                                        <small class="text-muted">tổng thẻ bài</small>
-                                    </td>
-                                    <td data-label="Tình Trạng Kho">
-                                        {% if card_set.cards_in_stock == 0 %}
-                                            <span class="stock-status-badge stock-out">Hết Hàng</span>
-                                        {% elif card_set.cards_in_stock < 10 %}
-                                            <span class="stock-status-badge stock-limited">Còn Ít</span>
-                                            <small class="d-block">{{ card_set.cards_in_stock }} có sẵn</small>
+                                        <div>
+                                            <div class="fw-bold">{{ card_set.name }}</div>
+                                            <small class="text-muted">
+                                                {% if card_set.release_date > today %}
+                                                Sắp Phát Hành
+                                                {% else %}
+                                                Phát hành {{ card_set.release_date|date:"M Y" }}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="Mã">
+                                    <span class="set-code-badge">{{ card_set.code }}</span>
+                                </td>
+                                <td data-label="Ngày Phát Hành">
+                                    {{ card_set.release_date|date:"d/m/Y" }}
+                                    {% if card_set.release_date > today %}
+                                    <br><small class="text-warning">Sắp Tới</small>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Thẻ Bài">
+                                    <div class="fw-bold">{{ card_set.total_cards }}</div>
+                                    <small class="text-muted">tổng thẻ bài</small>
+                                </td>
+                                <td data-label="Tình Trạng Kho">
+                                    {% if card_set.cards_in_stock == 0 %}
+                                    <span class="stock-status-badge stock-out">Hết Hàng</span>
+                                    {% elif card_set.cards_in_stock < 10 %} <span
+                                        class="stock-status-badge stock-limited">Còn Ít</span>
+                                        <small class="d-block">{{ card_set.cards_in_stock }} có sẵn</small>
                                         {% else %}
-                                            <span class="stock-status-badge stock-available">Có Sẵn</span>
-                                            <small class="d-block">{{ card_set.cards_in_stock }} có sẵn</small>
+                                        <span class="stock-status-badge stock-available">Có Sẵn</span>
+                                        <small class="d-block">{{ card_set.cards_in_stock }} có sẵn</small>
                                         {% endif %}
-                                    </td>
-                                    <td data-label="Thao Tác" class="table-actions">
-                                        <div class="btn-group" role="group">
-                                            <button class="btn btn-sm btn-outline-primary" 
-                                                    onclick="editCardSet({{ card_set.id }})" title="Chỉnh Sửa">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-sm btn-outline-info" 
-                                                    onclick="viewSetCards({{ card_set.id }})" title="Xem Thẻ">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
-                                            <a href="{% url 'admin_dashboard:warehouse' %}?set={{ card_set.id }}" 
-                                               class="btn btn-sm btn-outline-success" title="Quản Lý Thẻ">
-                                                <i class="fas fa-cogs"></i>
-                                            </a>
-                                            <button class="btn btn-sm btn-outline-danger" 
-                                                    onclick="confirmDeleteSet({{ card_set.id }}, '{{ card_set.name|escapejs }}')" title="Xóa">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="6" class="text-center py-5">
-                                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                        <p class="text-muted">Không tìm thấy bộ thẻ nào phù hợp với tiêu chí của bạn.</p>
-                                        <button class="btn btn-primary-custom" data-bs-toggle="modal" data-bs-target="#addCardSetModal">
-                                            <i class="fas fa-plus me-2"></i>Thêm Bộ Thẻ Đầu Tiên
+                                </td>
+                                <td data-label="Thao Tác" class="table-actions">
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            onclick="editCardSet({{ card_set.id }})" title="Chỉnh Sửa">
+                                            <i class="fas fa-edit"></i>
                                         </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                        <button class="btn btn-sm btn-outline-info"
+                                            onclick="viewSetCards({{ card_set.id }})" title="Xem Thẻ">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <a href="{% url 'admin_dashboard:warehouse' %}?set={{ card_set.id }}"
+                                            class="btn btn-sm btn-outline-success" title="Quản Lý Thẻ">
+                                            <i class="fas fa-cogs"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            onclick="confirmDeleteSet({{ card_set.id }}, '{{ card_set.name|escapejs }}')"
+                                            title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5">
+                                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Không tìm thấy bộ thẻ nào phù hợp với tiêu chí của bạn.</p>
+                                    <button class="btn btn-primary-custom" data-bs-toggle="modal"
+                                        data-bs-target="#addCardSetModal">
+                                        <i class="fas fa-plus me-2"></i>Thêm Bộ Thẻ Đầu Tiên
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
-            <!-- Pagination -->
-            {% if card_sets.has_other_pages %}
-            <nav aria-label="Phân trang bộ thẻ" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if card_sets.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ card_sets.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Trước</a>
-                        </li>
+        <!-- Pagination -->
+        {% if card_sets.has_other_pages %}
+        <nav aria-label="Phân trang bộ thẻ" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if card_sets.has_previous %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ card_sets.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Trước</a>
+                </li>
+                {% endif %}
+
+                {% for num in card_sets.paginator.page_range %}
+                {% if card_sets.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% elif num > card_sets.number|add:'-3' and num < card_sets.number|add:'3' %} <li class="page-item">
+                    <a class="page-link"
+                        href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">{{
+                        num }}</a>
+                    </li>
                     {% endif %}
-                    
-                    {% for num in card_sets.paginator.page_range %}
-                        {% if card_sets.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
-                        {% elif num > card_sets.number|add:'-3' and num < card_sets.number|add:'3' %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">{{ num }}</a>
-                            </li>
-                        {% endif %}
                     {% endfor %}
-                    
+
                     {% if card_sets.has_next %}
-                        <li class="page-item">
-                            <a class="page-link" href="?page={{ card_sets.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Sau</a>
-                        </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ card_sets.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if year_filter %}&year={{ year_filter }}{% endif %}">Sau</a>
+                    </li>
                     {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
-        </div>
+            </ul>
+        </nav>
+        {% endif %}
     </div>
+</div>
 
-    <!-- Add Card Set Modal -->
-    <div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCardSetModalLabel">
-                        <i class="fas fa-layer-group me-2"></i>Thêm Bộ Thẻ Mới
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                </div>
-                <form method="POST" id="addCardSetForm">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tên Bộ Thẻ *</label>
-                            <input type="text" class="form-control" name="name" required 
-                                   placeholder="vd: Legend of Blue Eyes White Dragon">
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Mã Bộ Thẻ *</label>
-                                <input type="text" class="form-control" name="code" required 
-                                       placeholder="vd: LOB" maxlength="10" style="text-transform: uppercase;">
-                                <div class="form-text">Mã ngắn cho bộ thẻ</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Ngày Phát Hành *</label>
-                                <input type="date" class="form-control" name="release_date" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Mô Tả</label>
-                            <textarea class="form-control" name="description" rows="3" 
-                                      placeholder="Mô tả ngắn về bộ thẻ..."></textarea>
-                        </div>
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            <strong>Lưu ý:</strong> Sau khi tạo bộ thẻ, bạn có thể thêm thẻ bài vào thông qua phần Kho Thẻ Bài.
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary-custom">
-                            <i class="fas fa-plus me-2"></i>Tạo Bộ Thẻ
-                        </button>
-                    </div>
-                </form>
+<!-- Add Card Set Modal -->
+<div class="modal fade" id="addCardSetModal" tabindex="-1" aria-labelledby="addCardSetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardSetModalLabel">
+                    <i class="fas fa-layer-group me-2"></i>Thêm Bộ Thẻ Mới
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Đóng"></button>
             </div>
-        </div>
-    </div>
-
-    <!-- Edit Card Set Modal -->
-    <div class="modal fade" id="editCardSetModal" tabindex="-1" aria-labelledby="editCardSetModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editCardSetModalLabel">
-                        <i class="fas fa-edit me-2"></i>Chỉnh Sửa Bộ Thẻ
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                </div>
-                <form id="editCardSetForm">
-                    {% csrf_token %}
-                    <div class="modal-body">
-                        <input type="hidden" name="set_id" id="editSetId">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Tên Bộ Thẻ *</label>
-                            <input type="text" class="form-control" name="name" id="editSetName" required>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Mã Bộ Thẻ *</label>
-                                <input type="text" class="form-control" name="code" id="editSetCode" required 
-                                       maxlength="10" style="text-transform: uppercase;">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Ngày Phát Hành *</label>
-                                <input type="date" class="form-control" name="release_date" id="editSetReleaseDate" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Mô Tả</label>
-                            <textarea class="form-control" name="description" id="editSetDescription" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-primary-custom" onclick="updateCardSet()">
-                            <i class="fas fa-save me-2"></i>Cập Nhật Bộ Thẻ
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- View Set Cards Modal -->
-    <div class="modal fade" id="viewSetCardsModal" tabindex="-1" aria-labelledby="viewSetCardsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewSetCardsTitle">Thẻ Bài Trong Bộ</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
-                </div>
+            <form method="POST" id="addCardSetForm" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên Bộ Thẻ *</label>
+                        <input type="text" class="form-control" name="name" required
+                            placeholder="vd: Legend of Blue Eyes White Dragon">
+                    </div>
                     <div class="row mb-3">
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" placeholder="Tìm kiếm thẻ..." id="setCardsSearch">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Mã Bộ Thẻ *</label>
+                            <input type="text" class="form-control" name="code" required placeholder="vd: LOB"
+                                maxlength="10" style="text-transform: uppercase;">
+                            <div class="form-text">Mã ngắn cho bộ thẻ</div>
                         </div>
-                        <div class="col-md-4">
-                            <select class="form-select" id="setCardsRarityFilter">
-                                <option value="">Tất Cả Độ Hiếm</option>
-                                <option value="common">Thường</option>
-                                <option value="rare">Hiếm</option>
-                                <option value="super_rare">Siêu Hiếm</option>
-                                <option value="ultra_rare">Cực Hiếm</option>
-                                <option value="secret_rare">Bí Mật</option>
-                                <option value="ghost_rare">Ma</option>
-                            </select>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ngày Phát Hành *</label>
+                            <input type="date" class="form-control" name="release_date" required>
                         </div>
                     </div>
-                    <div id="setCardsLoading" class="text-center py-4">
-                        <div class="spinner-border" role="status">
-                            <span class="visually-hidden">Đang tải...</span>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Hình Ảnh</label>
+                        <input type="file" class="form-control" name="image" accept="image/*">
+                        <div class="form-text">Tải lên hình ảnh đại diện cho bộ thẻ (tùy chọn)</div>
                     </div>
-                    <div class="table-responsive" id="setCardsTable" style="display: none;">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Tên Thẻ</th>
-                                    <th>Loại</th>
-                                    <th>Độ Hiếm</th>
-                                    <th>Kho</th>
-                                    <th>Giá</th>
-                                    <th>Thao Tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="setCardsTableBody">
-                                <!-- Cards will be loaded here -->
-                            </tbody>
-                        </table>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô Tả</label>
+                        <textarea class="form-control" name="description" rows="3"
+                            placeholder="Mô tả ngắn về bộ thẻ..."></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Lưu ý:</strong> Sau khi tạo bộ thẻ, bạn có thể thêm thẻ bài vào thông qua phần Kho Thẻ
+                        Bài.
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <a href="#" class="btn btn-primary-custom" id="addCardToSetBtn">
-                        <i class="fas fa-plus me-2"></i>Thêm Thẻ Vào Bộ
-                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="fas fa-plus me-2"></i>Tạo Bộ Thẻ
+                    </button>
                 </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Card Set Modal -->
+<div class="modal fade" id="editCardSetModal" tabindex="-1" aria-labelledby="editCardSetModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCardSetModalLabel">
+                    <i class="fas fa-edit me-2"></i>Chỉnh Sửa Bộ Thẻ
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Đóng"></button>
+            </div>
+            <form id="editCardSetForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" name="set_id" id="editSetId">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên Bộ Thẻ *</label>
+                        <input type="text" class="form-control" name="name" id="editSetName" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Mã Bộ Thẻ *</label>
+                            <input type="text" class="form-control" name="code" id="editSetCode" required maxlength="10"
+                                style="text-transform: uppercase;">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Ngày Phát Hành *</label>
+                            <input type="date" class="form-control" name="release_date" id="editSetReleaseDate"
+                                required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Hình Ảnh</label>
+                        <input type="file" class="form-control" name="image" accept="image/*">
+                        <div id="currentSetImage" class="mt-2 text-center"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Mô Tả</label>
+                        <textarea class="form-control" name="description" id="editSetDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary-custom" onclick="updateCardSet()">
+                        <i class="fas fa-save me-2"></i>Cập Nhật Bộ Thẻ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- View Set Cards Modal -->
+<div class="modal fade" id="viewSetCardsModal" tabindex="-1" aria-labelledby="viewSetCardsModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewSetCardsTitle">Thẻ Bài Trong Bộ</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm thẻ..." id="setCardsSearch">
+                    </div>
+                    <div class="col-md-4">
+                        <select class="form-select" id="setCardsRarityFilter">
+                            <option value="">Tất Cả Độ Hiếm</option>
+                            <option value="common">Thường</option>
+                            <option value="rare">Hiếm</option>
+                            <option value="super_rare">Siêu Hiếm</option>
+                            <option value="ultra_rare">Cực Hiếm</option>
+                            <option value="secret_rare">Bí Mật</option>
+                            <option value="ghost_rare">Ma</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="setCardsLoading" class="text-center py-4">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+                <div class="table-responsive" id="setCardsTable" style="display: none;">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tên Thẻ</th>
+                                <th>Loại</th>
+                                <th>Độ Hiếm</th>
+                                <th>Kho</th>
+                                <th>Giá</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="setCardsTableBody">
+                            <!-- Cards will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <a href="#" class="btn btn-primary-custom" id="addCardToSetBtn">
+                    <i class="fas fa-plus me-2"></i>Thêm Thẻ Vào Bộ
+                </a>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
-    <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
+<script>
+    // Mobile sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
+
+    // Close sidebar on window resize if it's open on desktop
+    window.addEventListener('resize', function () {
+        if (window.innerWidth >= 992) {
             const sidebar = document.querySelector('.sidebar');
             const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
         }
+    });
 
-        // Close sidebar on window resize if it's open on desktop
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 992) {
-                const sidebar = document.querySelector('.sidebar');
-                const overlay = document.querySelector('.sidebar-overlay');
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
-            }
+    // Auto-uppercase set codes
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('input[name="code"]').forEach(input => {
+            input.addEventListener('input', function () {
+                this.value = this.value.toUpperCase();
+            });
         });
 
-        // Auto-uppercase set codes
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('input[name="code"]').forEach(input => {
-                input.addEventListener('input', function() {
-                    this.value = this.value.toUpperCase();
-                });
-            });
+        // Form submission for adding card set
+        document.getElementById('addCardSetForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
 
-            // Form submission for adding card set
-            document.getElementById('addCardSetForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(this);
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang tạo...';
-                submitBtn.disabled = true;
-                
-                fetch('{% url "admin_dashboard:create_card_set" %}', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang tạo...';
+            submitBtn.disabled = true;
+
+            fetch('{% url "admin_dashboard:create_card_set" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -995,44 +1016,56 @@
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 });
-            });
         });
+    });
 
-        function editCardSet(setId) {
-            fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const setData = data.data;
-                        document.getElementById('editSetId').value = setData.id;
-                        document.getElementById('editSetName').value = setData.name;
-                        document.getElementById('editSetCode').value = setData.code;
-                        document.getElementById('editSetReleaseDate').value = setData.release_date;
-                        document.getElementById('editSetDescription').value = setData.description || '';
+    function editCardSet(setId) {
+        fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const setData = data.data;
+                    document.getElementById('editSetId').value = setData.id;
+                    document.getElementById('editSetName').value = setData.name;
+                    document.getElementById('editSetCode').value = setData.code;
+                    document.getElementById('editSetReleaseDate').value = setData.release_date;
+                    document.getElementById('editSetDescription').value = setData.description || '';
 
-                        new bootstrap.Modal(document.getElementById('editCardSetModal')).show();
+                    const imageContainer = document.getElementById('currentSetImage');
+                    if (setData.image_url) {
+                        imageContainer.innerHTML = `
+                                <div class="position-relative d-inline-block">
+                                    <img src="${setData.image_url}" alt="Current Image" class="img-thumbnail" style="max-height: 150px;">
+                                    <div class="badge bg-primary position-absolute top-0 end-0 m-1">Hiện tại</div>
+                                </div>
+                            `;
                     } else {
-                        showAlert('danger', data.error);
+                        imageContainer.innerHTML = '<span class="text-muted fst-italic">Chưa có hình ảnh</span>';
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Lỗi khi tải dữ liệu bộ thẻ.');
-                });
-        }
 
-        function updateCardSet() {
-            const form = document.getElementById('editCardSetForm');
-            const formData = new FormData(form);
-            const setId = formData.get('set_id');
-            
-            fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    new bootstrap.Modal(document.getElementById('editCardSetModal')).show();
+                } else {
+                    showAlert('danger', data.error);
                 }
             })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'Lỗi khi tải dữ liệu bộ thẻ.');
+            });
+    }
+
+    function updateCardSet() {
+        const form = document.getElementById('editCardSetForm');
+        const formData = new FormData(form);
+        const setId = formData.get('set_id');
+
+        fetch(`/dashboard/warehouse/card-sets/edit/${setId}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -1047,21 +1080,21 @@
                 console.error('Error:', error);
                 showAlert('danger', 'Đã xảy ra lỗi khi cập nhật bộ thẻ.');
             });
-        }
+    }
 
-        function viewSetCards(setId) {
-            document.getElementById('setCardsLoading').style.display = 'block';
-            document.getElementById('setCardsTable').style.display = 'none';
-            
-            fetch(`/dashboard/warehouse/card-sets/${setId}/cards/`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('viewSetCardsTitle').textContent = `Thẻ bài trong ${data.data.set_name}`;
-                        document.getElementById('addCardToSetBtn').href = `/dashboard/warehouse/?set=${setId}`;
-                        
-                        const tableBody = document.getElementById('setCardsTableBody');
-                        tableBody.innerHTML = data.data.cards.map(card => `
+    function viewSetCards(setId) {
+        document.getElementById('setCardsLoading').style.display = 'block';
+        document.getElementById('setCardsTable').style.display = 'none';
+
+        fetch(`/dashboard/warehouse/card-sets/${setId}/cards/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('viewSetCardsTitle').textContent = `Thẻ bài trong ${data.data.set_name}`;
+                    document.getElementById('addCardToSetBtn').href = `/dashboard/warehouse/?set=${setId}`;
+
+                    const tableBody = document.getElementById('setCardsTableBody');
+                    tableBody.innerHTML = data.data.cards.map(card => `
                             <tr>
                                 <td>
                                     <div class="fw-bold">${card.name}</div>
@@ -1086,34 +1119,34 @@
                                 </td>
                             </tr>
                         `).join('');
-                        
-                        document.getElementById('setCardsLoading').style.display = 'none';
-                        document.getElementById('setCardsTable').style.display = 'block';
-                        
-                        new bootstrap.Modal(document.getElementById('viewSetCardsModal')).show();
-                    } else {
-                        showAlert('danger', data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('danger', 'Lỗi khi tải thẻ bài trong bộ.');
-                });
-        }
 
-        function confirmDeleteSet(setId, setName) {
-            if (confirm(`Bạn có chắc chắn muốn xóa bộ thẻ "${setName}"? Hành động này không thể hoàn tác.`)) {
-                deleteCardSet(setId);
-            }
-        }
+                    document.getElementById('setCardsLoading').style.display = 'none';
+                    document.getElementById('setCardsTable').style.display = 'block';
 
-        function deleteCardSet(setId) {
-            fetch(`/dashboard/warehouse/card-sets/delete/${setId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    new bootstrap.Modal(document.getElementById('viewSetCardsModal')).show();
+                } else {
+                    showAlert('danger', data.error);
                 }
             })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', 'Lỗi khi tải thẻ bài trong bộ.');
+            });
+    }
+
+    function confirmDeleteSet(setId, setName) {
+        if (confirm(`Bạn có chắc chắn muốn xóa bộ thẻ "${setName}"? Hành động này không thể hoàn tác.`)) {
+            deleteCardSet(setId);
+        }
+    }
+
+    function deleteCardSet(setId) {
+        fetch(`/dashboard/warehouse/card-sets/delete/${setId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -1127,64 +1160,64 @@
                 console.error('Error:', error);
                 showAlert('danger', 'Đã xảy ra lỗi khi xóa bộ thẻ.');
             });
-        }
+    }
 
-        function showAlert(type, message) {
-            const existingAlerts = document.querySelectorAll('.alert-dismissible');
-            existingAlerts.forEach(alert => {
-                if (alert.classList.contains('position-fixed')) {
-                    alert.remove();
-                }
-            });
-            
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
-            alertDiv.innerHTML = `
+    function showAlert(type, message) {
+        const existingAlerts = document.querySelectorAll('.alert-dismissible');
+        existingAlerts.forEach(alert => {
+            if (alert.classList.contains('position-fixed')) {
+                alert.remove();
+            }
+        });
+
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 350px; max-width: 500px;';
+        alertDiv.innerHTML = `
                 <div class="d-flex align-items-center">
                     <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
                     <div>${message}</div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             `;
-            
-            document.body.appendChild(alertDiv);
-            
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
-        }
 
-        // Search functionality for set cards
-        document.getElementById('setCardsSearch')?.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#setCardsTableBody tr');
-            
-            rows.forEach(row => {
-                const cardName = row.querySelector('td:first-child .fw-bold').textContent.toLowerCase();
-                row.style.display = cardName.includes(searchTerm) ? '' : 'none';
-            });
-        });
+        document.body.appendChild(alertDiv);
 
-        // Rarity filter for set cards
-        document.getElementById('setCardsRarityFilter')?.addEventListener('change', function() {
-            const selectedRarity = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#setCardsTableBody tr');
-            
-            rows.forEach(row => {
-                const rarity = row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase();
-                const matches = !selectedRarity || rarity.includes(selectedRarity.replace('_', ' '));
-                row.style.display = matches ? '' : 'none';
-            });
-        });
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
 
-        // Auto-submit form on filter change
-        document.querySelectorAll('.filter-section select').forEach(function(select) {
-            select.addEventListener('change', function() {
-                this.form.submit();
-            });
+    // Search functionality for set cards
+    document.getElementById('setCardsSearch')?.addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#setCardsTableBody tr');
+
+        rows.forEach(row => {
+            const cardName = row.querySelector('td:first-child .fw-bold').textContent.toLowerCase();
+            row.style.display = cardName.includes(searchTerm) ? '' : 'none';
         });
-    </script>
+    });
+
+    // Rarity filter for set cards
+    document.getElementById('setCardsRarityFilter')?.addEventListener('change', function () {
+        const selectedRarity = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#setCardsTableBody tr');
+
+        rows.forEach(row => {
+            const rarity = row.querySelector('td:nth-child(3) .badge').textContent.toLowerCase();
+            const matches = !selectedRarity || rarity.includes(selectedRarity.replace('_', ' '));
+            row.style.display = matches ? '' : 'none';
+        });
+    });
+
+    // Auto-submit form on filter change
+    document.querySelectorAll('.filter-section select').forEach(function (select) {
+        select.addEventListener('change', function () {
+            this.form.submit();
+        });
+    });
+</script>
 {% endblock %}

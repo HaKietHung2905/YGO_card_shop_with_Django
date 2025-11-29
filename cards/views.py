@@ -19,14 +19,34 @@ def home(request):
     # Get featured cards (in stock only)
     featured_cards = Card.objects.filter(stock_quantity__gt=0).select_related('card_set')[:8]
     
-    # Get latest card sets
-    latest_sets = CardSet.objects.all().order_by('-release_date')[:4]
+    # Get latest card sets for hero slider (fetch 5)
+    latest_sets = list(CardSet.objects.all().order_by('-release_date')[:5])
     
+    # Attach a representative image to each set for the slider
+    for card_set in latest_sets:
+        # If set has its own image, use it
+        if card_set.image:
+            card_set.hero_image = card_set.image
+        else:
+            # Try to find a card in this set that has an image, preferably a high rarity one
+            representative_card = Card.objects.filter(
+                card_set=card_set, 
+                image__isnull=False
+            ).exclude(image='').order_by('-rarity').first()
+            
+            if representative_card:
+                card_set.hero_image = representative_card.image
+            else:
+                card_set.hero_image = None
+
     # Get featured accessories/other products (optional)
     featured_accessories = OtherProduct.objects.filter(
         stock_quantity__gt=0, 
         is_active=True
     ).order_by('-created_at')[:4]
+    
+    # Get new arrivals (recently added cards)
+    new_arrivals = Card.objects.filter(stock_quantity__gt=0).select_related('card_set').order_by('-created_at')[:8]
     
     # Get some statistics for the homepage
     total_cards_available = Card.objects.filter(stock_quantity__gt=0).count()
@@ -36,6 +56,7 @@ def home(request):
         'featured_cards': featured_cards,
         'latest_sets': latest_sets,
         'featured_accessories': featured_accessories,
+        'new_arrivals': new_arrivals,
         'total_cards_available': total_cards_available,
         'total_accessories': total_accessories,
     }
@@ -233,59 +254,97 @@ def card_detail(request, pk):
 
 @login_required
 def add_to_cart(request, pk):
+    # Handle both GET and POST for better UX with simple links
+    product_type = 'card'
+    quantity = 1
+    
     if request.method == 'POST':
         product_type = request.POST.get('product_type', 'card')
         quantity = int(request.POST.get('quantity', 1))
+    
+    # Determine which model to query
+    if product_type == 'other':
+        product = get_object_or_404(OtherProduct, pk=pk)
         
-        # Determine which model to query
-        if product_type == 'other':
-            product = get_object_or_404(OtherProduct, pk=pk)
-            
-            # Check stock
-            if product.stock_quantity < quantity:
-                messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
-                return redirect(request.META.get('HTTP_REFERER', 'home'))
-            
-            # Check if item already in cart
-            cart_item, created = CartItem.objects.get_or_create(
-                user=request.user,
-                other_product=product,
-                defaults={'quantity': quantity}
-            )
-            
-            if not created:
-                # Item already exists, update quantity
-                cart_item.quantity += quantity
-                if cart_item.quantity > product.stock_quantity:
-                    cart_item.quantity = product.stock_quantity
-                cart_item.save()
-                
-        else:  # card
-            product = get_object_or_404(Card, pk=pk)
-            
-            # Check stock
-            if product.stock_quantity < quantity:
-                messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
-                return redirect(request.META.get('HTTP_REFERER', 'home'))
-            
-            # Check if item already in cart
-            cart_item, created = CartItem.objects.get_or_create(
-                user=request.user,
-                card=product,
-                defaults={'quantity': quantity}
-            )
-            
-            if not created:
-                # Item already exists, update quantity
-                cart_item.quantity += quantity
-                if cart_item.quantity > product.stock_quantity:
-                    cart_item.quantity = product.stock_quantity
-                cart_item.save()
+        # Check stock
+        if product.stock_quantity < quantity:
+            messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
         
-        messages.success(request, f'Đã thêm {product.name} vào giỏ hàng!')
+        # Check if item already in cart
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            other_product=product,
+            defaults={'quantity': quantity}
+        )
+        
+        if not created:
+            # Item already exists, update quantity
+            cart_item.quantity += quantity
+            if cart_item.quantity > product.stock_quantity:
+                cart_item.quantity = product.stock_quantity
+            cart_item.save()
+            
+    else:  # card
+        product = get_object_or_404(Card, pk=pk)
+        
+        # Check stock
+        if product.stock_quantity < quantity:
+            messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
+            return redirect(request.META.get('HTTP_REFERER', 'home'))
+        
+        # Check if item already in cart
+        cart_item, created = CartItem.objects.get_or_create(
+            user=request.user,
+            card=product,
+            defaults={'quantity': quantity}
+        )
+        
+        if not created:
+            # Item already exists, update quantity
+            cart_item.quantity += quantity
+            if cart_item.quantity > product.stock_quantity:
+                cart_item.quantity = product.stock_quantity
+            cart_item.save()
+    
+    messages.success(request, f'Đã thêm {product.name} vào giỏ hàng!')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+@login_required
+def add_other_product_to_cart(request, pk):
+    """Specific view for adding other products to cart via GET request"""
+    # Create a mutable copy of GET params or just pass explicit values
+    # We can reuse the logic by mocking a POST or just calling the logic directly
+    # But simpler to just redirect to add_to_cart with a flag or duplicate logic?
+    # Duplicating logic is bad. Let's make add_to_cart flexible.
+    
+    # Actually, we can just call add_to_cart but we need to tell it it's 'other'
+    # Since add_to_cart defaults to 'card', we need a way to override.
+    # Let's just implement the logic here for 'other' product type to be safe and clean.
+    
+    product = get_object_or_404(OtherProduct, pk=pk)
+    quantity = 1
+    
+    # Check stock
+    if product.stock_quantity < quantity:
+        messages.error(request, f'Không đủ hàng trong kho. Chỉ còn {product.stock_quantity} sản phẩm.')
         return redirect(request.META.get('HTTP_REFERER', 'home'))
     
-    return redirect('home')
+    # Check if item already in cart
+    cart_item, created = CartItem.objects.get_or_create(
+        user=request.user,
+        other_product=product,
+        defaults={'quantity': quantity}
+    )
+    
+    if not created:
+        cart_item.quantity += quantity
+        if cart_item.quantity > product.stock_quantity:
+            cart_item.quantity = product.stock_quantity
+        cart_item.save()
+        
+    messages.success(request, f'Đã thêm {product.name} vào giỏ hàng!')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
 @login_required
 def view_cart(request):
