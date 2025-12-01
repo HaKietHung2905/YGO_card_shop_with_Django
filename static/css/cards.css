@@ -423,22 +423,7 @@ body {
     margin: 2px;
 }
 
-.navbar {
-    background: rgba(26, 26, 46, 0.95) !important;
-    backdrop-filter: blur(10px);
-}
-
-.navbar-brand {
-    color: #ffd700 !important;
-}
-
-.nav-link {
-    color: white !important;
-}
-
-.nav-link:hover {
-    color: #ffd700 !important;
-}
+/* Navbar overrides removed to match main.css styling */
 
 .pagination-custom {
     justify-content: center;
