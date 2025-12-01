@@ -2,6 +2,7 @@
 {% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,77 +16,94 @@
             margin: 0 auto;
             padding: 40px 20px;
         }
+
         .card-image-container {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
             position: relative;
+            width: 100%;
+            padding-top: 140%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
+
         .card-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             cursor: zoom-in;
             transition: transform 0.3s ease;
         }
+
         .card-image:hover {
             transform: scale(1.02);
         }
+
         .stock-badge {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
             border-radius: 20px;
             font-weight: bold;
-            z-index: 5;
+            font-size: 0.85rem;
+            z-index: 10;
         }
+
         .in-stock {
             background: #28a745;
             color: white;
         }
+
         .out-of-stock {
             background: #dc3545;
             color: white;
         }
+
         .price-display {
             font-size: 2rem;
             font-weight: bold;
             color: #dc3545;
         }
+
         .related-price {
             color: #dc3545;
             font-weight: bold;
         }
+
         .zoom-hint {
             position: absolute;
             bottom: 10px;
             right: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.7);
             color: white;
             padding: 5px 10px;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             gap: 5px;
-            z-index: 5;
+            z-index: 10;
         }
-        
+
         /* Zoom Modal Styles */
         .modal-backdrop.show {
             opacity: 0.9;
         }
+
         #zoomModal .modal-dialog {
             max-width: 90vw;
             margin: 2vh auto;
         }
+
         #zoomModal .modal-content {
             background: transparent;
             border: none;
         }
+
         #zoomModal .modal-body {
             padding: 0;
             display: flex;
@@ -93,6 +111,7 @@
             justify-content: center;
             min-height: 96vh;
         }
+
         .zoom-container {
             position: relative;
             overflow: auto;
@@ -102,21 +121,23 @@
             align-items: center;
             justify-content: center;
         }
+
         .zoomed-image {
             cursor: grab;
             transition: transform 0.3s ease;
         }
+
         .zoomed-image:active {
             cursor: grabbing;
         }
-        
+
         /* Zoom Controls */
         .zoom-controls {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             padding: 10px 20px;
             border-radius: 30px;
             display: flex;
@@ -124,6 +145,7 @@
             z-index: 1060;
             align-items: center;
         }
+
         .zoom-controls button {
             background: transparent;
             border: none;
@@ -133,28 +155,32 @@
             padding: 5px 10px;
             transition: background 0.3s ease;
         }
+
         .zoom-controls button:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
         }
+
         .zoom-level {
             color: white;
             min-width: 60px;
             text-align: center;
             font-size: 14px;
         }
-        
+
         /* Related Cards */
         .related-card-img {
             height: 100%;
             object-fit: cover;
             transition: transform 0.3s ease;
         }
+
         .related-card-link:hover .related-card-img {
             transform: scale(1.05);
         }
     </style>
 </head>
+
 <body>
     {% include 'includes/navbar.html' %}
 
@@ -168,38 +194,35 @@
     <div class="card-detail-container">
         <!-- Messages -->
         {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
         {% endif %}
 
         <div class="row">
             <div class="col-lg-5 mb-4">
                 <div class="card-image-container">
                     {% if card.is_in_stock %}
-                        <span class="stock-badge in-stock">Còn hàng</span>
+                    <span class="stock-badge in-stock">Còn hàng</span>
                     {% else %}
-                        <span class="stock-badge out-of-stock">Hết hàng</span>
+                    <span class="stock-badge out-of-stock">Hết hàng</span>
                     {% endif %}
-                    
+
                     {% if card.image %}
-                        <img src="{{ card.image.url }}" 
-                             alt="{{ card.name }}" 
-                             class="card-image" 
-                             onclick="openZoom(this)"
-                             data-bs-toggle="modal" 
-                             data-bs-target="#zoomModal">
-                        <div class="zoom-hint">
-                            <i class="fas fa-search-plus"></i>
-                            <span>Click để phóng to</span>
-                        </div>
+                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image" onclick="openZoom(this)"
+                        data-bs-toggle="modal" data-bs-target="#zoomModal">
+                    <div class="zoom-hint">
+                        <i class="fas fa-search-plus"></i>
+                        <span>Click để phóng to</span>
+                    </div>
                     {% else %}
-                        <div style="width: 100%; height: 400px; background: #e9ecef; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-image fa-5x text-muted"></i>
-                        </div>
+                    <div
+                        style="width: 100%; height: 400px; background: #e9ecef; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-image fa-5x text-muted"></i>
+                    </div>
                     {% endif %}
                 </div>
             </div>
@@ -208,13 +231,15 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-body">
                         <h2 class="mb-4">{{ card.name }}</h2>
-                        
+
                         <div class="row mb-3">
                             <div class="col-6">
-                                <p class="mb-2"><strong>Loại thẻ:</strong> <span class="badge bg-primary">{{ card.get_card_type_display }}</span></p>
+                                <p class="mb-2"><strong>Loại thẻ:</strong> <span class="badge bg-primary">{{
+                                        card.get_card_type_display }}</span></p>
                             </div>
                             <div class="col-6">
-                                <p class="mb-2"><strong>Độ hiếm:</strong> <span class="badge bg-warning text-dark">{{ card.get_rarity_display }}</span></p>
+                                <p class="mb-2"><strong>Độ hiếm:</strong> <span class="badge bg-warning text-dark">{{
+                                        card.get_rarity_display }}</span></p>
                             </div>
                         </div>
 
@@ -259,22 +284,22 @@
                         </div>
 
                         {% if card.is_in_stock %}
-                            {% if user.is_authenticated %}
-                                <form method="POST" action="{% url 'add_to_cart' card.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                                        <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
-                                    </button>
-                                </form>
-                            {% else %}
-                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mua
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            <button class="btn btn-secondary btn-lg w-100" disabled>
-                                <i class="fas fa-times-circle me-2"></i>Hết hàng
+                        {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'add_to_cart' card.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ hàng
                             </button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để mua
+                        </a>
+                        {% endif %}
+                        {% else %}
+                        <button class="btn btn-secondary btn-lg w-100" disabled>
+                            <i class="fas fa-times-circle me-2"></i>Hết hàng
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -290,11 +315,13 @@
                     <div class="card h-100 shadow-sm">
                         <a href="{% url 'card_detail' related_card.id %}" class="related-card-link">
                             {% if related_card.image %}
-                                <img src="{{ related_card.image.url }}" class="card-img-top related-card-img" alt="{{ related_card.name }}">
+                            <img src="{{ related_card.image.url }}" class="card-img-top related-card-img"
+                                alt="{{ related_card.name }}">
                             {% else %}
-                                <div style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-image fa-3x text-muted"></i>
-                                </div>
+                            <div
+                                style="width: 100%; height: 200px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
                             {% endif %}
                         </a>
                         <div class="card-body">
@@ -304,7 +331,8 @@
                                 <br>
                                 <small class="text-muted">{{ related_card.get_rarity_display }}</small>
                             </p>
-                            <a href="{% url 'card_detail' related_card.id %}" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                            <a href="{% url 'card_detail' related_card.id %}"
+                                class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
                         </div>
                     </div>
                 </div>
@@ -325,7 +353,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Zoom Controls -->
         <div class="zoom-controls" style="display: none;">
             <button onclick="zoomOut()" title="Thu nhỏ">
@@ -352,61 +380,61 @@
         const maxZoom = 300;
         let isDragging = false;
         let startX, startY, scrollLeft, scrollTop;
-        
+
         const zoomModal = document.getElementById('zoomModal');
         const zoomContainer = document.getElementById('zoomContainer');
         const zoomedImage = document.getElementById('zoomedImage');
         const zoomLevel = document.getElementById('zoomLevel');
-        
+
         function openZoom(img) {
             zoomedImage.src = img.src;
             zoomedImage.style.width = '100%';
             currentZoom = 100;
             updateZoomDisplay();
         }
-        
+
         function zoomIn() {
             if (currentZoom < maxZoom) {
                 currentZoom += zoomStep;
                 applyZoom();
             }
         }
-        
+
         function zoomOut() {
             if (currentZoom > minZoom) {
                 currentZoom -= zoomStep;
                 applyZoom();
             }
         }
-        
+
         function resetZoom() {
             currentZoom = 100;
             applyZoom();
         }
-        
+
         function applyZoom() {
             zoomedImage.style.width = currentZoom + '%';
             updateZoomDisplay();
         }
-        
+
         function updateZoomDisplay() {
             zoomLevel.textContent = currentZoom + '%';
         }
-        
+
         // Show/hide controls
         zoomModal.addEventListener('shown.bs.modal', function () {
             document.querySelector('.zoom-controls').style.display = 'flex';
         });
-        
+
         zoomModal.addEventListener('hidden.bs.modal', function () {
             document.querySelector('.zoom-controls').style.display = 'none';
             resetZoom();
         });
-        
+
         // Keyboard controls
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (zoomModal.classList.contains('show')) {
-                switch(e.key) {
+                switch (e.key) {
                     case '+':
                     case '=':
                         e.preventDefault();
@@ -424,9 +452,9 @@
                 }
             }
         });
-        
+
         // Mouse wheel zoom
-        zoomContainer.addEventListener('wheel', function(e) {
+        zoomContainer.addEventListener('wheel', function (e) {
             e.preventDefault();
             if (e.deltaY < 0) {
                 zoomIn();
@@ -434,9 +462,9 @@
                 zoomOut();
             }
         });
-        
+
         // Drag to pan when zoomed
-        zoomedImage.addEventListener('mousedown', function(e) {
+        zoomedImage.addEventListener('mousedown', function (e) {
             if (currentZoom > 100) {
                 isDragging = true;
                 startX = e.pageX - zoomContainer.offsetLeft;
@@ -446,20 +474,20 @@
                 zoomedImage.style.cursor = 'grabbing';
             }
         });
-        
-        zoomedImage.addEventListener('mouseleave', function() {
+
+        zoomedImage.addEventListener('mouseleave', function () {
             isDragging = false;
             zoomedImage.style.cursor = 'grab';
         });
-        
-        zoomedImage.addEventListener('mouseup', function() {
+
+        zoomedImage.addEventListener('mouseup', function () {
             isDragging = false;
             if (currentZoom > 100) {
                 zoomedImage.style.cursor = 'grab';
             }
         });
-        
-        zoomedImage.addEventListener('mousemove', function(e) {
+
+        zoomedImage.addEventListener('mousemove', function (e) {
             if (!isDragging) return;
             e.preventDefault();
             const x = e.pageX - zoomContainer.offsetLeft;
@@ -469,11 +497,11 @@
             zoomContainer.scrollLeft = scrollLeft - walkX;
             zoomContainer.scrollTop = scrollTop - walkY;
         });
-        
+
         // Touch support for mobile
         let touchStartDistance = 0;
-        
-        zoomContainer.addEventListener('touchstart', function(e) {
+
+        zoomContainer.addEventListener('touchstart', function (e) {
             if (e.touches.length === 2) {
                 touchStartDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
@@ -481,24 +509,25 @@
                 );
             }
         });
-        
-        zoomContainer.addEventListener('touchmove', function(e) {
+
+        zoomContainer.addEventListener('touchmove', function (e) {
             if (e.touches.length === 2) {
                 e.preventDefault();
                 const touchDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
                 );
-                
+
                 if (touchDistance > touchStartDistance) {
                     zoomIn();
                 } else {
                     zoomOut();
                 }
-                
+
                 touchStartDistance = touchDistance;
             }
         });
     </script>
 </body>
+
 </html>
