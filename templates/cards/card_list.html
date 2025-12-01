@@ -2,24 +2,26 @@
 {% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tất cả thẻ bài - Cửa hàng thẻ bài Yu-Gi-Oh</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <!-- Custom CSS Files -->
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <link rel="stylesheet" href="{% static 'css/cards.css' %}">
     <link rel="stylesheet" href="{% static 'css/utilities.css' %}">
 </head>
+
 <body>
-   <!-- Navigation -->  
-       {% include 'includes/navbar.html' %}
+    <!-- Navigation -->
+    {% include 'includes/navbar.html' %}
 
     <!-- Page Header -->
     <!-- <div class="page-header">
@@ -31,221 +33,128 @@
         </div>
     </div> -->
 
-    <div class="container" style = "padding-top: 100px;">
-        <!-- Search and Filters -->
-        <div class="search-filters">
-            <form class="row g-3" method="get">
-                <!-- Search Box -->
-                <div class="col-md-6">
-                    <label for="search" class="form-label fw-bold">
-                        <i class="fas fa-search me-2"></i>Tìm kiếm thẻ bài
-                    </label>
-                    <input type="text" 
-                           class="form-control" 
-                           id="search" 
-                           name="q"
-                           value="{{ query }}"
-                           placeholder="Tìm theo tên hoặc mô tả...">
-                </div>
-
-                <!-- Card Type Filter -->
-                <div class="col-md-2">
-                    <label for="type" class="form-label fw-bold">Loại thẻ</label>
-                    <select class="form-select" id="type" name="type">
-                        <option value="">Tất cả loại</option>
-                        {% for value, display in card_type_choices %}
-                            <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>{{ display }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Rarity Filter -->
-                <div class="col-md-2">
-                    <label for="rarity" class="form-label fw-bold">Độ hiếm</label>
-                    <select class="form-select" id="rarity" name="rarity">
-                        <option value="">Tất cả độ hiếm</option>
-                        {% for value, display in rarity_choices %}
-                            <option value="{{ value }}" {% if selected_rarity == value %}selected{% endif %}>{{ display }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Card Set Filter -->
-                <div class="col-md-2">
-                    <label for="set" class="form-label fw-bold">Bộ thẻ</label>
-                    <select class="form-select" id="set" name="set">
-                        <option value="">Tất cả bộ</option>
-                        {% for card_set in card_sets %}
-                            <option value="{{ card_set.id }}" {% if selected_set == card_set.id|stringformat:"s" %}selected{% endif %}>{{ card_set.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <!-- Submit Buttons -->
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary-custom me-2">
-                        <i class="fas fa-search me-2"></i>Tìm kiếm
-                    </button>
-                    <a href="{% url 'card_list' %}" class="btn btn-outline-custom">
-                        <i class="fas fa-times me-2"></i>Xóa bộ lọc
-                    </a>
-                </div>
-            </form>
-        </div>
-
-        <!-- Results Summary -->
-        <div class="results-summary">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h5 class="mb-2">
-                        {% if page_obj %}
-                            Hiển thị {{ page_obj.start_index }}-{{ page_obj.end_index }} trong tổng số {{ page_obj.paginator.count }} thẻ bài
+    <div class="container" style="padding-top: 100px;">
+        {% if page_obj %}
+        <div class="card-grid">
+            {% for card in page_obj %}
+            <div class="yugioh-card-item">
+                <div class="card-image">
+                    {% if card.image %}
+                    <img src="{{ card.image.url }}" alt="{{ card.name }}" class="w-100 h-100 object-cover">
+                    {% else %}
+                    <div class="card-placeholder">
+                        {% if card.card_type == 'monster' %}
+                        <i class="fas fa-dragon"></i>
+                        {% elif card.card_type == 'spell' %}
+                        <i class="fas fa-magic"></i>
                         {% else %}
-                            Không tìm thấy thẻ bài
-                        {% endif %}
-                    </h5>
-                    <div id="active-filters">
-                        {% if query or selected_type or selected_rarity or selected_set %}
-                            <strong>Bộ lọc đang áp dụng:</strong>
-                            {% if query %}<span class="filter-tag">Tìm kiếm: "{{ query }}"</span>{% endif %}
-                            {% if selected_type %}<span class="filter-tag">Loại: {{ selected_type }}</span>{% endif %}
-                            {% if selected_rarity %}<span class="filter-tag">Độ hiếm: {{ selected_rarity }}</span>{% endif %}
-                            {% if selected_set %}<span class="filter-tag">Bộ: {{ selected_set }}</span>{% endif %}
+                        <i class="fas fa-shield-alt"></i>
                         {% endif %}
                     </div>
+                    {% endif %}
+                    <!-- <div class="card-rarity rarity-{{ card.rarity|slugify }}">{{ card.get_rarity_display }}</div> -->
                 </div>
-                <div class="col-md-4 text-end">
-                    <select class="form-select" id="sort" onchange="updateSorting()">
-                        <option value="">Sắp xếp theo...</option>
-                        <option value="name">Tên (A-Z)</option>
-                        <option value="-name">Tên (Z-A)</option>
-                        <option value="price">Giá (Thấp đến Cao)</option>
-                        <option value="-price">Giá (Cao đến Thấp)</option>
-                        <option value="-created_at">Mới nhất</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- Card Grid -->
-        {% if page_obj %}
-            <div class="card-grid">
-                {% for card in page_obj %}
-                    <div class="yugioh-card-item">
-                        <div class="card-image">
-                            {% if card.image %}
-                                <img src="{{ card.image.url }}" alt="{{ card.name }}" class="w-100 h-100 object-cover">
-                            {% else %}
-                                <div class="card-placeholder">
-                                    {% if card.card_type == 'monster' %}
-                                        <i class="fas fa-dragon"></i>
-                                    {% elif card.card_type == 'spell' %}
-                                        <i class="fas fa-magic"></i>
-                                    {% else %}
-                                        <i class="fas fa-shield-alt"></i>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                            <!-- <div class="card-rarity rarity-{{ card.rarity|slugify }}">{{ card.get_rarity_display }}</div> -->
-                        </div>
-                        <div class="card-info">
-                            <h3 class="card-title">{{ card.name }}</h3>
-                            <!-- <div class="card-type">{{ card.get_card_type_display }}{% if card.card_type == 'monster' and card.level %} | Cấp {{ card.level }}{% endif %}</div>
+                <div class="card-info">
+                    <h3 class="card-title">{{ card.name }}</h3>
+                    <!-- <div class="card-type">{{ card.get_card_type_display }}{% if card.card_type == 'monster' and card.level %} | Cấp {{ card.level }}{% endif %}</div>
                             {% if card.card_type == 'monster' and card.attack is not None %}
                                 <div class="mb-2">
                                     <small class="text-muted">ATK: {{ card.attack }}{% if card.defense is not None %} / DEF: {{ card.defense }}{% endif %}</small>
                                 </div>
                             {% endif %} -->
-                            <div class="card-price">{{ card.price|format_currency }}</div>
-                            <div class="card-stock">
-                                {% if card.is_in_stock %}
-                                    <i class="fas fa-check-circle text-success"></i>
-                                    {{ card.stock_quantity }} còn hàng
-                                {% else %}
-                                    <i class="fas fa-times-circle text-danger"></i>
-                                    Hết hàng
-                                {% endif %}
-                            </div>
-                            <div class="card-actions">
-                                <a href="{% url 'card_detail' card.pk %}" class="btn-view">
-                                    <i class="fas fa-eye me-1"></i>Xem chi tiết
-                                </a>
-                                {% if user.is_authenticated and card.is_in_stock %}
-                                    <a href="{% url 'add_to_cart' card.pk %}" class="btn-cart">
-                                        <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
-                                    </a>
-                                {% elif not user.is_authenticated %}
-                                    <a href="{% url 'login' %}" class="btn-cart">
-                                        <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
-                                    </a>
-                                {% else %}
-                                    <button class="btn-cart" disabled>
-                                        <i class="fas fa-times me-1"></i>Hết hàng
-                                    </button>
-                                {% endif %}
-                            </div>
-                        </div>
+                    <div class="card-price">{{ card.price|format_currency }}</div>
+                    <div class="card-stock">
+                        {% if card.is_in_stock %}
+                        <i class="fas fa-check-circle text-success"></i>
+                        {{ card.stock_quantity }} còn hàng
+                        {% else %}
+                        <i class="fas fa-times-circle text-danger"></i>
+                        Hết hàng
+                        {% endif %}
                     </div>
-                {% endfor %}
+                    <div class="card-actions">
+                        <a href="{% url 'card_detail' card.pk %}" class="btn-view">
+                            <i class="fas fa-eye me-1"></i>Xem chi tiết
+                        </a>
+                        {% if user.is_authenticated and card.is_in_stock %}
+                        <a href="{% url 'add_to_cart' card.pk %}" class="btn-cart">
+                            <i class="fas fa-cart-plus me-1"></i>Thêm vào giỏ
+                        </a>
+                        {% elif not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn-cart">
+                            <i class="fas fa-sign-in-alt me-1"></i>Đăng nhập
+                        </a>
+                        {% else %}
+                        <button class="btn-cart" disabled>
+                            <i class="fas fa-times me-1"></i>Hết hàng
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
+            {% endfor %}
+        </div>
 
-            <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
-                <nav aria-label="Phân trang thẻ bài">
-                    <ul class="pagination pagination-custom">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page=1">
-                                    <i class="fas fa-angle-double-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                                    <i class="fas fa-angle-left"></i>
-                                </a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-angle-double-left"></i></span>
-                            </li>
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-angle-left"></i></span>
-                            </li>
-                        {% endif %}
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Phân trang thẻ bài">
+            <ul class="pagination pagination-custom">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page=1">
+                        <i class="fas fa-angle-double-left"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <i class="fas fa-angle-left"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-double-left"></i></span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-left"></i></span>
+                </li>
+                {% endif %}
 
-                        <li class="page-item active">
-                            <span class="page-link">Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-                        </li>
+                <li class="page-item active">
+                    <span class="page-link">Trang {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+                </li>
 
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}">
-                                    <i class="fas fa-angle-right"></i>
-                                </a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
-                                    <i class="fas fa-angle-double-right"></i>
-                                </a>
-                            </li>
-                        {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-angle-right"></i></span>
-                            </li>
-                            <li class="page-item disabled">
-                                <span class="page-link"><i class="fas fa-angle-double-right"></i></span>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% endif %}
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.next_page_number }}">
+                        <i class="fas fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?{% if query_params %}{{ query_params }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+                        <i class="fas fa-angle-double-right"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-right"></i></span>
+                </li>
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="fas fa-angle-double-right"></i></span>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                <h3>Không tìm thấy thẻ bài</h3>
-                <p class="text-muted">Thử điều chỉnh tiêu chí tìm kiếm hoặc xem tất cả thẻ bài.</p>
-                <a href="{% url 'card_list' %}" class="btn btn-primary-custom">Xem tất cả thẻ bài</a>
-            </div>
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h3>Không tìm thấy thẻ bài</h3>
+            <p class="text-muted">Thử điều chỉnh tiêu chí tìm kiếm hoặc xem tất cả thẻ bài.</p>
+            <a href="{% url 'card_list' %}" class="btn btn-primary-custom">Xem tất cả thẻ bài</a>
+        </div>
         {% endif %}
     </div>
 
@@ -265,4 +174,5 @@
         }
     </script>
 </body>
+
 </html>
