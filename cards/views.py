@@ -48,6 +48,9 @@ def home(request):
     # Get new arrivals (recently added cards)
     new_arrivals = Card.objects.filter(stock_quantity__gt=0).select_related('card_set').order_by('-created_at')[:8]
     
+    # Get new card sets (latest 8 card sets)
+    new_card_sets = CardSet.objects.all().order_by('-release_date')[:8]
+    
     # Get some statistics for the homepage
     total_cards_available = Card.objects.filter(stock_quantity__gt=0).count()
     total_accessories = OtherProduct.objects.filter(stock_quantity__gt=0, is_active=True).count()
@@ -57,6 +60,7 @@ def home(request):
         'latest_sets': latest_sets,
         'featured_accessories': featured_accessories,
         'new_arrivals': new_arrivals,
+        'new_card_sets': new_card_sets,
         'total_cards_available': total_cards_available,
         'total_accessories': total_accessories,
     }
