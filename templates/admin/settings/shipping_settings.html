@@ -1,5 +1,6 @@
 {% extends 'admin/base_admin.html' %}
 {% load static %}
+{% load currency_filters %}
 
 {% block title %}Cài Đặt Vận Chuyển - Admin{% endblock %}
 
@@ -37,7 +38,7 @@
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="{{ form.standard_shipping_fee.id_for_label }}" class="form-label">
-                    {{ form.standard_shipping_fee.label }}
+                    Phí Giao Hàng Tiêu Chuẩn (VND)
                 </label>
                 {{ form.standard_shipping_fee }}
                 {% if form.standard_shipping_fee.errors %}
@@ -46,7 +47,7 @@
             </div>
             <div class="col-md-6">
                 <label for="{{ form.standard_delivery_days.id_for_label }}" class="form-label">
-                    {{ form.standard_delivery_days.label }}
+                    Thời Gian Giao Hàng Tiêu Chuẩn
                 </label>
                 {{ form.standard_delivery_days }}
                 {% if form.standard_delivery_days.errors %}
@@ -55,7 +56,7 @@
             </div>
             <div class="col-md-6">
                 <label for="{{ form.fast_shipping_fee.id_for_label }}" class="form-label">
-                    {{ form.fast_shipping_fee.label }}
+                    Phí Giao Hàng Nhanh (VND)
                 </label>
                 {{ form.fast_shipping_fee }}
                 {% if form.fast_shipping_fee.errors %}
@@ -64,7 +65,7 @@
             </div>
             <div class="col-md-6">
                 <label for="{{ form.fast_delivery_days.id_for_label }}" class="form-label">
-                    {{ form.fast_delivery_days.label }}
+                    Thời Gian Giao Hàng Nhanh
                 </label>
                 {{ form.fast_delivery_days }}
                 {% if form.fast_delivery_days.errors %}
@@ -73,7 +74,7 @@
             </div>
             <div class="col-md-6">
                 <label for="{{ form.express_shipping_fee.id_for_label }}" class="form-label">
-                    {{ form.express_shipping_fee.label }}
+                    Phí Giao Hàng Hỏa Tốc (VND)
                 </label>
                 {{ form.express_shipping_fee }}
                 {% if form.express_shipping_fee.errors %}
@@ -82,7 +83,7 @@
             </div>
             <div class="col-md-6">
                 <label for="{{ form.express_delivery_days.id_for_label }}" class="form-label">
-                    {{ form.express_delivery_days.label }}
+                    Thời Gian Giao Hàng Hỏa Tốc
                 </label>
                 {{ form.express_delivery_days }}
                 {% if form.express_delivery_days.errors %}
@@ -91,10 +92,10 @@
             </div>
             <div class="col-12">
                 <label for="{{ form.free_shipping_threshold.id_for_label }}" class="form-label">
-                    {{ form.free_shipping_threshold.label }}
+                    Ngưỡng Miễn Phí Ship (VND)
                 </label>
                 {{ form.free_shipping_threshold }}
-                <small class="form-text text-muted">Đơn hàng đạt giá trị này sẽ được miễn phí ship</small>
+                <small class="form-text text-muted d-block mt-1">Đơn hàng đạt giá trị này sẽ được miễn phí ship</small>
                 {% if form.free_shipping_threshold.errors %}
                 <div class="text-danger small">{{ form.free_shipping_threshold.errors }}</div>
                 {% endif %}
@@ -113,9 +114,9 @@
                 <thead class="table-light">
                     <tr>
                         <th>Khu Vực</th>
-                        <th>Dưới 200k (VND)</th>
-                        <th>200k - 500k (VND)</th>
-                        <th>Trên 500k (VND)</th>
+                        <th>Dưới 200k</th>
+                        <th>200k - 500k</th>
+                        <th>Trên 500k</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -126,7 +127,7 @@
                         <td>{{ form.price_over_500k_inner }}</td>
                     </tr>
                     <tr>
-                        <td><strong>Ngo&#7841;i Thành</strong></td>
+                        <td><strong>Ngoại Thành</strong></td>
                         <td>{{ form.price_under_200k_outer }}</td>
                         <td>{{ form.price_200_500k_outer }}</td>
                         <td>{{ form.price_over_500k_outer }}</td>
@@ -151,10 +152,10 @@
         <div class="row">
             <div class="col-md-6">
                 <label for="{{ form.return_period_days.id_for_label }}" class="form-label">
-                    {{ form.return_period_days.label }}
+                    Số Ngày Đổi Trả
                 </label>
                 {{ form.return_period_days }}
-                <small class="form-text text-muted">Số ngày khách hàng có thể đổi trả sản phẩm</small>
+                <small class="form-text text-muted d-block mt-1">Số ngày khách hàng có thể đổi trả sản phẩm</small>
                 {% if form.return_period_days.errors %}
                 <div class="text-danger small">{{ form.return_period_days.errors }}</div>
                 {% endif %}
@@ -169,4 +170,204 @@
         </button>
     </div>
 </form>
+
+<style>
+    .dashboard-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 12px;
+    }
+
+    .table td input {
+        max-width: 100%;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 10px 15px;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        border: none;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .table thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        font-weight: 600;
+        border: none;
+    }
+
+    .table tbody td {
+        background: white;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Custom formatting function with comma separator
+        function formatVND(number) {
+            if (!number) return '';
+            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Function to parse Vietnamese formatted number
+        function parseVND(value) {
+            if (!value) return '';
+            return value.toString().replace(/[₫\s,]/g, '');
+        }
+
+        // Get all number input fields and convert them to text
+        const numberInputs = document.querySelectorAll('input[type="number"]');
+
+        numberInputs.forEach(input => {
+            // Change input type from number to text
+            input.type = 'text';
+
+            let isFormatting = false;
+
+            // Store original value and format on page load
+            const originalValue = input.value;
+            if (originalValue) {
+                const cleaned = parseVND(originalValue);
+                if (cleaned && cleaned !== '0') {
+                    input.value = formatVND(cleaned);
+                }
+            }
+
+            // Handle input event
+            input.addEventListener('input', function (e) {
+                if (isFormatting) return;
+                isFormatting = true;
+
+                const cursorPosition = this.selectionStart;
+                const oldValue = this.value;
+                const oldLength = oldValue.length;
+
+                // Remove all non-digit characters
+                let value = parseVND(this.value);
+
+                // Format display with thousands separator
+                if (value) {
+                    const formatted = formatVND(value);
+                    this.value = formatted;
+
+                    // Calculate new cursor position
+                    const newLength = formatted.length;
+                    const diff = newLength - oldLength;
+                    let newCursorPos = cursorPosition + diff;
+
+                    // Adjust cursor position to skip comma if necessary
+                    if (formatted[newCursorPos - 1] === ',') {
+                        newCursorPos++;
+                    }
+
+                    // Ensure cursor position is within bounds
+                    newCursorPos = Math.max(0, Math.min(newCursorPos, formatted.length));
+
+                    this.setSelectionRange(newCursorPos, newCursorPos);
+                } else {
+                    this.value = '';
+                }
+
+                isFormatting = false;
+            });
+
+            // Handle keyboard input
+            input.addEventListener('keydown', function (e) {
+                // Allow: backspace, delete, tab, escape, enter, arrows
+                if ([8, 9, 13, 27, 46, 37, 38, 39, 40].indexOf(e.keyCode) !== -1 ||
+                    // Allow: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                    (e.keyCode === 65 && e.ctrlKey === true) ||
+                    (e.keyCode === 67 && e.ctrlKey === true) ||
+                    (e.keyCode === 86 && e.ctrlKey === true) ||
+                    (e.keyCode === 88 && e.ctrlKey === true)) {
+                    return;
+                }
+                // Ensure that it is a number and stop the keypress
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+            // Format on blur - keep the formatted value
+            input.addEventListener('blur', function () {
+                const value = parseVND(this.value);
+                if (value) {
+                    this.value = formatVND(value);
+                }
+            });
+
+            // On focus, remove formatting for easier editing
+            input.addEventListener('focus', function () {
+                const value = parseVND(this.value);
+                if (value) {
+                    this.value = value;
+                    // Small delay to ensure selection works
+                    setTimeout(() => {
+                        this.select();
+                    }, 10);
+                }
+            });
+
+            // Handle paste event
+            input.addEventListener('paste', function (e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                const numericValue = parseVND(pastedText);
+
+                if (numericValue && !isNaN(numericValue)) {
+                    this.value = formatVND(numericValue);
+                }
+            });
+        });
+
+        // Before form submit, remove formatting
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                numberInputs.forEach(input => {
+                    // Remove commas before submitting
+                    const value = parseVND(input.value);
+                    if (value) {
+                        input.value = value;
+                    }
+                });
+            });
+        }
+    });
+</script>
 {% endblock %}

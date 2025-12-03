@@ -616,3 +616,4 @@ def shipping_info(request):
         'shipping_settings': shipping_settings,
     }
     return render(request, 'shipping_info.html', context)
+

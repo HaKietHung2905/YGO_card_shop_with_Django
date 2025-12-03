@@ -36,6 +36,7 @@ urlpatterns = [
 
     path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
     path('orders/', admin_views.admin_orders, name='orders'),
+    path('shipping/', admin_views.admin_shipping_settings, name='shipping_settings'),
     path('users/', admin_views.admin_users, name='users'),
     path('analytics/', admin_views.admin_analytics, name='analytics'),
     path('settings/', admin_views.admin_settings, name='settings'),
