@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chính Sách Vận Chuyển - YUTOPIA</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Custom CSS Files -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sections.css' %}">
+    <link rel="stylesheet" href="{% static 'css/utilities.css' %}">
+</head>
+
+<body>
+    <!-- Navigation -->
+    {% include 'includes/navbar.html' %}
+
+    <!-- Shipping Info Section -->
+    <section class="shipping-section py-5"
+        style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: calc(100vh - 200px);">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-12 text-center">
+                    <h1 class="display-3 fw-bold mb-3 text-white">Thông Tin Vận Chuyển</h1>
+                    <p class="lead text-white">Giao hàng nhanh chóng, an toàn và uy tín</p>
+                </div>
+            </div>
+
+            <!-- Shipping Methods -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-lg border-0" style="border-radius: 15px;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper mb-3"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fas fa-shipping-fast fa-2x text-white"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Giao Hàng Tiêu Chuẩn</h4>
+                            <p class="text-muted mb-3">Thời gian: 3-5 ngày làm việc</p>
+                            <h5 class="text-success fw-bold">MIỄN PHÍ</h5>
+                            <p class="text-muted small">Cho đơn hàng từ 500.000đ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-lg border-0" style="border-radius: 15px;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper mb-3"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fas fa-rocket fa-2x text-white"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Giao Hàng Nhanh</h4>
+                            <p class="text-muted mb-3">Thời gian: 1-2 ngày làm việc</p>
+                            <h5 class="text-primary fw-bold">30.000đ</h5>
+                            <p class="text-muted small">Nội thành TP.HCM & Hà Nội</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-lg border-0" style="border-radius: 15px;">
+                        <div class="card-body text-center p-4">
+                            <div class="icon-wrapper mb-3"
+                                style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                <i class="fas fa-bolt fa-2x text-white"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Giao Hàng Hỏa Tốc</h4>
+                            <p class="text-muted mb-3">Thời gian: Trong ngày</p>
+                            <h5 class="text-danger fw-bold">50.000đ</h5>
+                            <p class="text-muted small">Áp dụng trong nội thành</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Details -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                        <div class="card-body p-5">
+                            <h3 class="fw-bold mb-4 text-center">Chi Tiết Chính Sách Vận Chuyển</h3>
+
+                            <div class="accordion" id="shippingAccordion">
+                                <!-- Coverage Area -->
+                                <div class="accordion-item border-0 mb-3"
+                                    style="border-radius: 10px; overflow: hidden;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#collapseOne"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                            <i class="fas fa-map-marked-alt me-2"></i> Khu Vực Giao Hàng
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse show"
+                                        data-bs-parent="#shippingAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>
+                                                    Toàn bộ 63 tỉnh thành Việt Nam</li>
+                                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>
+                                                    Ưu tiên giao nhanh tại TP.HCM, Hà Nội, Đà Nẵng</li>
+                                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>
+                                                    Hỗ trợ giao hàng đến tận tay</li>
+                                                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>
+                                                    Có thể giao đến các khu vực xa như huyện, xã</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Packaging -->
+                                <div class="accordion-item border-0 mb-3"
+                                    style="border-radius: 10px; overflow: hidden;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                            <i class="fas fa-box me-2"></i> Đóng Gói Sản Phẩm
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse"
+                                        data-bs-parent="#shippingAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i> Thẻ
+                                                    bài được bảo vệ bằng sleeve cao cấp</li>
+                                                <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i>
+                                                    Đóng gói trong hộp cứng chống va đập</li>
+                                                <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i> Bọc
+                                                    thêm lớp chống ẩm cho vận chuyển đường dài</li>
+                                                <li class="mb-2"><i class="fas fa-shield-alt text-primary me-2"></i> Dán
+                                                    tem niêm phong đảm bảo chất lượng</li>
+                                                <li class="mb-0"><i class="fas fa-shield-alt text-primary me-2"></i>
+                                                    Miễn phí bảo hiểm cho đơn hàng trên 2 triệu</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Shipping Costs -->
+                                <div class="accordion-item border-0 mb-3"
+                                    style="border-radius: 10px; overflow: hidden;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseThree"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                            <i class="fas fa-money-bill-wave me-2"></i> Bảng Giá Vận Chuyển
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse"
+                                        data-bs-parent="#shippingAccordion">
+                                        <div class="accordion-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-striped table-hover">
+                                                    <thead
+                                                        style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                                                        <tr>
+                                                            <th class="text-white">Giá trị đơn hàng</th>
+                                                            <th class="text-white">Nội thành</th>
+                                                            <th class="text-white">Ngoại thành</th>
+                                                            <th class="text-white">Tỉnh khác</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Dưới 200.000đ</td>
+                                                            <td>15.000đ</td>
+                                                            <td>25.000đ</td>
+                                                            <td>35.000đ</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>200.000đ - 500.000đ</td>
+                                                            <td>10.000đ</td>
+                                                            <td>20.000đ</td>
+                                                            <td>30.000đ</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Trên 500.000đ</td>
+                                                            <td class="text-success fw-bold">MIỄN PHÍ</td>
+                                                            <td class="text-success fw-bold">MIỄN PHÍ</td>
+                                                            <td class="text-success fw-bold">MIỄN PHÍ</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Return Policy -->
+                                <div class="accordion-item border-0 mb-3"
+                                    style="border-radius: 10px; overflow: hidden;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseFour"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                            <i class="fas fa-undo-alt me-2"></i> Chính Sách Đổi Trả
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse"
+                                        data-bs-parent="#shippingAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2"><i class="fas fa-clock text-warning me-2"></i> Đổi trả
+                                                    trong vòng 7 ngày kể từ khi nhận hàng</li>
+                                                <li class="mb-2"><i class="fas fa-check-double text-success me-2"></i>
+                                                    Sản phẩm còn nguyên tem, chưa qua sử dụng</li>
+                                                <li class="mb-2"><i class="fas fa-box-open text-info me-2"></i> Giữ
+                                                    nguyên bao bì và phụ kiện đi kèm</li>
+                                                <li class="mb-2"><i class="fas fa-exchange-alt text-primary me-2"></i>
+                                                    Hỗ trợ đổi sang sản phẩm khác cùng giá trị</li>
+                                                <li class="mb-2"><i class="fas fa-truck text-danger me-2"></i> Miễn phí
+                                                    vận chuyển đổi trả nếu lỗi từ shop</li>
+                                                <li class="mb-0"><i
+                                                        class="fas fa-money-check-alt text-success me-2"></i> Hoàn tiền
+                                                    100% nếu sản phẩm lỗi</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Order Tracking -->
+                                <div class="accordion-item border-0" style="border-radius: 10px; overflow: hidden;">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#collapseFive"
+                                            style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                                            <i class="fas fa-search-location me-2"></i> Theo Dõi Đơn Hàng
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFive" class="accordion-collapse collapse"
+                                        data-bs-parent="#shippingAccordion">
+                                        <div class="accordion-body">
+                                            <ul class="list-unstyled mb-0">
+                                                <li class="mb-2"><i class="fas fa-envelope text-primary me-2"></i> Nhận
+                                                    mã vận đơn qua email sau khi đặt hàng</li>
+                                                <li class="mb-2"><i class="fas fa-bell text-warning me-2"></i> Cập nhật
+                                                    trạng thái đơn hàng qua SMS</li>
+                                                <li class="mb-2"><i class="fas fa-mobile-alt text-success me-2"></i>
+                                                    Theo dõi trực tiếp trên website</li>
+                                                <li class="mb-2"><i class="fas fa-headset text-info me-2"></i> Hỗ trợ
+                                                    24/7 qua hotline và chat online</li>
+                                                <li class="mb-0"><i class="fas fa-phone-volume text-danger me-2"></i>
+                                                    Shipper gọi điện trước khi giao 30 phút</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Note -->
+                            <div class="alert alert-info mt-4" role="alert"
+                                style="border-radius: 10px; border-left: 5px solid #0dcaf0;">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>Lưu ý:</strong> Thời gian giao hàng có thể thay đổi trong các dịp lễ, Tết hoặc
+                                do điều kiện thời tiết. Chúng tôi sẽ thông báo ngay cho bạn nếu có bất kỳ thay đổi nào.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .card:hover {
+            transform: translateY(-10px) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
+            transition: all 0.3s;
+        }
+
+        .accordion-button:not(.collapsed) {
+            box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+        }
+    </style>
+</body>
+
+</html>

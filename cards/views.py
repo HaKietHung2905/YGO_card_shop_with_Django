@@ -602,3 +602,11 @@ def create_other_product(request):
         'action': 'create',
     }
     return render(request, 'admin/other_products/form.html', context)
+
+def contact_us(request):
+    """Display contact us page"""
+    return render(request, 'contact_us.html')
+
+def shipping_info(request):
+    """Display shipping information page"""
+    return render(request, 'shipping_info.html')

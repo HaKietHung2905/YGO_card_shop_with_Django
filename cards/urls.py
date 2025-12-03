@@ -64,5 +64,9 @@ urlpatterns = [
     path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='user_edit'),
     path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
 
-    path('dashboard/warehouse/card/delete/<int:card_id>/', admin_views.admin_delete_card, name='admin_delete_card')
+    path('dashboard/warehouse/card/delete/<int:card_id>/', admin_views.admin_delete_card, name='admin_delete_card'),
+    
+    # Information pages
+    path('contact/', views.contact_us, name='contact_us'),
+    path('shipping/', views.shipping_info, name='shipping_info'),
 ]

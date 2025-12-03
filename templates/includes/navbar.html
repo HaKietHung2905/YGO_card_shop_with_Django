@@ -130,12 +130,14 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {% if 'shipping' in request.path %}active{% endif %}"
+                            href="{% url 'shipping_info' %}">
                             <i class="fas fa-shipping-fast"></i> Shipping
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {% if 'contact' in request.path %}active{% endif %}"
+                            href="{% url 'contact_us' %}">
                             <i class="fas fa-envelope"></i> Contact
                         </a>
                     </li>
