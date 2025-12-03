@@ -390,3 +390,101 @@ class SiteSettings(models.Model):
         """Get or create settings instance"""
         settings, created = cls.objects.get_or_create(pk=1)
         return settings
+
+class ShippingSettings(models.Model):
+    """Shipping configuration model for managing dynamic shipping fees"""
+    
+    # Shipping Costs
+    standard_shipping_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0, 
+        help_text="Phí giao hàng tiêu chuẩn"
+    )
+    fast_shipping_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, default=30000, 
+        help_text="Phí giao hàng nhanh"
+    )
+    express_shipping_fee = models.DecimalField(
+        max_digits=10, decimal_places=2, default=50000, 
+        help_text="Phí giao hàng hỏa tốc"
+    )
+    free_shipping_threshold = models.DecimalField(
+        max_digits=10, decimal_places=2, default=500000, 
+        help_text="Giá trị đơn hàng để miễn phí ship"
+    )
+    
+    # Delivery Times
+    standard_delivery_days = models.CharField(
+        max_length=50, default="3-5 ngày làm việc",
+        help_text="Thời gian giao hàng tiêu chuẩn"
+    )
+    fast_delivery_days = models.CharField(
+        max_length=50, default="1-2 ngày làm việc",
+        help_text="Thời gian giao hàng nhanh"
+    )
+    express_delivery_days = models.CharField(
+        max_length=50, default="Trong ngày",
+        help_text="Thời gian giao hàng hỏa tốc"
+    )
+    
+    # Pricing Table - Nội thành
+    price_under_200k_inner = models.DecimalField(
+        max_digits=10, decimal_places=2, default=15000,
+        help_text="Phí ship nội thành cho đơn dưới 200k"
+    )
+    price_200_500k_inner = models.DecimalField(
+        max_digits=10, decimal_places=2, default=10000,
+        help_text="Phí ship nội thành cho đơn 200k-500k"
+    )
+    price_over_500k_inner = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
+        help_text="Phí ship nội thành cho đơn trên 500k"
+    )
+    
+    # Pricing Table - Ngoại thành
+    price_under_200k_outer = models.DecimalField(
+        max_digits=10, decimal_places=2, default=25000,
+        help_text="Phí ship ngoại thành cho đơn dưới 200k"
+    )
+    price_200_500k_outer = models.DecimalField(
+        max_digits=10, decimal_places=2, default=20000,
+        help_text="Phí ship ngoại thành cho đơn 200k-500k"
+    )
+    price_over_500k_outer = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
+        help_text="Phí ship ngoại thành cho đơn trên 500k"
+    )
+    
+    # Pricing Table - Tỉnh khác
+    price_under_200k_province = models.DecimalField(
+        max_digits=10, decimal_places=2, default=35000,
+        help_text="Phí ship tỉnh khác cho đơn dưới 200k"
+    )
+    price_200_500k_province = models.DecimalField(
+        max_digits=10, decimal_places=2, default=30000,
+        help_text="Phí ship tỉnh khác cho đơn 200k-500k"
+    )
+    price_over_500k_province = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0,
+        help_text="Phí ship tỉnh khác cho đơn trên 500k"
+    )
+    
+    # Return Policy
+    return_period_days = models.IntegerField(
+        default=7, 
+        help_text="Số ngày cho phép đổi trả"
+    )
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Shipping Settings'
+        verbose_name_plural = 'Shipping Settings'
+    
+    def __str__(self):
+        return "Shipping Settings"
+    
+    @classmethod
+    def get_settings(cls):
+        """Get or create shipping settings instance"""
+        settings, created = cls.objects.get_or_create(pk=1)
+        return settings

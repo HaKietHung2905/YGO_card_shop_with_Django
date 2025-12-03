@@ -609,4 +609,10 @@ def contact_us(request):
 
 def shipping_info(request):
     """Display shipping information page"""
-    return render(request, 'shipping_info.html')
+    from .models import ShippingSettings
+    shipping_settings = ShippingSettings.get_settings()
+    
+    context = {
+        'shipping_settings': shipping_settings,
+    }
+    return render(request, 'shipping_info.html', context)

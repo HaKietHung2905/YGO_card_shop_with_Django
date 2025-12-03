@@ -1666,3 +1666,29 @@ def admin_create_other_product(request):
     except TemplateDoesNotExist:
         # If template doesn't exist, create a basic form
         return render(request, 'admin/warehouse/other_products/index.html', context)  # Fallback to a template you know exists
+
+@staff_member_required
+def admin_shipping_settings(request):
+    """Manage shipping settings"""
+    from .models import ShippingSettings
+    from .forms import ShippingSettingsForm
+    
+    settings = ShippingSettings.get_settings()
+    
+    if request.method == 'POST':
+        form = ShippingSettingsForm(request.POST, instance=settings)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Đã cập nhật cài đặt vận chuyển thành công!')
+            return redirect('admin_dashboard:shipping_settings')
+        else:
+            messages.error(request, 'Vui lòng kiểm tra lại thông tin.')
+    else:
+        form = ShippingSettingsForm(instance=settings)
+    
+    context = {
+        'form': form,
+        'settings': settings,
+        'page_title': 'Cài Đặt Vận Chuyển',
+    }
+    return render(request, 'admin/settings/shipping_settings.html', context)

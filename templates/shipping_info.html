@@ -1,4 +1,5 @@
 {% load static %}
+{% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -42,9 +43,11 @@
                                 <i class="fas fa-shipping-fast fa-2x text-white"></i>
                             </div>
                             <h4 class="fw-bold mb-3">Giao Hàng Tiêu Chuẩn</h4>
-                            <p class="text-muted mb-3">Thời gian: 3-5 ngày làm việc</p>
-                            <h5 class="text-success fw-bold">MIỄN PHÍ</h5>
-                            <p class="text-muted small">Cho đơn hàng từ 500.000đ</p>
+                            <p class="text-muted mb-3">Thời gian: {{ shipping_settings.standard_delivery_days }}</p>
+                            <h5 class="text-primary fw-bold">{{ shipping_settings.standard_shipping_fee|format_currency
+                                }}</h5>
+                            <p class="text-muted small">Cho đơn hàng từ {{
+                                shipping_settings.free_shipping_threshold|format_currency }}</p>
                         </div>
                     </div>
                 </div>
@@ -57,8 +60,9 @@
                                 <i class="fas fa-rocket fa-2x text-white"></i>
                             </div>
                             <h4 class="fw-bold mb-3">Giao Hàng Nhanh</h4>
-                            <p class="text-muted mb-3">Thời gian: 1-2 ngày làm việc</p>
-                            <h5 class="text-primary fw-bold">30.000đ</h5>
+                            <p class="text-muted mb-3">Thời gian: {{ shipping_settings.fast_delivery_days }}</p>
+                            <h5 class="text-primary fw-bold">{{ shipping_settings.fast_shipping_fee|format_currency}}đ
+                            </h5>
                             <p class="text-muted small">Nội thành TP.HCM & Hà Nội</p>
                         </div>
                     </div>
@@ -72,8 +76,10 @@
                                 <i class="fas fa-bolt fa-2x text-white"></i>
                             </div>
                             <h4 class="fw-bold mb-3">Giao Hàng Hỏa Tốc</h4>
-                            <p class="text-muted mb-3">Thời gian: Trong ngày</p>
-                            <h5 class="text-danger fw-bold">50.000đ</h5>
+                            <p class="text-muted mb-3">Thời gian: {{ shipping_settings.express_delivery_days }}</p>
+                            <h5 class="text-danger fw-bold">{{ shipping_settings.express_shipping_fee|format_currency
+                                }}đ
+                            </h5>
                             <p class="text-muted small">Áp dụng trong nội thành</p>
                         </div>
                     </div>
@@ -171,20 +177,30 @@
                                                     <tbody>
                                                         <tr>
                                                             <td>Dưới 200.000đ</td>
-                                                            <td>15.000đ</td>
-                                                            <td>25.000đ</td>
-                                                            <td>35.000đ</td>
+                                                            <td>{{
+                                                                shipping_settings.price_under_200k_inner|floatformat:0
+                                                                }}đ</td>
+                                                            <td>{{
+                                                                shipping_settings.price_under_200k_outer|floatformat:0
+                                                                }}đ</td>
+                                                            <td>{{
+                                                                shipping_settings.price_under_200k_province|floatformat:0
+                                                                }}đ</td>
                                                         </tr>
                                                         <tr>
                                                             <td>200.000đ - 500.000đ</td>
-                                                            <td>10.000đ</td>
-                                                            <td>20.000đ</td>
-                                                            <td>30.000đ</td>
+                                                            <td>{{ shipping_settings.price_200_500k_inner|floatformat:0
+                                                                }}đ</td>
+                                                            <td>{{ shipping_settings.price_200_500k_outer|floatformat:0
+                                                                }}đ</td>
+                                                            <td>{{
+                                                                shipping_settings.price_200_500k_province|floatformat:0
+                                                                }}đ</td>
                                                         </tr>
                                                         <tr>
-                                                            <td>Trên 500.000đ</td>
-                                                            <td class="text-success fw-bold">MIỄN PHÍ</td>
-                                                            <td class="text-success fw-bold">MIỄN PHÍ</td>
+                                                            <td>Trên {{
+                                                                shipping_settings.free_shipping_threshold|floatformat:0
+                                                                }}đ</td>
                                                             <td class="text-success fw-bold">MIỄN PHÍ</td>
                                                         </tr>
                                                     </tbody>
@@ -209,7 +225,8 @@
                                         <div class="accordion-body">
                                             <ul class="list-unstyled mb-0">
                                                 <li class="mb-2"><i class="fas fa-clock text-warning me-2"></i> Đổi trả
-                                                    trong vòng 7 ngày kể từ khi nhận hàng</li>
+                                                    trong vòng {{ shipping_settings.return_period_days }} ngày kể từ khi
+                                                    nhận hàng</li>
                                                 <li class="mb-2"><i class="fas fa-check-double text-success me-2"></i>
                                                     Sản phẩm còn nguyên tem, chưa qua sử dụng</li>
                                                 <li class="mb-2"><i class="fas fa-box-open text-info me-2"></i> Giữ

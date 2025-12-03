@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Card, CardSet, OtherProduct
+from .models import Card, CardSet, OtherProduct, ShippingSettings
 
 class CardForm(forms.ModelForm):
     """Form for creating and editing cards"""
@@ -275,3 +275,73 @@ class OtherProductForm(forms.ModelForm):
                 instance.save()
         
         return instance
+
+class ShippingSettingsForm(forms.ModelForm):
+    """Form for managing shipping settings"""
+    
+    class Meta:
+        model = ShippingSettings
+        fields = [
+            'standard_shipping_fee', 'fast_shipping_fee', 'express_shipping_fee',
+            'free_shipping_threshold', 'standard_delivery_days', 'fast_delivery_days',
+            'express_delivery_days', 'price_under_200k_inner', 'price_200_500k_inner',
+            'price_over_500k_inner', 'price_under_200k_outer', 'price_200_500k_outer',
+            'price_over_500k_outer', 'price_under_200k_province', 'price_200_500k_province',
+            'price_over_500k_province', 'return_period_days'
+        ]
+        widgets = {
+            'standard_shipping_fee': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'fast_shipping_fee': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'express_shipping_fee': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'free_shipping_threshold': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '10000'}),
+            'standard_delivery_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'VD: 3-5 ngày làm việc'}),
+            'fast_delivery_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'VD: 1-2 ngày làm việc'}),
+            'express_delivery_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'VD: Trong ngày'}),
+            'price_under_200k_inner': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_200_500k_inner': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_over_500k_inner': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_under_200k_outer': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_200_500k_outer': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_over_500k_outer': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_under_200k_province': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_200_500k_province': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'price_over_500k_province': forms.NumberInput(attrs={'class': 'form-control', 'min': '0', 'step': '1000'}),
+            'return_period_days': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'max': '90'}),
+        }
+        labels = {
+            'standard_shipping_fee': 'Phí Giao Hàng Tiêu Chuẩn (VND)',
+            'fast_shipping_fee': 'Phí Giao Hàng Nhanh (VND)',
+            'express_shipping_fee': 'Phí Giao Hàng Hỏa Tốc (VND)',
+            'free_shipping_threshold': 'Ngưỡng Miễn Phí Ship (VND)',
+            'standard_delivery_days': 'Thời Gian Giao Hàng Tiêu Chuẩn',
+            'fast_delivery_days': 'Thời Gian Giao Hàng Nhanh',
+            'express_delivery_days': 'Thời Gian Giao Hàng Hỏa Tốc',
+            'price_under_200k_inner': 'Nội Thành - Dưới 200k (VND)',
+            'price_200_500k_inner': 'Nội Thành - 200k-500k (VND)',
+            'price_over_500k_inner': 'Nội Thành - Trên 500k (VND)',
+            'price_under_200k_outer': 'Ngoại Thành - Dưới 200k (VND)',
+            'price_200_500k_outer': 'Ngoại Thành - 200k-500k (VND)',
+            'price_over_500k_outer': 'Ngoại Thành - Trên 500k (VND)',
+            'price_under_200k_province': 'Tỉnh Khác - Dưới 200k (VND)',
+            'price_200_500k_province': 'Tỉnh Khác - 200k-500k (VND)',
+            'price_over_500k_province': 'Tỉnh Khác - Trên 500k (VND)',
+            'return_period_days': 'Số Ngày Đổi Trả',
+        }
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        # Validate that all fees are non-negative
+        for field_name in ['standard_shipping_fee', 'fast_shipping_fee', 'express_shipping_fee',
+                          'free_shipping_threshold', 'price_under_200k_inner', 'price_200_500k_inner',
+                          'price_over_500k_inner', 'price_under_200k_outer', 'price_200_500k_outer',
+                          'price_over_500k_outer', 'price_under_200k_province', 'price_200_500k_province',
+                          'price_over_500k_province']:
+            value = cleaned_data.get(field_name)
+            if value is not None and value < 0:
+                self.add_error(field_name, 'Giá trị không thể âm')
+        
+        return_days = cleaned_data.get('return_period_days')
+        if return_days is not None and (return_days < 1 or return_days > 90):
+            self.add_error('return_period_days', 'Số ngày đổi trả phải từ 1 đến 90')
+        
+        return cleaned_data

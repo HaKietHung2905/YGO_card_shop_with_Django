@@ -65,4 +65,5 @@ urlpatterns = [
     path('settings/', admin_views.admin_settings, name='settings'),
     path('settings/update/', admin_views.update_settings, name='update_settings'),
     path('settings/clear-cache/', admin_views.clear_cache, name='clear_cache'),
+    path('settings/shipping/', admin_views.admin_shipping_settings, name='shipping_settings'),
 ]
