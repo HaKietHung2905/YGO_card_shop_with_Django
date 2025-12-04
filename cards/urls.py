@@ -46,7 +46,7 @@ urlpatterns = [
     path('my-orders/', views.my_orders, name='my_orders'),
     path('order/<int:order_id>/', views.order_detail, name='order_detail'),
     path('order/<int:order_id>/cancel/', views.cancel_order, name='cancel_order'),
-    
+
     # Authentication URLs
     path('login/', auth_views.LoginView.as_view(), name='login'),
     # Custom logout view that redirects to home
@@ -69,4 +69,6 @@ urlpatterns = [
     # Information pages
     path('contact/', views.contact_us, name='contact_us'),
     path('shipping/', views.shipping_info, name='shipping_info'),
+
+    
 ]

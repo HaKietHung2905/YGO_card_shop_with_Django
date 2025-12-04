@@ -665,16 +665,6 @@ def admin_tournaments(request):
 
 
 @staff_member_required
-def admin_orders(request):
-    """Orders management"""
-    orders = CartItem.objects.select_related('user', 'card').all()[:20]
-    context = {
-        'orders': orders,
-    }
-    return render(request, 'admin/orders/index.html', context)
-
-
-@staff_member_required
 def admin_analytics(request):
     """Analytics and reports"""
     context = {}
@@ -925,7 +915,6 @@ def admin_bulk_post_action(request):
         messages.info(request, f'Bulk action "{action}" on {len(post_ids)} posts will be available once the Post model is created.')
     
     return redirect('admin_dashboard:posts')
-
 @staff_member_required
 def admin_orders(request):
     """Enhanced orders management with filtering and search"""
@@ -959,15 +948,19 @@ def admin_orders(request):
     if date_to:
         orders = orders.filter(created_at__lte=date_to)
     
-    # Ordering
+    # Ordering - IMPORTANT: Order BEFORE pagination
     order_by = request.GET.get('order_by', '-created_at')
-    if order_by in ['created_at', '-created_at', 'total_amount', '-total_amount', 'status']:
-        orders = orders.order_by(order_by)
+    orders = orders.order_by(order_by)
     
     # Pagination
     paginator = Paginator(orders, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+    
+    # DEBUG: Check what's in the page
+    print(f"DEBUG: Page has {len(page_obj)} orders")
+    for order in page_obj:
+        print(f"DEBUG: Order ID={order.id}, PK={order.pk}, Number={order.order_number}")
     
     # Statistics
     total_orders = Order.objects.count()
@@ -992,13 +985,7 @@ def admin_orders(request):
         'status_choices': Order.STATUS_CHOICES,
     }
     return render(request, 'admin/orders/index.html', context)
-
-
-"""
-STEP 3: Add these NEW functions at the END of your cards/admin_views.py file
-Keep all your existing admin views, just add these new ones at the bottom
-"""
-
+    
 @staff_member_required
 def admin_order_detail(request, order_id):
     """View detailed information about a specific order"""
@@ -1692,3 +1679,28 @@ def admin_shipping_settings(request):
         'page_title': 'Cài Đặt Vận Chuyển',
     }
     return render(request, 'admin/settings/shipping_settings.html', context)
+
+@staff_member_required
+def update_order_status(request, order_id):
+    """Update order status"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        note = request.POST.get('note', '')
+        
+        if new_status in dict(Order.STATUS_CHOICES):
+            old_status = order.get_status_display()
+            order.status = new_status
+            order.save()
+            
+            # Log the status change (optional)
+            log_message = f"Cập nhật trạng thái từ '{old_status}' thành '{order.get_status_display()}'"
+            if note:
+                log_message += f" - Ghi chú: {note}"
+            
+            messages.success(request, f"Đã cập nhật trạng thái đơn hàng #{order.order_number} thành công!")
+        else:
+            messages.error(request, "Trạng thái không hợp lệ!")
+    
+    return redirect('admin_dashboard:orders')

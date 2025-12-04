@@ -539,13 +539,33 @@ def order_confirmation(request, order_id):
 
 @login_required
 def my_orders(request):
-    """Display user's order history"""
+    """Display user's order history with search and filter"""
     orders = Order.objects.filter(user=request.user).prefetch_related('items')
+    
+    # Search by order number
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        orders = orders.filter(order_number__icontains=search_query)
+    
+    # Filter by status
+    status_filter = request.GET.get('status', '').strip()
+    if status_filter:
+        orders = orders.filter(status=status_filter)
+    
+    # Order by created date (newest first)
+    orders = orders.order_by('-created_at')
+    
+    # Get all possible order statuses for the filter dropdown
+    order_statuses = Order.STATUS_CHOICES
     
     context = {
         'orders': orders,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'order_statuses': order_statuses,
     }
     return render(request, 'cards/orders/my_orders.html', context)
+
 
 
 @login_required

@@ -20,13 +20,14 @@ urlpatterns = [
     path('warehouse/card-sets/<int:set_id>/cards/', admin_views.admin_card_set_cards, name='card_set_cards'),
     path('warehouse/card-sets/stats/', admin_views.admin_card_sets_stats, name='card_sets_stats'),
     
-    # Order Management URLs - NEW
+    # Order Management URLs
     path('orders/', admin_views.admin_orders, name='orders'),
     path('orders/<int:order_id>/', admin_views.admin_order_detail, name='order_detail'),
-    path('orders/<int:order_id>/update-status/', admin_views.admin_update_order_status, name='update_order_status'),
+    path('orders/<int:order_id>/update-status/', admin_views.update_order_status, name='update_order_status'),
     path('orders/<int:order_id>/update-payment/', admin_views.admin_update_payment_status, name='update_payment_status'),
     path('orders/statistics/', admin_views.admin_order_statistics, name='order_statistics'),
- 
+    # REMOVED THE DUPLICATE LINE HERE
+    
     # Other Products Management URLs
     path('warehouse/other-products/', admin_views.admin_other_products, name='other_products'),
     path('warehouse/other-products/create/', admin_views.admin_create_other_product, name='create_other_product'),
