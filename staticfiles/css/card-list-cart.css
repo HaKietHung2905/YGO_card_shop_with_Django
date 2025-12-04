@@ -61,12 +61,35 @@
     font-weight: bold;
 }
 
-.rarity-common { background: #6c757d; color: white; }
-.rarity-rare { background: #ffc107; color: black; }
-.rarity-super-rare { background: #17a2b8; color: white; }
-.rarity-ultra-rare { background: #e83e8c; color: white; }
-.rarity-secret-rare { background: #6f42c1; color: white; }
-.rarity-ghost-rare { background: #343a40; color: white; }
+.rarity-common {
+    background: #6c757d;
+    color: white;
+}
+
+.rarity-rare {
+    background: #ffc107;
+    color: black;
+}
+
+.rarity-super-rare {
+    background: #17a2b8;
+    color: white;
+}
+
+.rarity-ultra-rare {
+    background: #e83e8c;
+    color: white;
+}
+
+.rarity-secret-rare {
+    background: #6f42c1;
+    color: white;
+}
+
+.rarity-ghost-rare {
+    background: #343a40;
+    color: white;
+}
 
 .card-info {
     padding: 20px;
@@ -193,9 +216,10 @@
 .cart-container {
     background: white;
     border-radius: 15px;
-    padding: 30px;
+    padding: 50px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
+    margin-top: 80px !important;
 }
 
 .cart-item {

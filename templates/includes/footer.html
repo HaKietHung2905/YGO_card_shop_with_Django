@@ -6,7 +6,6 @@
                 <h5 class="fw-bold mb-3">
                     <i class="fas fa-magic me-2 text-warning"></i>YUTOPIA SHOP
                 </h5>
-                <p class="text-muted">Điểm đến hàng đầu của bạn cho thẻ bài Yu-Gi-Oh chính hãng. Phục vụ đấu thủ trên toàn thế giới từ năm 2000.</p>
                 <div class="social-links">
                     <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
                     <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
@@ -17,21 +16,19 @@
             <div class="col-md-2 mb-4">
                 <h6 class="fw-bold mb-3">Mua Sắm</h6>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Tất Cả Thẻ Bài</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}?type=monster" class="text-muted text-decoration-none">Thẻ Quái Thú</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}?type=spell" class="text-muted text-decoration-none">Thẻ Phép</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}?type=trap" class="text-muted text-decoration-none">Thẻ Bẫy</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}?rarity=ultra_rare" class="text-muted text-decoration-none">Thẻ Hiếm</a></li>
+                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Tất Cả Thẻ
+                            Bài</a></li>
                 </ul>
             </div>
             <div class="col-md-2 mb-4">
-                <h6 class="fw-bold mb-3">Bộ Thẻ</h6>
+                <h6 class="fw-bold mb-3">Sản Phẩm</h6>
                 <ul class="list-unstyled">
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Mới Nhất</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Kinh Điển</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Gói Booster</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Cấu Trúc</a></li>
-                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Sưu Tập Hộp Thiếc</a></li>
+                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Thẻ Bài</a>
+                    </li>
+                    <li class="mb-2"><a href="{% url 'other_products' %}" class="text-muted text-decoration-none">Phụ
+                            Kiện</a></li>
+                    <li class="mb-2"><a href="{% url 'card_list' %}" class="text-muted text-decoration-none">Bộ Sản
+                            Phẩm</a></li>
                 </ul>
             </div>
             <div class="col-md-2 mb-4">
@@ -48,14 +45,18 @@
                 <h6 class="fw-bold mb-3">Tài Khoản</h6>
                 <ul class="list-unstyled">
                     {% if user.is_authenticated %}
-                        <li class="mb-2"><a href="{% url 'cart' %}" class="text-muted text-decoration-none">Giỏ Hàng</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Đơn Hàng Của Tôi</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Danh Sách Yêu Thích</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Hồ Sơ</a></li>
-                        <li class="mb-2"><a href="{% url 'logout' %}" class="text-muted text-decoration-none">Đăng Xuất</a></li>
+                    <li class="mb-2"><a href="{% url 'cart' %}" class="text-muted text-decoration-none">Giỏ Hàng</a>
+                    </li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Đơn Hàng Của Tôi</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Danh Sách Yêu Thích</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none">Hồ Sơ</a></li>
+                    <li class="mb-2"><a href="{% url 'logout' %}" class="text-muted text-decoration-none">Đăng Xuất</a>
+                    </li>
                     {% else %}
-                        <li class="mb-2"><a href="{% url 'login' %}" class="text-muted text-decoration-none">Đăng Nhập</a></li>
-                        <li class="mb-2"><a href="{% url 'signup' %}" class="text-muted text-decoration-none">Đăng Ký</a></li>
+                    <li class="mb-2"><a href="{% url 'login' %}" class="text-muted text-decoration-none">Đăng Nhập</a>
+                    </li>
+                    <li class="mb-2"><a href="{% url 'signup' %}" class="text-muted text-decoration-none">Đăng Ký</a>
+                    </li>
                     {% endif %}
                 </ul>
             </div>
