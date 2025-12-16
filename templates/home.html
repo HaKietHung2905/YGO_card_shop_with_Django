@@ -23,12 +23,23 @@
     <!-- Navigation -->
     {% include 'includes/navbar.html' %}
     <!-- Hero Product Slider -->
-    <section class="hero-slider-section">
+    <section class="hero-slider-section" style="position: relative; margin-top: 150px;">
         <div class="container-fluid px-0">
             <div id="heroProductCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel"
                 data-bs-interval="10000">
+
+                <!-- Admin Edit Button - Floating Overlay -->
+                {% if user.is_staff %}
+                <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+                    <a href="{% url 'admin_dashboard:hero_slider' %}" class="btn btn-warning shadow-lg"
+                        style="font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                        <i class="fas fa-edit me-2"></i>Edit Slider Images
+                    </a>
+                </div>
+                {% endif %}
+
                 <div class="carousel-indicators">
-                    {% for card_set in latest_sets %}
+                    {% for slide in hero_slides %}
                     <button type="button" data-bs-target="#heroProductCarousel"
                         data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"
                         aria-current="true" {% endif %} aria-label="Slide {{ forloop.counter }}"></button>
@@ -36,22 +47,32 @@
                 </div>
 
                 <div class="carousel-inner">
-                    {% for card_set in latest_sets %}
+                    {% for slide in hero_slides %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <div class="hero-slide-wrapper">
                             <div class="hero-slide-image" data-aos="zoom-in">
-                                <a href="{% url 'card_list' %}?set={{ card_set.id }}" class="d-block">
-                                    {% if card_set.hero_image %}
-                                    <img src="{{ card_set.hero_image.url }}" alt="{{ card_set.name }}"
-                                        class="img-fluid">
-                                    {% else %}
-                                    <div class="hero-slide-placeholder mx-auto" style="max-width: 400px;">
-                                        <i class="fas fa-box-open fa-8x text-warning"></i>
-                                    </div>
-                                    {% endif %}
+                                {% if slide.link_url %}
+                                <a href="{{ slide.link_url }}" class="d-block">
+                                    <img src="{{ slide.image.url }}" alt="{{ slide.title }}" class="img-fluid">
                                 </a>
+                                {% else %}
+                                <img src="{{ slide.image.url }}" alt="{{ slide.title }}" class="img-fluid">
+                                {% endif %}
                             </div>
-
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="carousel-item active">
+                        <div class="hero-slide-wrapper">
+                            <div class="hero-slide-placeholder text-center py-5">
+                                <i class="fas fa-images fa-5x text-muted mb-3"></i>
+                                <p class="text-muted">No slider images available</p>
+                                {% if user.is_staff %}
+                                <a href="{% url 'admin_dashboard:hero_slider' %}" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Add Slider Images
+                                </a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     {% endfor %}

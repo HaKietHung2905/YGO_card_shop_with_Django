@@ -62,6 +62,13 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'hero_slider' %}active{% endif %}"
+                    href="{% url 'admin_dashboard:hero_slider' %}">
+                    <i class="fas fa-images"></i>Banner
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'tournaments' %}active{% endif %}"
                     href="{% url 'admin_dashboard:tournaments' %}">
                     <i class="fas fa-trophy"></i>Giải đấu

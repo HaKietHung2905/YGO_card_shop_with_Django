@@ -26,7 +26,6 @@ urlpatterns = [
     path('orders/<int:order_id>/update-status/', admin_views.update_order_status, name='update_order_status'),
     path('orders/<int:order_id>/update-payment/', admin_views.admin_update_payment_status, name='update_payment_status'),
     path('orders/statistics/', admin_views.admin_order_statistics, name='order_statistics'),
-    # REMOVED THE DUPLICATE LINE HERE
     
     # Other Products Management URLs
     path('warehouse/other-products/', admin_views.admin_other_products, name='other_products'),
@@ -36,7 +35,6 @@ urlpatterns = [
     path('warehouse/other-products/stats/', admin_views.admin_other_products_stats, name='other_products_stats'),
 
     path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
-    path('orders/', admin_views.admin_orders, name='orders'),
     path('shipping/', admin_views.admin_shipping_settings, name='shipping_settings'),
     path('users/', admin_views.admin_users, name='users'),
     path('analytics/', admin_views.admin_analytics, name='analytics'),
@@ -50,22 +48,21 @@ urlpatterns = [
     path('posts/bulk-action/', admin_views.admin_bulk_post_action, name='bulk_post_action'),
 
     # User Management URLs
-    path('users/', admin_views.admin_users, name='users'),
     path('users/create/', admin_views.create_user, name='user_create'),
     path('users/<int:user_id>/', admin_views.admin_user_detail, name='user_detail'),
     path('users/<int:user_id>/edit/', admin_views.admin_edit_user, name='edit_user'),
     path('users/<int:user_id>/toggle-status/', admin_views.admin_toggle_user_status, name='toggle_user_status'),
    
     # Tournament URLs
-    path('tournaments/', admin_views.admin_tournaments, name='tournaments'),
     path('tournaments/create/', admin_views.create_tournament, name='create_tournament'),
     path('tournaments/<int:tournament_id>/', admin_views.tournament_detail, name='tournament_detail'),
     path('tournaments/<int:tournament_id>/edit/', admin_views.edit_tournament, name='edit_tournament'),
     path('tournaments/<int:tournament_id>/delete/', admin_views.delete_tournament, name='delete_tournament'),
     
     # Settings URLs
-    path('settings/', admin_views.admin_settings, name='settings'),
     path('settings/update/', admin_views.update_settings, name='update_settings'),
     path('settings/clear-cache/', admin_views.clear_cache, name='clear_cache'),
-    path('settings/shipping/', admin_views.admin_shipping_settings, name='shipping_settings'),
+    
+    # Hero Slider Management
+    path('hero-slider/', admin_views.admin_hero_slider, name='hero_slider'),
 ]

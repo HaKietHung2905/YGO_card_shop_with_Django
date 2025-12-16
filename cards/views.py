@@ -16,29 +16,14 @@ from .forms import OtherProductForm
 
 def home(request):
     """Enhanced homepage view with featured cards and other products"""
+    from .models import HeroSlider
+    
     # Get featured cards (in stock only)
     featured_cards = Card.objects.filter(stock_quantity__gt=0).select_related('card_set')[:8]
     
-    # Get latest card sets for hero slider (fetch 5)
-    latest_sets = list(CardSet.objects.all().order_by('-release_date')[:5])
+    # Get active hero slider images ordered by order field
+    hero_slides = HeroSlider.objects.filter(is_active=True).order_by('order')[:10]
     
-    # Attach a representative image to each set for the slider
-    for card_set in latest_sets:
-        # If set has its own image, use it
-        if card_set.image:
-            card_set.hero_image = card_set.image
-        else:
-            # Try to find a card in this set that has an image, preferably a high rarity one
-            representative_card = Card.objects.filter(
-                card_set=card_set, 
-                image__isnull=False
-            ).exclude(image='').order_by('-rarity').first()
-            
-            if representative_card:
-                card_set.hero_image = representative_card.image
-            else:
-                card_set.hero_image = None
-
     # Get featured accessories/other products (optional)
     featured_accessories = OtherProduct.objects.filter(
         stock_quantity__gt=0, 
@@ -57,7 +42,7 @@ def home(request):
     
     context = {
         'featured_cards': featured_cards,
-        'latest_sets': latest_sets,
+        'hero_slides': hero_slides,  # Changed from latest_sets
         'featured_accessories': featured_accessories,
         'new_arrivals': new_arrivals,
         'new_card_sets': new_card_sets,
@@ -65,6 +50,7 @@ def home(request):
         'total_accessories': total_accessories,
     }
     return render(request, 'home.html', context)
+
 
 def other_products_list(request):
     """Public view for browsing other products (accessories, etc.)"""
@@ -193,10 +179,23 @@ def card_list(request):
     if rarity:
         cards = cards.filter(rarity=rarity)
     
-    # Filter by card set
-    card_set = request.GET.get('set', '')
-    if card_set:
-        cards = cards.filter(card_set__id=card_set)
+    # Filter by card set (support both ID and code)
+    card_set_param = request.GET.get('set', '')
+    selected_card_set = None
+    if card_set_param:
+        # Try to filter by code first (for hero slider links)
+        try:
+            if card_set_param.isdigit():
+                # If it's a number, filter by ID (for filter dropdown)
+                selected_card_set = CardSet.objects.get(id=card_set_param)
+                cards = cards.filter(card_set__id=card_set_param)
+            else:
+                # If it's not a number, filter by code (for hero slider)
+                selected_card_set = CardSet.objects.get(code=card_set_param)
+                cards = cards.filter(card_set__code=card_set_param)
+        except CardSet.DoesNotExist:
+            # If set doesn't exist, show all cards
+            pass
     
     # Price range filter
     min_price = request.GET.get('min_price', '')
@@ -233,7 +232,8 @@ def card_list(request):
         'query': query,
         'selected_type': card_type,
         'selected_rarity': rarity,
-        'selected_set': card_set,
+        'selected_set': card_set_param,  # Keep the original param
+    'selected_card_set': selected_card_set,  # Add the actual CardSet object
         'min_price': min_price,
         'max_price': max_price,
         'card_type_choices': Card.CARD_TYPE_CHOICES,

@@ -488,3 +488,22 @@ class ShippingSettings(models.Model):
         """Get or create shipping settings instance"""
         settings, created = cls.objects.get_or_create(pk=1)
         return settings
+
+class HeroSlider(models.Model):
+    """Hero slider images for homepage"""
+    title = models.CharField(max_length=200, help_text="Title for the slide")
+    description = models.TextField(blank=True, help_text="Optional description")
+    image = models.ImageField(upload_to='hero_slider/', help_text="Slider image (recommended: 1200x400px)")
+    link_url = models.CharField(max_length=500, blank=True, help_text="Optional link URL (e.g., card list filter)")
+    order = models.IntegerField(default=0, help_text="Display order (lower numbers appear first)")
+    is_active = models.BooleanField(default=True, help_text="Show this slide on homepage")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['order', '-created_at']
+        verbose_name = 'Hero Slider'
+        verbose_name_plural = 'Hero Sliders'
+    
+    def __str__(self):
+        return f"{self.title} (Order: {self.order})"

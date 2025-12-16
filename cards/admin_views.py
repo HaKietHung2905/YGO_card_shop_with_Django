@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 from datetime import datetime
 import json
-from .models import Order, SiteSettings
+from .models import Order, SiteSettings, HeroSlider, CardSet
 from django.db.models import Sum, Count
 from django import forms
 from django.template.exceptions import TemplateDoesNotExist
@@ -1704,3 +1704,113 @@ def update_order_status(request, order_id):
             messages.error(request, "Trạng thái không hợp lệ!")
     
     return redirect('admin_dashboard:orders')
+
+@staff_member_required
+def admin_hero_slider(request):
+    if request.method == 'POST':
+        # Add new slide
+        if 'add_slide' in request.POST:
+            title = request.POST.get('title')
+            description = request.POST.get('description', '')
+            image = request.FILES.get('image')
+            link_type = request.POST.get('link_type')
+            card_set_id = request.POST.get('card_set_id')
+            order = request.POST.get('order', 0)
+            
+            # Determine link_url based on link_type
+            link_url = ''
+            if link_type == 'all_cards':
+                link_url = '/cards/'
+            elif link_type == 'card_set' and card_set_id:
+                try:
+                    card_set = CardSet.objects.get(id=card_set_id)
+                    link_url = f'/cards/?set={card_set.code}'
+                except CardSet.DoesNotExist:
+                    link_url = '/cards/'
+            elif link_type == 'other_products':
+                link_url = '/other_products/'
+            
+            HeroSlider.objects.create(
+                title=title,
+                description=description,
+                image=image,
+                link_url=link_url,
+                order=order
+            )
+            messages.success(request, f'Slide "{title}" đã được thêm thành công!')
+            return redirect('admin_dashboard:hero_slider')
+        
+        # Edit slide
+        elif 'edit_slide' in request.POST:
+            slide_id = request.POST.get('slide_id')
+            slide = get_object_or_404(HeroSlider, id=slide_id)
+            
+            slide.title = request.POST.get('title')
+            slide.description = request.POST.get('description', '')
+            slide.order = request.POST.get('order', 0)
+            
+            # Update image if new one is uploaded
+            if request.FILES.get('image'):
+                slide.image = request.FILES.get('image')
+            
+            # Update link_url based on link_type
+            link_type = request.POST.get('link_type')
+            card_set_id = request.POST.get('card_set_id')
+            
+            if link_type == 'all_cards':
+                slide.link_url = '/cards/'
+            elif link_type == 'card_set' and card_set_id:
+                try:
+                    card_set = CardSet.objects.get(id=card_set_id)
+                    slide.link_url = f'/cards/?set={card_set.code}'
+                except CardSet.DoesNotExist:
+                    slide.link_url = '/cards/'
+            elif link_type == 'other_products':
+                slide.link_url = '/other_products/'
+            else:
+                slide.link_url = ''
+            
+            slide.save()
+            messages.success(request, f'Slide "{slide.title}" đã được cập nhật thành công!')
+            return redirect('admin_dashboard:hero_slider')
+        
+        # Delete slide
+        elif 'delete_slide' in request.POST:
+            slide_id = request.POST.get('delete_slide')
+            slide = get_object_or_404(HeroSlider, id=slide_id)
+            title = slide.title
+            slide.delete()
+            messages.success(request, f'Slide "{title}" đã được xóa thành công!')
+            return redirect('admin_dashboard:hero_slider')
+        
+        # Toggle active status
+        elif 'toggle_active' in request.POST:
+            slide_id = request.POST.get('toggle_active')
+            slide = get_object_or_404(HeroSlider, id=slide_id)
+            slide.is_active = not slide.is_active
+            slide.save()
+            status = "kích hoạt" if slide.is_active else "vô hiệu hóa"
+            messages.success(request, f'Slide "{slide.title}" đã được {status}!')
+            return redirect('admin_dashboard:hero_slider')
+        
+        # Reorder slide
+        elif 'reorder' in request.POST:
+            slide_id = request.POST.get('slide_id')
+            new_order = request.POST.get('new_order')
+            slide = get_object_or_404(HeroSlider, id=slide_id)
+            slide.order = new_order
+            slide.save()
+            messages.success(request, f'Thứ tự slide đã được cập nhật!')
+            return redirect('admin_dashboard:hero_slider')
+    
+    # Get all slides and card sets
+    slides = HeroSlider.objects.all().order_by('order')
+    card_sets = CardSet.objects.all().order_by('name')
+    
+    context = {
+        'page_title': 'Quản Lý Hero Slider',
+        'slides': slides,
+        'card_sets': card_sets,
+    }
+    
+    return render(request, 'admin/hero_slider/manage.html', context)
