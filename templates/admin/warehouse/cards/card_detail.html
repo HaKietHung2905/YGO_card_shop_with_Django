@@ -2,6 +2,7 @@
 {% load currency_filters %}
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -381,6 +382,7 @@
         }
     </style>
 </head>
+
 <body>
     {% include 'includes/navbar.html' %}
 
@@ -406,22 +408,22 @@
                 <div class="col-lg-5">
                     <div class="card-image-section">
                         {% if card.is_in_stock %}
-                            <span class="stock-badge in-stock">
-                                <i class="fas fa-check-circle me-2"></i>Còn Hàng
-                            </span>
+                        <span class="stock-badge in-stock">
+                            <i class="fas fa-check-circle me-2"></i>Còn Hàng
+                        </span>
                         {% else %}
-                            <span class="stock-badge out-of-stock">
-                                <i class="fas fa-times-circle me-2"></i>Hết Hàng
-                            </span>
+                        <span class="stock-badge out-of-stock">
+                            <i class="fas fa-times-circle me-2"></i>Hết Hàng
+                        </span>
                         {% endif %}
-                        
+
                         <div class="card-image-container">
                             {% if card.image %}
-                                <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
+                            <img src="{{ card.image.url }}" alt="{{ card.name }}" class="card-image">
                             {% else %}
-                                <div class="placeholder-image">
-                                    <i class="fas fa-image placeholder-icon"></i>
-                                </div>
+                            <div class="placeholder-image">
+                                <i class="fas fa-image placeholder-icon"></i>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -430,7 +432,7 @@
                 <div class="col-lg-7">
                     <div class="card-info-section">
                         <h2 class="card-title-main">{{ card.name }}</h2>
-                        
+
                         <div class="info-grid">
                             <div class="info-item">
                                 <strong><i class="fas fa-tag me-2"></i>Loại Thẻ</strong>
@@ -487,22 +489,23 @@
                         </div>
 
                         {% if card.is_in_stock %}
-                            {% if user.is_authenticated %}
-                                <form method="POST" action="{% url 'add_to_cart' card.id %}" class="d-grid gap-2">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-primary-custom">
-                                        <i class="fas fa-shopping-cart me-2"></i>Thêm Vào Giỏ Hàng
-                                    </button>
-                                </form>
-                            {% else %}
-                                <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary-custom d-block text-center">
-                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập Để Mua Hàng
-                                </a>
-                            {% endif %}
-                        {% else %}
-                            <button class="btn btn-outline-custom d-block w-100" disabled>
-                                <i class="fas fa-times-circle me-2"></i>Hiện Tại Hết Hàng
+                        {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'add_to_cart' card.id %}" class="d-grid gap-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-shopping-cart me-2"></i>Thêm Vào Giỏ Hàng
                             </button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'login' %}?next={{ request.path }}"
+                            class="btn btn-primary-custom d-block text-center">
+                            <i class="fas fa-sign-in-alt me-2"></i>Đăng Nhập Để Mua Hàng
+                        </a>
+                        {% endif %}
+                        {% else %}
+                        <button class="btn btn-outline-custom d-block w-100" disabled>
+                            <i class="fas fa-times-circle me-2"></i>Hiện Tại Hết Hàng
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -517,17 +520,19 @@
                 <div class="col-lg-3 col-md-4 col-sm-6">
                     <div class="related-card">
                         {% if related_card.image %}
-                            <img src="{{ related_card.image.url }}" alt="{{ related_card.name }}">
+                        <img src="{{ related_card.image.url }}" alt="{{ related_card.name }}">
                         {% else %}
-                            <div style="width: 100%; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-                                <i class="fas fa-image fa-3x text-muted"></i>
-                            </div>
+                        <div
+                            style="width: 100%; height: 250px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                        </div>
                         {% endif %}
                         <div class="related-card-body">
                             <h6 class="related-card-title">{{ related_card.name }}</h6>
                             <div class="related-card-price">{% currency_display related_card.price %}</div>
                             <small class="text-muted d-block mb-3">{{ related_card.get_rarity_display }}</small>
-                            <a href="{% url 'card_detail' related_card.id %}" class="btn btn-outline-custom btn-sm w-100">
+                            <a href="{% url 'card_detail' related_card.id %}"
+                                class="btn btn-outline-custom btn-sm w-100">
                                 <i class="fas fa-eye me-2"></i>Xem Chi Tiết
                             </a>
                         </div>
@@ -543,4 +548,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
