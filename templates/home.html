@@ -28,13 +28,18 @@
             <div id="heroProductCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel"
                 data-bs-interval="10000">
 
-                <!-- Admin Edit Button - Floating Overlay -->
+                <!-- Admin Edit Buttons - Floating Overlay -->
                 {% if user.is_staff %}
-                <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+                <div style="position: absolute; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px;">
                     <a href="{% url 'admin_dashboard:hero_slider' %}" class="btn btn-warning shadow-lg"
                         style="font-weight: 600; padding: 10px 20px; border-radius: 8px;">
                         <i class="fas fa-edit me-2"></i>Thay đổi ảnh bìa
                     </a>
+                    <button type="button" class="btn btn-info shadow-lg text-white" data-bs-toggle="modal"
+                        data-bs-target="#manageSliderModal"
+                        style="font-weight: 600; padding: 10px 20px; border-radius: 8px;">
+                        <i class="fas fa-cog me-2"></i>Sửa nhanh
+                    </button>
                 </div>
                 {% endif %}
 
@@ -210,6 +215,229 @@
         </div>
     </section>
 
+
+    <!-- Manage Slider Modal -->
+{% if user.is_staff %}
+<div class="modal fade" id="manageSliderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-light">
+                <h5 class="modal-title">
+                    <i class="fas fa-images me-2"></i>Quản lý Hero Slider
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <!-- Tabs -->
+                <ul class="nav nav-tabs nav-fill" id="sliderTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="add-tab" data-bs-toggle="tab" data-bs-target="#add-pane"
+                            type="button" role="tab">
+                            <i class="fas fa-plus me-2"></i>Thêm Slide Mới
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="list-tab" data-bs-toggle="tab" data-bs-target="#list-pane"
+                            type="button" role="tab">
+                            <i class="fas fa-list me-2"></i>Danh sách Slide
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content p-3" id="sliderTabContent">
+                    <!-- Add Tab (Active by default) -->
+                    <div class="tab-pane fade show active" id="add-pane" role="tabpanel">
+                        <form method="post" action="{% url 'admin_dashboard:hero_slider' %}"
+                            enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="add_slide" value="1">
+                            <input type="hidden" name="next" value="{% url 'home' %}">
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Tiêu đề *</label>
+                                <input type="text" class="form-control" name="title" required
+                                    placeholder="Ví dụ: Bộ sưu tập mới">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Mô tả</label>
+                                <textarea class="form-control" name="description" rows="2"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Hình ảnh *</label>
+                                <input type="file" class="form-control" name="image" accept="image/*" required>
+                                <small class="text-muted">Khuyên dùng: 1200x400px</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Link liên kết</label>
+                                <select class="form-select mb-2" name="link_type"
+                                    onchange="toggleCardSetSelect(this, 'add_card_set_container')">
+                                    <option value="">-- Không liên kết --</option>
+                                    <option value="all_cards">Tất cả thẻ bài</option>
+                                    <option value="card_set">Bộ thẻ bài cụ thể</option>
+                                    <option value="other_products">Sản phẩm khác</option>
+                                </select>
+
+                                <div id="add_card_set_container" style="display: none;">
+                                    <select class="form-select" name="card_set_id">
+                                        <option value="">-- Chọn bộ thẻ bài --</option>
+                                        {% for card_set in all_card_sets %}
+                                        <option value="{{ card_set.id }}">{{ card_set.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Thứ tự hiển thị</label>
+                                <input type="number" class="form-control" name="order" value="0">
+                                <small class="text-muted">Đặt là 0 để hiển thị đầu tiên</small>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Thêm Slide
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="tab-pane fade" id="list-pane" role="tabpanel">
+                        {% if hero_slides %}
+                        <div class="accordion" id="slidesAccordion">
+                            {% for slide in hero_slides %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading{{ slide.id }}">
+                                    <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#collapse{{ slide.id }}">
+                                        <div class="d-flex align-items-center w-100">
+                                            <img src="{{ slide.image.url }}" class="me-3 rounded"
+                                                style="width: 60px; height: 30px; object-fit: cover;">
+                                            <span class="fw-bold me-auto">{{ slide.title }}</span>
+                                            <span
+                                                class="badge {% if slide.is_active %}bg-success{% else %}bg-secondary{% endif %} me-2">
+                                                {% if slide.is_active %}Active{% else %}Inactive{% endif %}
+                                            </span>
+                                        </div>
+                                    </button>
+                                </h2>
+                                <div id="collapse{{ slide.id }}" class="accordion-collapse collapse"
+                                    data-bs-parent="#slidesAccordion">
+                                    <div class="accordion-body bg-light">
+                                        <form method="post" action="{% url 'admin_dashboard:hero_slider' %}"
+                                            enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="edit_slide" value="1">
+                                            <input type="hidden" name="slide_id" value="{{ slide.id }}">
+                                            <input type="hidden" name="next" value="{% url 'home' %}">
+
+                                            <div class="row g-3">
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Tiêu đề</label>
+                                                    <input type="text" class="form-control" name="title"
+                                                        value="{{ slide.title }}" required>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Mô tả</label>
+                                                    <textarea class="form-control" name="description"
+                                                        rows="2">{{ slide.description }}</textarea>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Thứ tự hiển thị</label>
+                                                    <input type="number" class="form-control" name="order"
+                                                        value="{{ slide.order }}">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Thay đổi ảnh</label>
+                                                    <input type="file" class="form-control" name="image"
+                                                        accept="image/*">
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <label class="form-label">Link liên kết</label>
+                                                    <select class="form-select mb-2" name="link_type"
+                                                        onchange="toggleCardSetSelect(this, 'edit_card_set_{{ slide.id }}')">
+                                                        <option value="">-- Không liên kết --</option>
+                                                        <option value="all_cards" {% if slide.link_url == '/cards/'%}selected{% endif %}>
+                                                            Tất cả thẻ bài
+                                                        </option>
+                                                        <option value="card_set" {% if '/cards/?set=' in slide.link_url and slide.link_url != '/cards/' %}selected{% endif %}>
+                                                            Bộ thẻ bài cụ thể
+                                                        </option>
+                                                        <option value="other_products" {% if slide.link_url == '/other_products/' %}selected{% endif %}>
+                                                            Sản phẩm khác
+                                                        </option>
+                                                    </select>
+
+                                                    <div id="edit_card_set_{{ slide.id }}"
+                                                        style="display: {% if '/cards/?set=' in slide.link_url and slide.link_url != '/cards/' %}block{% else %}none{% endif %};">
+                                                        <select class="form-select" name="card_set_id">
+                                                            <option value="">-- Chọn bộ thẻ bài --</option>
+                                                            {% for card_set in all_card_sets %}
+                                                            {% with expected_url='/cards/?set='|add:card_set.code %}
+                                                            <option value="{{ card_set.id }}" {% if slide.link_url == expected_url %}selected{% endif %}>
+                                                                {{ card_set.name }}
+                                                            </option>
+                                                            {% endwith %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-12 d-flex justify-content-between mt-3 pt-3 border-top">
+                                                    <div>
+                                                        <button type="submit" name="toggle_active"
+                                                            value="{{ slide.id }}"
+                                                            class="btn btn-outline-secondary btn-sm" formnovalidate>
+                                                            {% if slide.is_active %}
+                                                            <i class="fas fa-eye-slash me-1"></i>Ẩn
+                                                            {% else %}
+                                                            <i class="fas fa-eye me-1"></i>Hiện
+                                                            {% endif %}
+                                                        </button>
+                                                        <button type="submit" name="delete_slide"
+                                                            value="{{ slide.id }}"
+                                                            class="btn btn-outline-danger btn-sm ms-2"
+                                                            onclick="return confirm('Bạn có chắc chắn muốn xóa slide này?')"
+                                                            formnovalidate>
+                                                            <i class="fas fa-trash me-1"></i>Xóa
+                                                        </button>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="fas fa-save me-1"></i>Lưu thay đổi
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4 text-muted">
+                            <i class="fas fa-images fa-3x mb-3"></i>
+                            <p>Chưa có slide nào. Hãy thêm slide mới!</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCardSetSelect(selectElement, targetId) {
+        const container = document.getElementById(targetId);
+        if (container) {
+            container.style.display = selectElement.value === 'card_set' ? 'block' : 'none';
+        }
+    }
+</script>
+{% endif %}
 
     <!-- Footer -->
     {% include 'includes/footer.html' %}

@@ -15,6 +15,7 @@ from .models import Order, SiteSettings, HeroSlider, CardSet
 from django.db.models import Sum, Count
 from django import forms
 from django.template.exceptions import TemplateDoesNotExist
+from django.urls import reverse
 
 @staff_member_required
 def admin_dashboard(request):
@@ -1708,6 +1709,9 @@ def update_order_status(request, order_id):
 @staff_member_required
 def admin_hero_slider(request):
     if request.method == 'POST':
+        # Lấy URL redirect từ form
+        next_url = request.POST.get('next', reverse('admin_dashboard:hero_slider'))
+        
         # Add new slide
         if 'add_slide' in request.POST:
             title = request.POST.get('title')
@@ -1738,7 +1742,7 @@ def admin_hero_slider(request):
                 order=order
             )
             messages.success(request, f'Slide "{title}" đã được thêm thành công!')
-            return redirect('admin_dashboard:hero_slider')
+            return redirect(next_url)  # Thay đổi ở đây
         
         # Edit slide
         elif 'edit_slide' in request.POST:
@@ -1772,7 +1776,7 @@ def admin_hero_slider(request):
             
             slide.save()
             messages.success(request, f'Slide "{slide.title}" đã được cập nhật thành công!')
-            return redirect('admin_dashboard:hero_slider')
+            return redirect(next_url)  # Thay đổi ở đây
         
         # Delete slide
         elif 'delete_slide' in request.POST:
@@ -1781,7 +1785,7 @@ def admin_hero_slider(request):
             title = slide.title
             slide.delete()
             messages.success(request, f'Slide "{title}" đã được xóa thành công!')
-            return redirect('admin_dashboard:hero_slider')
+            return redirect(next_url)  # Thay đổi ở đây
         
         # Toggle active status
         elif 'toggle_active' in request.POST:
@@ -1791,7 +1795,7 @@ def admin_hero_slider(request):
             slide.save()
             status = "kích hoạt" if slide.is_active else "vô hiệu hóa"
             messages.success(request, f'Slide "{slide.title}" đã được {status}!')
-            return redirect('admin_dashboard:hero_slider')
+            return redirect(next_url)  # Thay đổi ở đây
         
         # Reorder slide
         elif 'reorder' in request.POST:
@@ -1801,7 +1805,7 @@ def admin_hero_slider(request):
             slide.order = new_order
             slide.save()
             messages.success(request, f'Thứ tự slide đã được cập nhật!')
-            return redirect('admin_dashboard:hero_slider')
+            return redirect(next_url)  # Thay đổi ở đây
     
     # Get all slides and card sets
     slides = HeroSlider.objects.all().order_by('order')
